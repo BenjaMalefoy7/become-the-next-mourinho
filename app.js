@@ -173,6 +173,99 @@ function getCareerToContinue() {
   return careers[0] || null;
 }
 
+function closeCustomSelects(exceptElement) {
+  document.querySelectorAll(".custom-select.open").forEach(function(select) {
+    if (select !== exceptElement) select.classList.remove("open");
+  });
+}
+
+function setCustomSelectValue(selectId, value, label) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+
+  const inputId = select.dataset.input;
+  const hiddenInput = inputId ? document.getElementById(inputId) : null;
+  const labelNode = select.querySelector("[data-selected-label]");
+  const options = Array.from(select.querySelectorAll(".custom-select-option"));
+  const matchedOption = options.find(function(option) {
+    return option.dataset.value === value;
+  });
+
+  const finalValue = value || (matchedOption ? matchedOption.dataset.value : "");
+  const finalLabel = label || (matchedOption ? matchedOption.dataset.label || matchedOption.textContent.trim() : finalValue);
+
+  if (hiddenInput) hiddenInput.value = finalValue;
+  if (labelNode) labelNode.textContent = finalLabel;
+
+  options.forEach(function(option) {
+    option.classList.toggle("active", option.dataset.value === finalValue);
+  });
+}
+
+function bindCustomSelects() {
+  document.querySelectorAll(".custom-select").forEach(function(select) {
+    const trigger = select.querySelector(".custom-select-trigger");
+    const menu = select.querySelector(".custom-select-menu");
+    const inputId = select.dataset.input;
+    const hiddenInput = inputId ? document.getElementById(inputId) : null;
+
+    if (trigger) {
+      trigger.addEventListener("click", function(event) {
+        event.stopPropagation();
+        const willOpen = !select.classList.contains("open");
+        closeCustomSelects(select);
+        select.classList.toggle("open", willOpen);
+      });
+    }
+
+    if (menu) {
+      menu.addEventListener("click", function(event) {
+        const option = event.target.closest(".custom-select-option");
+        if (!option) return;
+
+        setCustomSelectValue(select.id, option.dataset.value, option.dataset.label || option.textContent.trim());
+        select.classList.remove("open");
+      });
+    }
+
+    const currentValue = hiddenInput ? hiddenInput.value : "";
+    if (currentValue) setCustomSelectValue(select.id, currentValue);
+  });
+
+  document.addEventListener("click", function() {
+    closeCustomSelects(null);
+  });
+
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closeCustomSelects(null);
+  });
+}
+
+function populateReplacedClubs() {
+  const select = document.getElementById("replaced-club-select");
+  const menu = select ? select.querySelector(".custom-select-menu") : null;
+  const clubs = getPremierLeagueClubs();
+
+  if (!menu) return;
+
+  menu.innerHTML = clubs.map(function(club) {
+    return `<button type="button" class="custom-select-option" data-value="${club.id}" data-label="${club.name}">${club.name}</button>`;
+  }).join("");
+
+  if (clubs.length) {
+    setCustomSelectValue("replaced-club-select", clubs[0].id, clubs[0].name);
+  }
+}
+
+function resetCareerFormVisualValues() {
+  const firstClub = getPremierLeagueClubs()[0];
+  setCustomSelectValue("club-badge-select", "🐉", "🐉 Dragon");
+  setCustomSelectValue("difficulty-select", "ambitious", "Club ambitieux");
+  if (firstClub) setCustomSelectValue("replaced-club-select", firstClub.id, firstClub.name);
+  document.getElementById("primary-color").value = "#2ee987";
+  document.getElementById("secondary-color").value = "#ffffff";
+}
+
 function showMenuScreen(screenId) {
   document.querySelectorAll(".menu-screen").forEach(function(screen) {
     screen.classList.toggle("app-hidden", screen.id !== screenId);
@@ -181,6 +274,7 @@ function showMenuScreen(screenId) {
   const appShell = document.getElementById("app-shell");
   if (appShell) appShell.classList.add("app-hidden");
 
+  closeCustomSelects(null);
   refreshUI();
 }
 
@@ -204,6 +298,7 @@ function enterApp(screenId) {
   const appShell = document.getElementById("app-shell");
   if (appShell) appShell.classList.remove("app-hidden");
 
+  closeCustomSelects(null);
   refreshUI();
   showScreen(screenId || "dashboard");
 }
@@ -396,22 +491,13 @@ function renderSaves() {
   }).join("");
 }
 
-function populateReplacedClubs() {
-  const select = document.getElementById("replaced-club");
-  if (!select) return;
-
-  select.innerHTML = getPremierLeagueClubs().map(function(club) {
-    return `<option value="${club.id}">${club.name}</option>`;
-  }).join("");
-}
-
 function fillDemoCareer() {
   document.getElementById("career-name").value = "Carrière Dragon FC";
   document.getElementById("manager-name").value = "Benjamin";
   document.getElementById("club-name").value = "Dragon FC";
   document.getElementById("club-short-name").value = "DFC";
-  document.getElementById("club-badge").value = "🐉";
-  document.getElementById("difficulty").value = "ambitious";
+  setCustomSelectValue("club-badge-select", "🐉", "🐉 Dragon");
+  setCustomSelectValue("difficulty-select", "ambitious", "Club ambitieux");
   document.getElementById("primary-color").value = "#2ee987";
   document.getElementById("secondary-color").value = "#ffffff";
 }
@@ -426,11 +512,21 @@ function createCareerFromForm(event) {
   const badge = document.getElementById("club-badge").value || "⚽";
   const replacedClubId = document.getElementById("replaced-club").value;
   const replacedClub = getClubById(replacedClubId);
-  const difficulty = document.getElementById("difficulty").value;
+  const difficulty = document.getElementById("difficulty").value || "ambitious";
   const primaryColor = document.getElementById("primary-color").value;
   const secondaryColor = document.getElementById("secondary-color").value;
   const settings = getDifficultySettings(difficulty);
   const now = new Date().toISOString();
+
+  if (!careerName || !managerName || !clubName || !shortName) {
+    window.alert("Remplis les champs obligatoires avant de créer la carrière.");
+    return;
+  }
+
+  if (!replacedClub) {
+    window.alert("Choisis le club de Premier League que ton club remplace.");
+    return;
+  }
 
   const customClub = {
     id: slugify(clubName) || createId("custom_club"),
@@ -452,7 +548,7 @@ function createCareerFromForm(event) {
 
   const career = {
     id: createId("career"),
-    version: "0.3.2",
+    version: "0.3.3",
     dataVersion: "premier_league_2025_2026_v0_3",
     careerName: careerName,
     mode: "custom_club",
@@ -463,7 +559,7 @@ function createCareerFromForm(event) {
     objective: settings.objective,
     squadLevel: settings.squadLevel,
     replacedClubId: replacedClubId,
-    replacedClubName: replacedClub ? replacedClub.name : "Club inconnu",
+    replacedClubName: replacedClub.name,
     nextMatch: clubName + " vs " + nextOpponentName,
     league: PREMIER_LEAGUE,
     clubs: leagueTeams,
@@ -486,9 +582,7 @@ function createCareerFromForm(event) {
   setActiveCareerId(career.id);
 
   document.getElementById("career-form").reset();
-  document.getElementById("club-badge").value = "🐉";
-  document.getElementById("primary-color").value = "#2ee987";
-  document.getElementById("secondary-color").value = "#ffffff";
+  resetCareerFormVisualValues();
 
   enterApp("dashboard");
 }
@@ -574,6 +668,7 @@ function initApp() {
   populateReplacedClubs();
   bindNavigation();
   bindButtons();
+  bindCustomSelects();
   refreshUI();
   showWelcome();
 }
