@@ -1,11 +1,26 @@
 (function () {
-  const LINEUP_VERSION = "0.5.1";
-  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_1";
+  const LINEUP_VERSION = "0.5.2";
+  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_2";
   const DEFAULT_FORMATION = "4-3-3";
 
   const originalRepairCareerIfNeeded = window.repairCareerIfNeeded;
   const originalRefreshUI = window.refreshUI;
   const originalBindButtons = window.bindButtons;
+
+  const POSITION_LABELS_LOCAL = {
+    GK: "Gardien",
+    DC: "Défenseur central",
+    DG: "Défenseur gauche",
+    DD: "Défenseur droit",
+    MDC: "Milieu défensif",
+    MC: "Milieu central",
+    MOC: "Milieu offensif",
+    MG: "Milieu gauche",
+    MD: "Milieu droit",
+    AG: "Ailier gauche",
+    AD: "Ailier droit",
+    BU: "Buteur"
+  };
 
   const FORMATION_BLUEPRINTS = {
     "4-3-3": [
@@ -16,26 +31,26 @@
     ],
     "4-2-3-1": [
       { name: "Attaque", className: "attack", slots: ["BU"] },
-      { name: "Soutien offensif", className: "support", slots: ["AG", "MOC", "AD"] },
+      { name: "Ligne offensive", className: "support", slots: ["AG", "MOC", "AD"] },
       { name: "Double pivot", className: "midfield", slots: ["MDC", "MDC"] },
       { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
       { name: "Gardien", className: "keeper", slots: ["GK"] }
     ],
     "4-4-2": [
       { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
-      { name: "Milieu à quatre", className: "midfield", slots: ["AG", "MC", "MC", "AD"] },
+      { name: "Milieu à plat", className: "midfield", slots: ["MG", "MC", "MC", "MD"] },
       { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
       { name: "Gardien", className: "keeper", slots: ["GK"] }
     ],
     "3-5-2": [
       { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
-      { name: "Milieu à cinq", className: "midfield", slots: ["AG", "MC", "MDC", "MC", "AD"] },
+      { name: "Milieu à cinq", className: "midfield", slots: ["MG", "MC", "MDC", "MC", "MD"] },
       { name: "Défense à trois", className: "defense", slots: ["DC", "DC", "DC"] },
       { name: "Gardien", className: "keeper", slots: ["GK"] }
     ],
     "3-4-3": [
       { name: "Attaque", className: "attack", slots: ["AG", "BU", "AD"] },
-      { name: "Milieu à quatre", className: "midfield", slots: ["AG", "MC", "MC", "AD"] },
+      { name: "Milieu à quatre", className: "midfield", slots: ["MG", "MC", "MC", "MD"] },
       { name: "Défense à trois", className: "defense", slots: ["DC", "DC", "DC"] },
       { name: "Gardien", className: "keeper", slots: ["GK"] }
     ],
@@ -54,6 +69,17 @@
     ]
   };
 
+  const FORMATION_ORDER = Object.keys(FORMATION_BLUEPRINTS);
+  const LINE_ORDER = ["Gardien", "Défense", "Défense à trois", "Défense à cinq", "Double pivot", "Milieu", "Milieu diamant", "Milieu à plat", "Milieu à quatre", "Milieu à cinq", "Meneur", "Ligne offensive", "Attaque"];
+
+  function labelForPosition(position) {
+    if (typeof getPositionLabel === "function") {
+      const label = getPositionLabel(position);
+      if (label && label !== position) return label;
+    }
+    return POSITION_LABELS_LOCAL[position] || position;
+  }
+
   function auditedFormations() {
     Object.keys(FORMATION_BLUEPRINTS).forEach((formation) => {
       const count = FORMATION_BLUEPRINTS[formation].reduce((sum, line) => sum + line.slots.length, 0);
@@ -63,11 +89,8 @@
   }
 
   function formationNames() {
-    const names = Object.keys(auditedFormations());
-    if (typeof FORMATIONS !== "undefined" && FORMATIONS && typeof FORMATIONS === "object") {
-      return Object.keys(FORMATIONS).filter((name) => FORMATION_BLUEPRINTS[name]).concat(names.filter((name) => !FORMATIONS[name]));
-    }
-    return names;
+    auditedFormations();
+    return FORMATION_ORDER;
   }
 
   function blueprint(formationName) {
@@ -126,10 +149,35 @@
     return career.players.find((player) => player.id === playerId) || null;
   }
 
+  function equivalentPositions(position) {
+    const map = {
+      MG: ["AG", "MC", "DG"],
+      MD: ["AD", "MC", "DD"],
+      AG: ["MG", "MOC", "AD"],
+      AD: ["MD", "MOC", "AG"],
+      MC: ["MDC", "MOC", "MG", "MD"],
+      MDC: ["MC", "DC"],
+      MOC: ["MC", "AG", "AD"],
+      DG: ["DC", "MG"],
+      DD: ["DC", "MD"],
+      DC: ["DD", "DG", "MDC"],
+      BU: ["AG", "AD", "MOC"],
+      GK: []
+    };
+    return map[position] || [];
+  }
+
+  function playerSecondaryPositions(player) {
+    const list = Array.isArray(player && player.secondaryPositions) ? player.secondaryPositions : [];
+    const extras = equivalentPositions(player && player.primaryPosition).filter((position) => !list.includes(position));
+    return list.concat(extras);
+  }
+
   function compatibility(player, position) {
     if (!player) return { key: "empty", label: "Vide", penalty: 0, className: "empty" };
     if (player.primaryPosition === position) return { key: "natural", label: "Poste naturel", penalty: 0, className: "good" };
-    if (Array.isArray(player.secondaryPositions) && player.secondaryPositions.includes(position)) return { key: "secondary", label: "Poste secondaire", penalty: 3, className: "warning" };
+    if (playerSecondaryPositions(player).includes(position)) return { key: "secondary", label: "Compatible", penalty: 3, className: "warning" };
+    if (equivalentPositions(position).includes(player.primaryPosition)) return { key: "secondary", label: "Compatible", penalty: 3, className: "warning" };
     return { key: "bad", label: "Hors poste", penalty: 12, className: "danger" };
   }
 
@@ -170,7 +218,11 @@
       };
     });
 
-    return { formation: chosenFormation, starters, updatedAt: new Date().toISOString() };
+    return { formation: chosenFormation, starters, updatedAt: new Date().toISOString(), lineupVersion: LINEUP_VERSION };
+  }
+
+  function slotSignature(slots) {
+    return slots.map((slot) => slot.slotId || slot.id).join("|");
   }
 
   function normalizeLineup(career) {
@@ -178,8 +230,10 @@
     const requestedFormation = career.lineup && FORMATION_BLUEPRINTS[career.lineup.formation] ? career.lineup.formation : DEFAULT_FORMATION;
     const slots = formationSlots(requestedFormation);
     const existing = Array.isArray(career.lineup && career.lineup.starters) ? career.lineup.starters : [];
+    const expectedSignature = slotSignature(slots);
+    const existingSignature = slotSignature(existing);
 
-    if (!career.lineup || existing.length !== slots.length) {
+    if (!career.lineup || existing.length !== slots.length || existingSignature !== expectedSignature || career.lineup.lineupVersion !== LINEUP_VERSION) {
       return { lineup: defaultLineup(career, requestedFormation), changed: true };
     }
 
@@ -197,7 +251,7 @@
     });
 
     return {
-      lineup: { formation: requestedFormation, starters, updatedAt: career.lineup.updatedAt || new Date().toISOString() },
+      lineup: { formation: requestedFormation, starters, updatedAt: career.lineup.updatedAt || new Date().toISOString(), lineupVersion: LINEUP_VERSION },
       changed
     };
   }
@@ -349,14 +403,14 @@
 
   function playerLine(player) {
     if (!player) return "Aucun titulaire choisi";
-    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? " / " + player.secondaryPositions.join("/") : "";
+    const secondary = playerSecondaryPositions(player).length ? " / " + playerSecondaryPositions(player).join("/") : "";
     return escapeHtml(player.name) + " · " + escapeHtml(player.primaryPosition + secondary) + " · OVR " + safeText(player.overall);
   }
 
   function optionLabel(player, targetPosition) {
     const fit = compatibility(player, targetPosition);
     const marker = fit.key === "natural" ? "✓" : fit.key === "secondary" ? "~" : "!";
-    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? " / " + player.secondaryPositions.join("/") : "";
+    const secondary = playerSecondaryPositions(player).length ? " / " + playerSecondaryPositions(player).join("/") : "";
     return marker + " " + player.name + " — " + player.primaryPosition + secondary + " — OVR " + safeText(player.overall);
   }
 
@@ -377,7 +431,6 @@
 
     const players = Array.isArray(career.players) ? career.players : [];
     const selected = new Set(selectedPlayerIds(career.lineup));
-    const lines = ["Gardien", "Défense", "Défense à trois", "Défense à cinq", "Milieu", "Double pivot", "Milieu à quatre", "Milieu à cinq", "Milieu diamant", "Meneur", "Soutien offensif", "Attaque"];
     const startersByLine = new Map();
 
     career.lineup.starters.forEach((starter) => {
@@ -386,7 +439,7 @@
       startersByLine.get(key).push(starter);
     });
 
-    container.innerHTML = lines.filter((lineName) => startersByLine.has(lineName)).map((lineName) => {
+    container.innerHTML = LINE_ORDER.filter((lineName) => startersByLine.has(lineName)).map((lineName) => {
       const starters = startersByLine.get(lineName);
       return `
         <section class="lineup-editor-group">
@@ -408,7 +461,7 @@
                 <article class="lineup-row lineup-status-${fit.className}">
                   <div class="lineup-row-position">
                     <strong>${escapeHtml(starter.label)}</strong>
-                    <span>${escapeHtml(getPositionLabel(starter.position))}</span>
+                    <span>${escapeHtml(labelForPosition(starter.position))}</span>
                   </div>
                   <div class="lineup-row-player">
                     <strong>${currentPlayer ? escapeHtml(currentPlayer.name) : "Poste vide"}</strong>
