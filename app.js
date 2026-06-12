@@ -106,6 +106,66 @@ function getActiveCareer() {
   }) || null;
 }
 
+function getCareerToContinue() {
+  const careers = loadCareers();
+  const activeCareer = getActiveCareer();
+  if (activeCareer) return activeCareer;
+  return careers[0] || null;
+}
+
+function showWelcome() {
+  const welcomeScreen = document.getElementById("welcome-screen");
+  const appShell = document.getElementById("app-shell");
+
+  if (welcomeScreen) welcomeScreen.classList.remove("app-hidden");
+  if (appShell) appShell.classList.add("app-hidden");
+
+  updateWelcome();
+}
+
+function enterApp(screenId) {
+  const welcomeScreen = document.getElementById("welcome-screen");
+  const appShell = document.getElementById("app-shell");
+
+  if (welcomeScreen) welcomeScreen.classList.add("app-hidden");
+  if (appShell) appShell.classList.remove("app-hidden");
+
+  refreshUI();
+  showScreen(screenId || "dashboard");
+}
+
+function continueCareer() {
+  const career = getCareerToContinue();
+
+  if (!career) {
+    enterApp("saves");
+    return;
+  }
+
+  setActiveCareerId(career.id);
+  enterApp("dashboard");
+}
+
+function updateWelcome() {
+  const careers = loadCareers();
+  const career = getCareerToContinue();
+  const status = document.getElementById("welcome-status");
+  const continueButton = document.getElementById("welcome-continue-btn");
+
+  if (continueButton) {
+    continueButton.disabled = careers.length === 0;
+  }
+
+  if (!status) return;
+
+  if (!career) {
+    status.textContent = "Aucune carrière sauvegardée. Lance une nouvelle partie pour commencer.";
+    return;
+  }
+
+  status.textContent = "Dernière carrière : " + career.careerName + " · " + career.club.name + " · " + getDifficultyLabel(career.difficulty);
+}
+
 function showScreen(screenId) {
   document.querySelectorAll(".screen").forEach(function(screen) {
     screen.classList.toggle("active", screen.id === screenId);
@@ -122,9 +182,11 @@ function updateDashboard() {
   const career = getActiveCareer();
 
   if (!career) {
-    document.getElementById("dashboard-title").textContent = "Construis ton club, gagne ta place, deviens une légende.";
-    document.getElementById("dashboard-description").textContent = "Crée une carrière pour commencer. Cette V0.2 ajoute les sauvegardes multiples en localStorage.";
+    document.getElementById("dashboard-title").textContent = "Aucune carrière active.";
+    document.getElementById("dashboard-description").textContent = "Retourne à l’accueil pour lancer une nouvelle partie ou charger une sauvegarde.";
     document.getElementById("active-career-badge").innerHTML = "<span>PL</span><strong>25/26</strong>";
+    document.getElementById("active-career-badge").style.background = "rgba(46, 233, 135, 0.10)";
+    document.getElementById("active-career-badge").style.borderColor = "rgba(46, 233, 135, 0.22)";
     document.getElementById("kpi-club").textContent = "Aucune carrière";
     document.getElementById("kpi-money").textContent = "—";
     document.getElementById("kpi-difficulty").textContent = "—";
@@ -225,7 +287,7 @@ function renderSaves() {
       <div class="empty-state compact-empty">
         <span>💾</span>
         <h4>Aucune carrière sauvegardée</h4>
-        <p>Crée ta première carrière pour commencer la V0.2.</p>
+        <p>Crée ta première carrière depuis l’accueil ou via Nouvelle carrière.</p>
       </div>
     `;
     return;
@@ -294,7 +356,7 @@ function createCareerFromForm(event) {
 
   const career = {
     id: createId("career"),
-    version: "0.2",
+    version: "0.2.1",
     careerName: careerName,
     mode: "custom_club",
     managerName: managerName,
@@ -334,14 +396,12 @@ function createCareerFromForm(event) {
   document.getElementById("primary-color").value = "#2ee987";
   document.getElementById("secondary-color").value = "#ffffff";
 
-  refreshUI();
-  showScreen("dashboard");
+  enterApp("dashboard");
 }
 
 function loadCareer(careerId) {
   setActiveCareerId(careerId);
-  refreshUI();
-  showScreen("dashboard");
+  enterApp("dashboard");
 }
 
 function deleteCareer(careerId) {
@@ -376,6 +436,10 @@ function bindNavigation() {
 }
 
 function bindButtons() {
+  const welcomeNewButton = document.getElementById("welcome-new-career-btn");
+  const welcomeContinueButton = document.getElementById("welcome-continue-btn");
+  const welcomeSavesButton = document.getElementById("welcome-saves-btn");
+  const homeButton = document.getElementById("home-btn");
   const newCareerButton = document.getElementById("new-career-btn");
   const createFromSavesButton = document.getElementById("create-from-saves-btn");
   const goSavesButton = document.getElementById("go-saves-btn");
@@ -383,6 +447,10 @@ function bindButtons() {
   const careerForm = document.getElementById("career-form");
   const savesList = document.getElementById("saves-list");
 
+  if (welcomeNewButton) welcomeNewButton.addEventListener("click", function() { enterApp("club"); });
+  if (welcomeContinueButton) welcomeContinueButton.addEventListener("click", continueCareer);
+  if (welcomeSavesButton) welcomeSavesButton.addEventListener("click", function() { enterApp("saves"); });
+  if (homeButton) homeButton.addEventListener("click", showWelcome);
   if (newCareerButton) newCareerButton.addEventListener("click", function() { showScreen("club"); });
   if (createFromSavesButton) createFromSavesButton.addEventListener("click", function() { showScreen("club"); });
   if (goSavesButton) goSavesButton.addEventListener("click", function() { showScreen("saves"); });
@@ -401,6 +469,7 @@ function bindButtons() {
 }
 
 function refreshUI() {
+  updateWelcome();
   updateDashboard();
   renderSaves();
   renderStandingsPreview();
@@ -412,6 +481,7 @@ function initApp() {
   bindButtons();
   renderPlayersPreview();
   refreshUI();
+  showWelcome();
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
