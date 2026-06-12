@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <section class="welcome-screen" id="welcome-screen">
+  <section class="welcome-screen menu-screen" id="welcome-screen">
     <div class="welcome-card">
       <div class="welcome-brand">
         <div class="brand-badge welcome-badge">BTM</div>
@@ -33,6 +33,112 @@
     </div>
   </section>
 
+  <section class="welcome-screen menu-screen app-hidden" id="career-setup-screen">
+    <div class="welcome-card">
+      <div class="welcome-brand">
+        <div>
+          <p class="eyebrow">Nouvelle partie</p>
+          <h2>Créer une carrière</h2>
+        </div>
+        <button class="secondary-btn" id="back-from-create-btn" type="button">Retour accueil</button>
+      </div>
+
+      <div class="section-header">
+        <h3>Mode de départ</h3>
+        <p>Pour l’instant, seul le mode “Créer mon club” est actif. Le choix d’un club réel sera branché plus tard.</p>
+      </div>
+
+      <form class="career-form" id="career-form">
+        <div class="mode-grid">
+          <label class="mode-card active">
+            <input type="radio" name="careerMode" value="custom" checked />
+            <strong>Créer mon club</strong>
+            <span>Crée ton identité et remplace un club de Premier League.</span>
+          </label>
+          <label class="mode-card disabled-mode">
+            <input type="radio" name="careerMode" value="real" disabled />
+            <strong>Choisir un club réel</strong>
+            <span>Prévu pour la V1.1.</span>
+          </label>
+        </div>
+
+        <div class="form-preview form-grid">
+          <label>
+            Nom de la carrière
+            <input id="career-name" type="text" placeholder="Ex : Carrière Dragon FC" required />
+          </label>
+          <label>
+            Nom du manager
+            <input id="manager-name" type="text" placeholder="Ex : Benjamin" required />
+          </label>
+          <label>
+            Nom du club
+            <input id="club-name" type="text" placeholder="Ex : Dragon FC" required />
+          </label>
+          <label>
+            Nom court
+            <input id="club-short-name" type="text" placeholder="Ex : DFC" maxlength="5" required />
+          </label>
+          <label>
+            Badge temporaire
+            <input id="club-badge" type="text" placeholder="Ex : 🐉" maxlength="3" />
+          </label>
+          <label>
+            Club remplacé
+            <select id="replaced-club" required></select>
+          </label>
+          <label>
+            Difficulté
+            <select id="difficulty" required>
+              <option value="outsider">Petit club outsider</option>
+              <option value="ambitious" selected>Club ambitieux</option>
+              <option value="giant">Nouveau géant</option>
+            </select>
+          </label>
+          <label>
+            Couleur principale
+            <input id="primary-color" type="color" value="#2ee987" />
+          </label>
+          <label>
+            Couleur secondaire
+            <input id="secondary-color" type="color" value="#ffffff" />
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-btn">Créer la carrière</button>
+          <button type="button" class="secondary-btn" id="fill-demo-career-btn">Remplir un exemple</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="welcome-screen menu-screen app-hidden" id="saves-menu-screen">
+    <div class="welcome-card">
+      <div class="welcome-brand">
+        <div>
+          <p class="eyebrow">Carrières locales</p>
+          <h2>Mes sauvegardes</h2>
+        </div>
+        <button class="secondary-btn" id="back-from-saves-btn" type="button">Retour accueil</button>
+      </div>
+
+      <div class="section-header section-header-row">
+        <div>
+          <h3>Sauvegardes</h3>
+          <p>Charge ou supprime tes carrières locales. Les données restent dans ce navigateur.</p>
+        </div>
+        <button class="primary-btn" id="create-from-saves-btn">Créer une carrière</button>
+      </div>
+
+      <div class="info-banner">
+        <strong>Note :</strong> les sauvegardes utilisent localStorage. Si tu changes de navigateur ou d’ordinateur, elles ne suivent pas automatiquement.
+      </div>
+
+      <div class="saves-list" id="saves-list"></div>
+    </div>
+  </section>
+
   <div class="app-shell app-hidden" id="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -45,8 +151,6 @@
 
       <nav class="nav">
         <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
-        <button class="nav-btn" data-screen="saves">Sauvegardes</button>
-        <button class="nav-btn" data-screen="club">Nouvelle carrière</button>
         <button class="nav-btn" data-screen="squad">Effectif</button>
         <button class="nav-btn" data-screen="lineup">Composition</button>
         <button class="nav-btn" data-screen="calendar">Calendrier</button>
@@ -57,7 +161,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.3 — Clubs & championnat</div>
+      <div class="sidebar-footer">V0.3.1 — Menus pré-jeu</div>
     </aside>
 
     <main class="main-content">
@@ -67,9 +171,7 @@
           <h2 id="page-title">Dashboard</h2>
         </div>
         <div class="topbar-actions">
-          <button class="secondary-btn" id="home-btn">Accueil</button>
-          <button class="secondary-btn" id="go-saves-btn">Mes sauvegardes</button>
-          <button class="primary-btn" id="new-career-btn">Nouvelle carrière</button>
+          <button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button>
         </div>
       </header>
 
@@ -79,7 +181,7 @@
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
             <p id="dashboard-description">
-              La V0.3 ajoute la structure de données Premier League 2025/2026 : clubs, championnat et classement initial.
+              La V0.3.1 sépare les menus pré-jeu de l’interface manager.
             </p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
@@ -94,100 +196,14 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.3</h3>
-            <p>Les nouvelles carrières créent une vraie Premier League de 20 équipes avec le club personnalisé qui remplace le club choisi.</p>
+            <h3>Statut V0.3.1</h3>
+            <p>Les menus Accueil, Nouvelle partie et Sauvegardes sont maintenant séparés du jeu.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
             <p>V0.4 : générer l’effectif de départ du club créé selon la difficulté choisie.</p>
           </article>
         </div>
-      </section>
-
-      <section class="screen" id="saves">
-        <div class="section-header section-header-row">
-          <div>
-            <h3>Sauvegardes</h3>
-            <p>Gère tes carrières locales. Les données restent dans ce navigateur.</p>
-          </div>
-          <button class="primary-btn" id="create-from-saves-btn">Créer une carrière</button>
-        </div>
-
-        <div class="info-banner">
-          <strong>Note :</strong> les sauvegardes utilisent localStorage. Si tu changes de navigateur ou d’ordinateur, elles ne suivent pas automatiquement.
-        </div>
-
-        <div class="saves-list" id="saves-list"></div>
-      </section>
-
-      <section class="screen" id="club">
-        <div class="section-header">
-          <h3>Nouvelle carrière</h3>
-          <p>Pour la V0.3, le mode pleinement actif est “Créer mon club”. Le mode club réel sera branché plus tard.</p>
-        </div>
-
-        <form class="career-form" id="career-form">
-          <div class="mode-grid">
-            <label class="mode-card active">
-              <input type="radio" name="careerMode" value="custom" checked />
-              <strong>Créer mon club</strong>
-              <span>Crée ton identité et remplace un club de Premier League.</span>
-            </label>
-            <label class="mode-card disabled-mode">
-              <input type="radio" name="careerMode" value="real" disabled />
-              <strong>Choisir un club réel</strong>
-              <span>Prévu pour la V1.1.</span>
-            </label>
-          </div>
-
-          <div class="form-preview form-grid">
-            <label>
-              Nom de la carrière
-              <input id="career-name" type="text" placeholder="Ex : Carrière Dragon FC" required />
-            </label>
-            <label>
-              Nom du manager
-              <input id="manager-name" type="text" placeholder="Ex : Benjamin" required />
-            </label>
-            <label>
-              Nom du club
-              <input id="club-name" type="text" placeholder="Ex : Dragon FC" required />
-            </label>
-            <label>
-              Nom court
-              <input id="club-short-name" type="text" placeholder="Ex : DFC" maxlength="5" required />
-            </label>
-            <label>
-              Badge temporaire
-              <input id="club-badge" type="text" placeholder="Ex : 🐉" maxlength="3" />
-            </label>
-            <label>
-              Club remplacé
-              <select id="replaced-club" required></select>
-            </label>
-            <label>
-              Difficulté
-              <select id="difficulty" required>
-                <option value="outsider">Petit club outsider</option>
-                <option value="ambitious" selected>Club ambitieux</option>
-                <option value="giant">Nouveau géant</option>
-              </select>
-            </label>
-            <label>
-              Couleur principale
-              <input id="primary-color" type="color" value="#2ee987" />
-            </label>
-            <label>
-              Couleur secondaire
-              <input id="secondary-color" type="color" value="#ffffff" />
-            </label>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="primary-btn">Créer la carrière</button>
-            <button type="button" class="secondary-btn" id="fill-demo-career-btn">Remplir un exemple</button>
-          </div>
-        </form>
       </section>
 
       <section class="screen" id="squad">
