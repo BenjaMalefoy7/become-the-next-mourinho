@@ -1,11 +1,13 @@
 (function () {
-  const LINEUP_VERSION = "0.5.2";
-  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_2";
+  const LINEUP_VERSION = "0.5.3";
+  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_3";
   const DEFAULT_FORMATION = "4-3-3";
 
   const originalRepairCareerIfNeeded = window.repairCareerIfNeeded;
   const originalRefreshUI = window.refreshUI;
   const originalBindButtons = window.bindButtons;
+
+  let selectedSlotId = "";
 
   const POSITION_LABELS_LOCAL = {
     GK: "Gardien",
@@ -70,7 +72,14 @@
   };
 
   const FORMATION_ORDER = Object.keys(FORMATION_BLUEPRINTS);
-  const LINE_ORDER = ["Gardien", "Défense", "Défense à trois", "Défense à cinq", "Double pivot", "Milieu", "Milieu diamant", "Milieu à plat", "Milieu à quatre", "Milieu à cinq", "Meneur", "Ligne offensive", "Attaque"];
+
+  function safeEscape(value) {
+    return typeof escapeHtml === "function" ? escapeHtml(value) : String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+  }
+
+  function safe(value, fallback = "—") {
+    return typeof safeText === "function" ? safeText(value, fallback) : (value ?? fallback);
+  }
 
   function labelForPosition(position) {
     if (typeof getPositionLabel === "function") {
@@ -80,37 +89,20 @@
     return POSITION_LABELS_LOCAL[position] || position;
   }
 
-  function auditedFormations() {
-    Object.keys(FORMATION_BLUEPRINTS).forEach((formation) => {
-      const count = FORMATION_BLUEPRINTS[formation].reduce((sum, line) => sum + line.slots.length, 0);
-      if (count !== 11) console.warn("Formation invalide", formation, count);
-    });
-    return FORMATION_BLUEPRINTS;
-  }
-
-  function formationNames() {
-    auditedFormations();
-    return FORMATION_ORDER;
-  }
-
   function blueprint(formationName) {
     return FORMATION_BLUEPRINTS[formationName] || FORMATION_BLUEPRINTS[DEFAULT_FORMATION];
   }
 
   function formationSlots(formationName) {
     const chosen = FORMATION_BLUEPRINTS[formationName] ? formationName : DEFAULT_FORMATION;
-    const lines = blueprint(chosen);
     const counters = {};
     const totals = {};
-
-    lines.forEach((line) => {
-      line.slots.forEach((position) => {
-        totals[position] = (totals[position] || 0) + 1;
-      });
-    });
+    blueprint(chosen).forEach((line) => line.slots.forEach((position) => {
+      totals[position] = (totals[position] || 0) + 1;
+    }));
 
     const slots = [];
-    lines.slice().reverse().forEach((line) => {
+    blueprint(chosen).slice().reverse().forEach((line) => {
       line.slots.forEach((position) => {
         counters[position] = (counters[position] || 0) + 1;
         slots.push({
@@ -123,25 +115,11 @@
         });
       });
     });
-
     return slots;
   }
 
-  function pitchLines(formationName, starters) {
-    const byPositionQueue = {};
-    (Array.isArray(starters) ? starters : []).forEach((starter) => {
-      if (!byPositionQueue[starter.position]) byPositionQueue[starter.position] = [];
-      byPositionQueue[starter.position].push(starter);
-    });
-
-    return blueprint(formationName).map((line) => ({
-      name: line.name,
-      className: line.className,
-      starters: line.slots.map((position) => {
-        const queue = byPositionQueue[position] || [];
-        return queue.shift() || null;
-      }).filter(Boolean)
-    }));
+  function slotSignature(slots) {
+    return slots.map((slot) => slot.slotId || slot.id).join("|");
   }
 
   function playerById(career, playerId) {
@@ -157,7 +135,7 @@
       AD: ["MD", "MOC", "AG"],
       MC: ["MDC", "MOC", "MG", "MD"],
       MDC: ["MC", "DC"],
-      MOC: ["MC", "AG", "AD"],
+      MOC: ["MC", "AG", "AD", "BU"],
       DG: ["DC", "MG"],
       DD: ["DC", "MD"],
       DC: ["DD", "DG", "MDC"],
@@ -174,8 +152,8 @@
   }
 
   function compatibility(player, position) {
-    if (!player) return { key: "empty", label: "Vide", penalty: 0, className: "empty" };
-    if (player.primaryPosition === position) return { key: "natural", label: "Poste naturel", penalty: 0, className: "good" };
+    if (!player) return { key: "empty", label: "Poste vide", penalty: 0, className: "empty" };
+    if (player.primaryPosition === position) return { key: "natural", label: "Naturel", penalty: 0, className: "good" };
     if (playerSecondaryPositions(player).includes(position)) return { key: "secondary", label: "Compatible", penalty: 3, className: "warning" };
     if (equivalentPositions(position).includes(player.primaryPosition)) return { key: "secondary", label: "Compatible", penalty: 3, className: "warning" };
     return { key: "bad", label: "Hors poste", penalty: 12, className: "danger" };
@@ -197,32 +175,23 @@
     });
   }
 
+  function sortedPlayers(players) {
+    if (typeof sortPlayers === "function") return sortPlayers(players);
+    return players.slice().sort((a, b) => (Number(b.overall) || 0) - (Number(a.overall) || 0));
+  }
+
   function defaultLineup(career, formationName) {
     const chosenFormation = FORMATION_BLUEPRINTS[formationName] ? formationName : DEFAULT_FORMATION;
     const slots = formationSlots(chosenFormation);
     const players = Array.isArray(career && career.players) ? career.players : [];
     const used = new Set();
-
     const starters = slots.map((slot) => {
       const candidates = sortCandidates(players.filter((player) => !used.has(player.id)), slot.position);
       const selected = candidates[0] || null;
       if (selected) used.add(selected.id);
-      return {
-        slotId: slot.id,
-        slotIndex: slot.index,
-        position: slot.position,
-        label: slot.label,
-        lineName: slot.lineName,
-        lineClassName: slot.lineClassName,
-        playerId: selected ? selected.id : ""
-      };
+      return { slotId: slot.id, slotIndex: slot.index, position: slot.position, label: slot.label, lineName: slot.lineName, lineClassName: slot.lineClassName, playerId: selected ? selected.id : "" };
     });
-
     return { formation: chosenFormation, starters, updatedAt: new Date().toISOString(), lineupVersion: LINEUP_VERSION };
-  }
-
-  function slotSignature(slots) {
-    return slots.map((slot) => slot.slotId || slot.id).join("|");
   }
 
   function normalizeLineup(career) {
@@ -241,7 +210,6 @@
     const existingBySlot = new Map(existing.map((starter) => [starter.slotId, starter]));
     const used = new Set();
     let changed = false;
-
     const starters = slots.map((slot) => {
       const oldStarter = existingBySlot.get(slot.id);
       let playerId = oldStarter && validPlayerIds.has(oldStarter.playerId) && !used.has(oldStarter.playerId) ? oldStarter.playerId : "";
@@ -250,10 +218,7 @@
       return { slotId: slot.id, slotIndex: slot.index, position: slot.position, label: slot.label, lineName: slot.lineName, lineClassName: slot.lineClassName, playerId };
     });
 
-    return {
-      lineup: { formation: requestedFormation, starters, updatedAt: career.lineup.updatedAt || new Date().toISOString(), lineupVersion: LINEUP_VERSION },
-      changed
-    };
+    return { lineup: { formation: requestedFormation, starters, updatedAt: career.lineup.updatedAt || new Date().toISOString(), lineupVersion: LINEUP_VERSION }, changed };
   }
 
   function selectedPlayerIds(lineup) {
@@ -263,15 +228,12 @@
 
   function benchPlayers(career) {
     const selected = new Set(selectedPlayerIds(career.lineup));
-    const players = Array.isArray(career.players) ? sortPlayers(career.players) : [];
+    const players = Array.isArray(career.players) ? sortedPlayers(career.players) : [];
     return players.filter((player) => !selected.has(player.id)).slice(0, 9);
   }
 
   function lineupMetrics(career) {
-    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) {
-      return { completed: 0, score: 0, averageOverall: 0, attack: 0, defense: 0, warnings: [] };
-    }
-
+    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) return { completed: 0, score: 0, averageOverall: 0, attack: 0, defense: 0, warnings: [] };
     let completed = 0;
     let adjustedOverall = 0;
     let rawOverall = 0;
@@ -289,27 +251,19 @@
       if (fit.key === "bad") warnings.push(player.name + " est hors poste en " + starter.position + ".");
       completed += 1;
       rawOverall += Number(player.overall) || 0;
-      adjustedOverall += clamp((Number(player.overall) || 0) - fit.penalty, 1, 99);
+      adjustedOverall += (typeof clamp === "function" ? clamp((Number(player.overall) || 0) - fit.penalty, 1, 99) : Math.max(1, Math.min(99, (Number(player.overall) || 0) - fit.penalty)));
       attack += Number(player.attack) || 0;
       defense += Number(player.defense) || 0;
     });
 
     const count = completed || 1;
-    return {
-      completed,
-      score: Math.round(adjustedOverall / count),
-      averageOverall: Math.round(rawOverall / count),
-      attack: Math.round(attack / count),
-      defense: Math.round(defense / count),
-      warnings
-    };
+    return { completed, score: Math.round(adjustedOverall / count), averageOverall: Math.round(rawOverall / count), attack: Math.round(attack / count), defense: Math.round(defense / count), warnings };
   }
 
   function updateCareerById(careerId, updater) {
     const careers = loadCareers();
     const index = careers.findIndex((career) => career.id === careerId && isValidCareer(career));
     if (index === -1) return false;
-
     const repaired = window.repairCareerIfNeeded(careers[index]);
     careers[index] = repaired.career;
     updater(careers[index]);
@@ -324,55 +278,67 @@
   }
 
   window.repairCareerIfNeeded = function (career) {
-    const result = typeof originalRepairCareerIfNeeded === "function"
-      ? originalRepairCareerIfNeeded(career)
-      : { career, changed: false };
-
+    const result = typeof originalRepairCareerIfNeeded === "function" ? originalRepairCareerIfNeeded(career) : { career, changed: false };
     const fixedCareer = result.career;
     if (!fixedCareer || !fixedCareer.club) return result;
-
     let changed = Boolean(result.changed);
     const normalized = normalizeLineup(fixedCareer);
     if (normalized.changed) {
       fixedCareer.lineup = normalized.lineup;
       changed = true;
     }
-
     if (fixedCareer.version !== LINEUP_VERSION) {
       fixedCareer.version = LINEUP_VERSION;
       changed = true;
     }
-
     if (fixedCareer.dataVersion !== LINEUP_DATA_VERSION) {
       fixedCareer.dataVersion = LINEUP_DATA_VERSION;
       changed = true;
     }
-
     if (changed) fixedCareer.updatedAt = new Date().toISOString();
     return { career: fixedCareer, changed };
   };
+
+  function currentStarter(career) {
+    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) return null;
+    const existing = career.lineup.starters.find((starter) => starter.slotId === selectedSlotId);
+    if (existing) return existing;
+    selectedSlotId = career.lineup.starters[0] ? career.lineup.starters[0].slotId : "";
+    return career.lineup.starters[0] || null;
+  }
+
+  function startersInPitchOrder(career) {
+    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) return [];
+    const queues = {};
+    career.lineup.starters.forEach((starter) => {
+      if (!queues[starter.position]) queues[starter.position] = [];
+      queues[starter.position].push(starter);
+    });
+    return blueprint(career.lineup.formation).map((line) => ({
+      name: line.name,
+      className: line.className,
+      starters: line.slots.map((position) => {
+        const queue = queues[position] || [];
+        return queue.shift() || null;
+      }).filter(Boolean)
+    }));
+  }
 
   function renderFormationButtons(career) {
     const container = document.getElementById("formation-buttons");
     if (!container) return;
     const current = (career && career.lineup && career.lineup.formation) || DEFAULT_FORMATION;
-    const buttons = formationNames().map((formation) => `
-      <button type="button" class="formation-btn${formation === current ? " active" : ""}" data-formation="${escapeHtml(formation)}">${escapeHtml(formation)}</button>
-    `).join("");
-
     container.innerHTML = `
-      <div class="formation-list">${buttons}</div>
+      <div class="formation-list">${FORMATION_ORDER.map((formation) => `<button type="button" class="formation-btn${formation === current ? " active" : ""}" data-formation="${safeEscape(formation)}">${safeEscape(formation)}</button>`).join("")}</div>
       <button type="button" class="secondary-btn lineup-auto-btn" data-lineup-action="auto">Auto-composer</button>
+      <button type="button" class="secondary-btn lineup-clear-btn" data-lineup-action="clear">Vider</button>
     `;
   }
 
   function renderSummary(career) {
     const container = document.getElementById("lineup-summary");
     if (!container) return;
-    if (!career) {
-      container.innerHTML = "";
-      return;
-    }
+    if (!career) { container.innerHTML = ""; return; }
     const metrics = lineupMetrics(career);
     container.innerHTML = `
       <article class="kpi-card"><p>Note du onze</p><strong>${metrics.score || "—"}</strong></article>
@@ -385,18 +351,14 @@
   function renderWarnings(career) {
     const container = document.getElementById("lineup-warning");
     if (!container) return;
-    if (!career) {
-      container.innerHTML = "";
-      container.classList.add("app-hidden");
-      return;
-    }
+    if (!career) { container.innerHTML = ""; container.classList.add("app-hidden"); return; }
     const metrics = lineupMetrics(career);
     if (!metrics.warnings.length) {
       container.innerHTML = "<strong>Composition valide :</strong> tous les postes sont remplis sans hors poste majeur.";
       container.classList.remove("app-hidden", "lineup-warning-danger");
       return;
     }
-    container.innerHTML = "<strong>À vérifier :</strong> " + metrics.warnings.slice(0, 4).map(escapeHtml).join(" · ");
+    container.innerHTML = "<strong>À vérifier :</strong> " + metrics.warnings.slice(0, 4).map(safeEscape).join(" · ");
     container.classList.remove("app-hidden");
     container.classList.add("lineup-warning-danger");
   }
@@ -404,117 +366,122 @@
   function playerLine(player) {
     if (!player) return "Aucun titulaire choisi";
     const secondary = playerSecondaryPositions(player).length ? " / " + playerSecondaryPositions(player).join("/") : "";
-    return escapeHtml(player.name) + " · " + escapeHtml(player.primaryPosition + secondary) + " · OVR " + safeText(player.overall);
-  }
-
-  function optionLabel(player, targetPosition) {
-    const fit = compatibility(player, targetPosition);
-    const marker = fit.key === "natural" ? "✓" : fit.key === "secondary" ? "~" : "!";
-    const secondary = playerSecondaryPositions(player).length ? " / " + playerSecondaryPositions(player).join("/") : "";
-    return marker + " " + player.name + " — " + player.primaryPosition + secondary + " — OVR " + safeText(player.overall);
-  }
-
-  function renderSlots(career) {
-    const container = document.getElementById("lineup-slots");
-    if (!container) return;
-
-    if (!career || !career.lineup || !Array.isArray(career.players) || !career.players.length) {
-      container.innerHTML = `
-        <div class="empty-state compact-empty">
-          <span>📋</span>
-          <h4>Composition indisponible</h4>
-          <p>Crée ou charge une carrière avec un effectif pour composer ton onze.</p>
-        </div>
-      `;
-      return;
-    }
-
-    const players = Array.isArray(career.players) ? career.players : [];
-    const selected = new Set(selectedPlayerIds(career.lineup));
-    const startersByLine = new Map();
-
-    career.lineup.starters.forEach((starter) => {
-      const key = starter.lineName || "Autres";
-      if (!startersByLine.has(key)) startersByLine.set(key, []);
-      startersByLine.get(key).push(starter);
-    });
-
-    container.innerHTML = LINE_ORDER.filter((lineName) => startersByLine.has(lineName)).map((lineName) => {
-      const starters = startersByLine.get(lineName);
-      return `
-        <section class="lineup-editor-group">
-          <h4>${escapeHtml(lineName)}</h4>
-          <div class="lineup-editor-rows">
-            ${starters.map((starter) => {
-              const currentPlayer = playerById(career, starter.playerId);
-              const fit = compatibility(currentPlayer, starter.position);
-              const candidates = sortCandidates(players, starter.position);
-              const options = [
-                `<option value="">Aucun joueur</option>`,
-                ...candidates.map((player) => {
-                  const disabled = selected.has(player.id) && player.id !== starter.playerId;
-                  return `<option value="${escapeHtml(player.id)}" ${player.id === starter.playerId ? "selected" : ""} ${disabled ? "disabled" : ""}>${escapeHtml(optionLabel(player, starter.position))}</option>`;
-                })
-              ].join("");
-
-              return `
-                <article class="lineup-row lineup-status-${fit.className}">
-                  <div class="lineup-row-position">
-                    <strong>${escapeHtml(starter.label)}</strong>
-                    <span>${escapeHtml(labelForPosition(starter.position))}</span>
-                  </div>
-                  <div class="lineup-row-player">
-                    <strong>${currentPlayer ? escapeHtml(currentPlayer.name) : "Poste vide"}</strong>
-                    <span>${playerLine(currentPlayer)}</span>
-                  </div>
-                  <select class="lineup-player-select" data-lineup-slot="${escapeHtml(starter.slotId)}">${options}</select>
-                  <span class="lineup-status-pill">${escapeHtml(fit.label)}</span>
-                </article>
-              `;
-            }).join("")}
-          </div>
-        </section>
-      `;
-    }).join("");
+    return safeEscape(player.primaryPosition + secondary) + " · OVR " + safe(player.overall) + " · Cond. " + safe(player.condition, 100) + "%";
   }
 
   function renderPitch(career) {
     const container = document.getElementById("lineup-pitch");
     if (!container) return;
-    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) {
-      container.innerHTML = "";
+    if (!career || !career.lineup || !Array.isArray(career.lineup.starters)) { container.innerHTML = ""; return; }
+    currentStarter(career);
+    const lines = startersInPitchOrder(career);
+    container.innerHTML = `
+      <div class="lineup-pitch-inner">
+        ${lines.map((line) => `
+          <div class="pitch-line lineup-pitch-line lineup-pitch-${safeEscape(line.className)}">
+            <span class="lineup-pitch-label">${safeEscape(line.name)}</span>
+            ${line.starters.map((starter) => {
+              const player = playerById(career, starter.playerId);
+              const fit = compatibility(player, starter.position);
+              const label = player ? player.name.split(" ").slice(-1)[0] : "Libre";
+              const selected = starter.slotId === selectedSlotId ? " selected" : "";
+              return `<button type="button" class="lineup-pitch-player lineup-status-${safeEscape(fit.className)}${selected}" data-lineup-pitch-slot="${safeEscape(starter.slotId)}"><small>${safeEscape(starter.label)}</small><strong>${safeEscape(label)}</strong><span>${player ? safe(player.overall) : "—"}</span></button>`;
+            }).join("")}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function candidateGroup(players, starter, usedIds, keys) {
+    return sortCandidates(players, starter.position).filter((player) => {
+      const fit = compatibility(player, starter.position);
+      return keys.includes(fit.key) && (!usedIds.has(player.id) || player.id === starter.playerId);
+    });
+  }
+
+  function renderCandidateCard(player, starter, usedIds) {
+    const fit = compatibility(player, starter.position);
+    const usedElsewhere = usedIds.has(player.id) && player.id !== starter.playerId;
+    const active = player.id === starter.playerId;
+    return `
+      <button type="button" class="lineup-candidate lineup-status-${safeEscape(fit.className)}${active ? " active" : ""}${usedElsewhere ? " disabled" : ""}" data-lineup-select-player="${safeEscape(player.id)}" ${usedElsewhere ? "disabled" : ""}>
+        <span>
+          <strong>${safeEscape(player.name)}</strong>
+          <small>${playerLine(player)}</small>
+          <em>${safeEscape(fit.label)}</em>
+        </span>
+        <b>${safe(player.overall)}</b>
+      </button>
+    `;
+  }
+
+  function renderPlayerPanel(career) {
+    const container = document.getElementById("lineup-slots");
+    if (!container) return;
+    if (!career || !career.lineup || !Array.isArray(career.players) || !career.players.length) {
+      container.innerHTML = `<div class="empty-state compact-empty"><span>📋</span><h4>Composition indisponible</h4><p>Crée ou charge une carrière avec un effectif pour composer ton onze.</p></div>`;
       return;
     }
 
-    const lines = pitchLines(career.lineup.formation, career.lineup.starters);
-    container.innerHTML = lines.map((line) => `
-      <div class="pitch-line lineup-pitch-line lineup-pitch-${escapeHtml(line.className)}">
-        <span class="lineup-pitch-label">${escapeHtml(line.name)}</span>
-        ${line.starters.map((starter) => {
-          const player = playerById(career, starter.playerId);
-          const fit = compatibility(player, starter.position);
-          const label = player ? player.name.split(" ").slice(-1)[0] : "Libre";
-          return `<span class="lineup-pitch-player lineup-status-${fit.className}"><small>${escapeHtml(starter.position)}</small>${escapeHtml(label)}</span>`;
-        }).join("")}
-      </div>
-    `).join("");
+    const starter = currentStarter(career);
+    if (!starter) { container.innerHTML = ""; return; }
+    const currentPlayer = playerById(career, starter.playerId);
+    const selected = new Set(selectedPlayerIds(career.lineup));
+    const players = Array.isArray(career.players) ? career.players : [];
+    const perfect = candidateGroup(players, starter, selected, ["natural"]);
+    const compatible = candidateGroup(players, starter, selected, ["secondary"]);
+    const others = candidateGroup(players, starter, selected, ["bad"]).slice(0, 8);
+
+    container.innerHTML = `
+      <aside class="lineup-selection-panel panel">
+        <div class="lineup-selection-header">
+          <div>
+            <p class="eyebrow">Poste sélectionné</p>
+            <h3>${safeEscape(starter.label)} <span>${safeEscape(labelForPosition(starter.position))}</span></h3>
+          </div>
+          <span class="lineup-selected-position">${safeEscape(starter.position)}</span>
+        </div>
+
+        <div class="lineup-current-player lineup-status-${safeEscape(compatibility(currentPlayer, starter.position).className)}">
+          <span>Titulaire actuel</span>
+          <strong>${currentPlayer ? safeEscape(currentPlayer.name) : "Poste vide"}</strong>
+          <small>${playerLine(currentPlayer)}</small>
+          <button type="button" class="small-btn" data-lineup-select-player="">Retirer</button>
+        </div>
+
+        <div class="lineup-candidate-block">
+          <h4>Recommandés</h4>
+          <div class="lineup-candidates">${perfect.length ? perfect.map((player) => renderCandidateCard(player, starter, selected)).join("") : `<p class="save-meta">Aucun joueur naturel disponible.</p>`}</div>
+        </div>
+
+        <div class="lineup-candidate-block">
+          <h4>Peuvent dépanner</h4>
+          <div class="lineup-candidates">${compatible.length ? compatible.map((player) => renderCandidateCard(player, starter, selected)).join("") : `<p class="save-meta">Aucun joueur compatible disponible.</p>`}</div>
+        </div>
+
+        <details class="lineup-candidate-block">
+          <summary>Voir les autres joueurs</summary>
+          <div class="lineup-candidates">${others.length ? others.map((player) => renderCandidateCard(player, starter, selected)).join("") : `<p class="save-meta">Aucun autre joueur disponible.</p>`}</div>
+        </details>
+      </aside>
+    `;
   }
 
   function renderBench(career) {
     const container = document.getElementById("lineup-bench");
     if (!container) return;
-    if (!career) {
-      container.innerHTML = "";
-      return;
-    }
+    if (!career) { container.innerHTML = ""; return; }
     const bench = benchPlayers(career);
-    if (!bench.length) {
-      container.innerHTML = "<p class='save-meta'>Aucun remplaçant disponible.</p>";
-      return;
-    }
-    container.innerHTML = bench.map((player) => `
-      <div class="bench-player"><strong>${escapeHtml(player.name)}</strong><span>${escapeHtml(player.primaryPosition)} · OVR ${safeText(player.overall)} · ${safeText(player.condition, 100)}%</span></div>
-    `).join("");
+    if (!bench.length) { container.innerHTML = "<p class='save-meta'>Aucun remplaçant disponible.</p>"; return; }
+    container.innerHTML = bench.map((player) => `<button type="button" class="bench-player" data-lineup-bench-player="${safeEscape(player.id)}"><strong>${safeEscape(player.name)}</strong><span>${safeEscape(player.primaryPosition)} · OVR ${safe(player.overall)} · ${safe(player.condition, 100)}%</span></button>`).join("");
+  }
+
+  function setVersionTexts() {
+    const footer = document.querySelector(".sidebar-footer");
+    if (footer) footer.textContent = "V0.5.3 — Composition";
+    const dashboardDescription = document.getElementById("dashboard-description");
+    if (dashboardDescription) dashboardDescription.textContent = "La V0.5.3 refond l’écran Composition avec un terrain cliquable et un panneau joueur.";
   }
 
   window.renderLineupBuilder = function (career) {
@@ -522,11 +489,12 @@
       const normalized = normalizeLineup(career);
       if (normalized.lineup) career.lineup = normalized.lineup;
     }
+    setVersionTexts();
     renderFormationButtons(career);
     renderSummary(career);
     renderWarnings(career);
-    renderSlots(career);
     renderPitch(career);
+    renderPlayerPanel(career);
     renderBench(career);
   };
 
@@ -538,6 +506,7 @@
 
   function changeFormation(formation) {
     if (!FORMATION_BLUEPRINTS[formation]) return;
+    selectedSlotId = "";
     updateActiveCareer((career) => {
       career.lineup = defaultLineup(career, formation);
       career.lineup.updatedAt = new Date().toISOString();
@@ -554,6 +523,16 @@
     window.refreshUI();
   }
 
+  function clearLineup() {
+    updateActiveCareer((career) => {
+      const normalized = normalizeLineup(career);
+      career.lineup = normalized.lineup;
+      career.lineup.starters.forEach((starter) => { starter.playerId = ""; });
+      career.lineup.updatedAt = new Date().toISOString();
+    });
+    window.refreshUI();
+  }
+
   function changeSlot(slotId, playerId) {
     updateActiveCareer((career) => {
       const normalized = normalizeLineup(career);
@@ -564,30 +543,56 @@
       starter.playerId = playerId && !selectedElsewhere.has(playerId) ? playerId : "";
       career.lineup.updatedAt = new Date().toISOString();
     });
+    selectedSlotId = slotId;
     window.refreshUI();
   }
 
   window.bindButtons = function () {
     if (typeof originalBindButtons === "function") originalBindButtons();
-
     const formationButtons = document.getElementById("formation-buttons");
-    const lineupSlots = document.getElementById("lineup-slots");
+    const pitch = document.getElementById("lineup-pitch");
+    const playerPanel = document.getElementById("lineup-slots");
+    const bench = document.getElementById("lineup-bench");
 
-    if (formationButtons && !formationButtons.dataset.bound) {
-      formationButtons.dataset.bound = "true";
+    if (formationButtons && !formationButtons.dataset.boundV053) {
+      formationButtons.dataset.boundV053 = "true";
       formationButtons.addEventListener("click", (event) => {
         const formationButton = event.target.closest("[data-formation]");
         const actionButton = event.target.closest("[data-lineup-action]");
         if (formationButton) changeFormation(formationButton.dataset.formation);
         if (actionButton && actionButton.dataset.lineupAction === "auto") autoComposeLineup();
+        if (actionButton && actionButton.dataset.lineupAction === "clear") clearLineup();
       });
     }
 
-    if (lineupSlots && !lineupSlots.dataset.bound) {
-      lineupSlots.dataset.bound = "true";
-      lineupSlots.addEventListener("change", (event) => {
-        const select = event.target.closest("[data-lineup-slot]");
-        if (select) changeSlot(select.dataset.lineupSlot, select.value);
+    if (pitch && !pitch.dataset.boundV053) {
+      pitch.dataset.boundV053 = "true";
+      pitch.addEventListener("click", (event) => {
+        const slot = event.target.closest("[data-lineup-pitch-slot]");
+        if (!slot) return;
+        selectedSlotId = slot.dataset.lineupPitchSlot;
+        const career = getResolvedCareer();
+        window.renderLineupBuilder(career);
+      });
+    }
+
+    if (playerPanel && !playerPanel.dataset.boundV053) {
+      playerPanel.dataset.boundV053 = "true";
+      playerPanel.addEventListener("click", (event) => {
+        const playerButton = event.target.closest("[data-lineup-select-player]");
+        if (!playerButton) return;
+        const starter = currentStarter(getResolvedCareer());
+        if (starter) changeSlot(starter.slotId, playerButton.dataset.lineupSelectPlayer || "");
+      });
+    }
+
+    if (bench && !bench.dataset.boundV053) {
+      bench.dataset.boundV053 = "true";
+      bench.addEventListener("click", (event) => {
+        const playerButton = event.target.closest("[data-lineup-bench-player]");
+        if (!playerButton) return;
+        const starter = currentStarter(getResolvedCareer());
+        if (starter) changeSlot(starter.slotId, playerButton.dataset.lineupBenchPlayer || "");
       });
     }
   };
