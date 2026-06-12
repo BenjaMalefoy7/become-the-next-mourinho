@@ -1,35 +1,124 @@
 (function () {
-  const LINEUP_VERSION = "0.5.0";
-  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_0";
+  const LINEUP_VERSION = "0.5.1";
+  const LINEUP_DATA_VERSION = "premier_league_2025_2026_v0_5_1";
   const DEFAULT_FORMATION = "4-3-3";
 
   const originalRepairCareerIfNeeded = window.repairCareerIfNeeded;
   const originalRefreshUI = window.refreshUI;
   const originalBindButtons = window.bindButtons;
 
-  function formations() {
-    if (typeof FORMATIONS !== "undefined" && FORMATIONS && typeof FORMATIONS === "object") return FORMATIONS;
-    return {
-      "4-3-3": ["GK", "DD", "DC", "DC", "DG", "MC", "MC", "MC", "AD", "BU", "AG"]
-    };
+  const FORMATION_BLUEPRINTS = {
+    "4-3-3": [
+      { name: "Attaque", className: "attack", slots: ["AG", "BU", "AD"] },
+      { name: "Milieu", className: "midfield", slots: ["MC", "MDC", "MC"] },
+      { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "4-2-3-1": [
+      { name: "Attaque", className: "attack", slots: ["BU"] },
+      { name: "Soutien offensif", className: "support", slots: ["AG", "MOC", "AD"] },
+      { name: "Double pivot", className: "midfield", slots: ["MDC", "MDC"] },
+      { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "4-4-2": [
+      { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
+      { name: "Milieu à quatre", className: "midfield", slots: ["AG", "MC", "MC", "AD"] },
+      { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "3-5-2": [
+      { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
+      { name: "Milieu à cinq", className: "midfield", slots: ["AG", "MC", "MDC", "MC", "AD"] },
+      { name: "Défense à trois", className: "defense", slots: ["DC", "DC", "DC"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "3-4-3": [
+      { name: "Attaque", className: "attack", slots: ["AG", "BU", "AD"] },
+      { name: "Milieu à quatre", className: "midfield", slots: ["AG", "MC", "MC", "AD"] },
+      { name: "Défense à trois", className: "defense", slots: ["DC", "DC", "DC"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "5-3-2": [
+      { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
+      { name: "Milieu", className: "midfield", slots: ["MC", "MDC", "MC"] },
+      { name: "Défense à cinq", className: "defense", slots: ["DG", "DC", "DC", "DC", "DD"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ],
+    "4-1-2-1-2": [
+      { name: "Attaque", className: "attack", slots: ["BU", "BU"] },
+      { name: "Meneur", className: "support", slots: ["MOC"] },
+      { name: "Milieu diamant", className: "midfield", slots: ["MC", "MDC", "MC"] },
+      { name: "Défense", className: "defense", slots: ["DG", "DC", "DC", "DD"] },
+      { name: "Gardien", className: "keeper", slots: ["GK"] }
+    ]
+  };
+
+  function auditedFormations() {
+    Object.keys(FORMATION_BLUEPRINTS).forEach((formation) => {
+      const count = FORMATION_BLUEPRINTS[formation].reduce((sum, line) => sum + line.slots.length, 0);
+      if (count !== 11) console.warn("Formation invalide", formation, count);
+    });
+    return FORMATION_BLUEPRINTS;
+  }
+
+  function formationNames() {
+    const names = Object.keys(auditedFormations());
+    if (typeof FORMATIONS !== "undefined" && FORMATIONS && typeof FORMATIONS === "object") {
+      return Object.keys(FORMATIONS).filter((name) => FORMATION_BLUEPRINTS[name]).concat(names.filter((name) => !FORMATIONS[name]));
+    }
+    return names;
+  }
+
+  function blueprint(formationName) {
+    return FORMATION_BLUEPRINTS[formationName] || FORMATION_BLUEPRINTS[DEFAULT_FORMATION];
   }
 
   function formationSlots(formationName) {
-    const allFormations = formations();
-    const formation = allFormations[formationName] ? formationName : DEFAULT_FORMATION;
-    const positions = allFormations[formation] || allFormations[DEFAULT_FORMATION] || [];
+    const chosen = FORMATION_BLUEPRINTS[formationName] ? formationName : DEFAULT_FORMATION;
+    const lines = blueprint(chosen);
     const counters = {};
+    const totals = {};
 
-    return positions.map((position, index) => {
-      counters[position] = (counters[position] || 0) + 1;
-      const total = positions.filter((item) => item === position).length;
-      return {
-        id: "slot_" + index + "_" + position,
-        index,
-        position,
-        label: total > 1 ? position + " " + counters[position] : position
-      };
+    lines.forEach((line) => {
+      line.slots.forEach((position) => {
+        totals[position] = (totals[position] || 0) + 1;
+      });
     });
+
+    const slots = [];
+    lines.slice().reverse().forEach((line) => {
+      line.slots.forEach((position) => {
+        counters[position] = (counters[position] || 0) + 1;
+        slots.push({
+          id: "slot_" + slots.length + "_" + position,
+          index: slots.length,
+          position,
+          label: totals[position] > 1 ? position + " " + counters[position] : position,
+          lineName: line.name,
+          lineClassName: line.className
+        });
+      });
+    });
+
+    return slots;
+  }
+
+  function pitchLines(formationName, starters) {
+    const byPositionQueue = {};
+    (Array.isArray(starters) ? starters : []).forEach((starter) => {
+      if (!byPositionQueue[starter.position]) byPositionQueue[starter.position] = [];
+      byPositionQueue[starter.position].push(starter);
+    });
+
+    return blueprint(formationName).map((line) => ({
+      name: line.name,
+      className: line.className,
+      starters: line.slots.map((position) => {
+        const queue = byPositionQueue[position] || [];
+        return queue.shift() || null;
+      }).filter(Boolean)
+    }));
   }
 
   function playerById(career, playerId) {
@@ -52,16 +141,22 @@
     return overall;
   }
 
+  function sortCandidates(players, position) {
+    return players.slice().sort((a, b) => {
+      const scoreDiff = candidateScore(b, position) - candidateScore(a, position);
+      if (scoreDiff !== 0) return scoreDiff;
+      return (Number(b.overall) || 0) - (Number(a.overall) || 0);
+    });
+  }
+
   function defaultLineup(career, formationName) {
-    const chosenFormation = formations()[formationName] ? formationName : DEFAULT_FORMATION;
+    const chosenFormation = FORMATION_BLUEPRINTS[formationName] ? formationName : DEFAULT_FORMATION;
     const slots = formationSlots(chosenFormation);
     const players = Array.isArray(career && career.players) ? career.players : [];
     const used = new Set();
 
     const starters = slots.map((slot) => {
-      const candidates = players
-        .filter((player) => !used.has(player.id))
-        .sort((a, b) => candidateScore(b, slot.position) - candidateScore(a, slot.position));
+      const candidates = sortCandidates(players.filter((player) => !used.has(player.id)), slot.position);
       const selected = candidates[0] || null;
       if (selected) used.add(selected.id);
       return {
@@ -69,6 +164,8 @@
         slotIndex: slot.index,
         position: slot.position,
         label: slot.label,
+        lineName: slot.lineName,
+        lineClassName: slot.lineClassName,
         playerId: selected ? selected.id : ""
       };
     });
@@ -78,8 +175,7 @@
 
   function normalizeLineup(career) {
     if (!career || !career.club) return { lineup: null, changed: false };
-    const allFormations = formations();
-    const requestedFormation = career.lineup && allFormations[career.lineup.formation] ? career.lineup.formation : DEFAULT_FORMATION;
+    const requestedFormation = career.lineup && FORMATION_BLUEPRINTS[career.lineup.formation] ? career.lineup.formation : DEFAULT_FORMATION;
     const slots = formationSlots(requestedFormation);
     const existing = Array.isArray(career.lineup && career.lineup.starters) ? career.lineup.starters : [];
 
@@ -96,8 +192,8 @@
       const oldStarter = existingBySlot.get(slot.id);
       let playerId = oldStarter && validPlayerIds.has(oldStarter.playerId) && !used.has(oldStarter.playerId) ? oldStarter.playerId : "";
       if (playerId) used.add(playerId);
-      if (!oldStarter || oldStarter.position !== slot.position || oldStarter.label !== slot.label || oldStarter.playerId !== playerId) changed = true;
-      return { slotId: slot.id, slotIndex: slot.index, position: slot.position, label: slot.label, playerId };
+      if (!oldStarter || oldStarter.position !== slot.position || oldStarter.label !== slot.label || oldStarter.lineName !== slot.lineName || oldStarter.playerId !== playerId) changed = true;
+      return { slotId: slot.id, slotIndex: slot.index, position: slot.position, label: slot.label, lineName: slot.lineName, lineClassName: slot.lineClassName, playerId };
     });
 
     return {
@@ -206,9 +302,14 @@
     const container = document.getElementById("formation-buttons");
     if (!container) return;
     const current = (career && career.lineup && career.lineup.formation) || DEFAULT_FORMATION;
-    container.innerHTML = Object.keys(formations()).map((formation) => `
+    const buttons = formationNames().map((formation) => `
       <button type="button" class="formation-btn${formation === current ? " active" : ""}" data-formation="${escapeHtml(formation)}">${escapeHtml(formation)}</button>
     `).join("");
+
+    container.innerHTML = `
+      <div class="formation-list">${buttons}</div>
+      <button type="button" class="secondary-btn lineup-auto-btn" data-lineup-action="auto">Auto-composer</button>
+    `;
   }
 
   function renderSummary(career) {
@@ -246,6 +347,19 @@
     container.classList.add("lineup-warning-danger");
   }
 
+  function playerLine(player) {
+    if (!player) return "Aucun titulaire choisi";
+    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? " / " + player.secondaryPositions.join("/") : "";
+    return escapeHtml(player.name) + " · " + escapeHtml(player.primaryPosition + secondary) + " · OVR " + safeText(player.overall);
+  }
+
+  function optionLabel(player, targetPosition) {
+    const fit = compatibility(player, targetPosition);
+    const marker = fit.key === "natural" ? "✓" : fit.key === "secondary" ? "~" : "!";
+    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? " / " + player.secondaryPositions.join("/") : "";
+    return marker + " " + player.name + " — " + player.primaryPosition + secondary + " — OVR " + safeText(player.overall);
+  }
+
   function renderSlots(career) {
     const container = document.getElementById("lineup-slots");
     if (!container) return;
@@ -261,30 +375,52 @@
       return;
     }
 
-    const players = sortPlayers(career.players);
+    const players = Array.isArray(career.players) ? career.players : [];
     const selected = new Set(selectedPlayerIds(career.lineup));
+    const lines = ["Gardien", "Défense", "Défense à trois", "Défense à cinq", "Milieu", "Double pivot", "Milieu à quatre", "Milieu à cinq", "Milieu diamant", "Meneur", "Soutien offensif", "Attaque"];
+    const startersByLine = new Map();
 
-    container.innerHTML = career.lineup.starters.map((starter) => {
-      const currentPlayer = playerById(career, starter.playerId);
-      const fit = compatibility(currentPlayer, starter.position);
-      const options = [
-        `<option value="">Aucun joueur</option>`,
-        ...players.map((player) => {
-          const disabled = selected.has(player.id) && player.id !== starter.playerId;
-          const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? " / " + player.secondaryPositions.join("/") : "";
-          return `<option value="${escapeHtml(player.id)}" ${player.id === starter.playerId ? "selected" : ""} ${disabled ? "disabled" : ""}>${escapeHtml(player.name)} — ${escapeHtml(player.primaryPosition + secondary)} — OVR ${safeText(player.overall)}</option>`;
-        })
-      ].join("");
+    career.lineup.starters.forEach((starter) => {
+      const key = starter.lineName || "Autres";
+      if (!startersByLine.has(key)) startersByLine.set(key, []);
+      startersByLine.get(key).push(starter);
+    });
 
+    container.innerHTML = lines.filter((lineName) => startersByLine.has(lineName)).map((lineName) => {
+      const starters = startersByLine.get(lineName);
       return `
-        <article class="lineup-slot-card lineup-status-${fit.className}">
-          <div class="lineup-slot-header">
-            <div><strong>${escapeHtml(starter.label)}</strong><span>${escapeHtml(getPositionLabel(starter.position))}</span></div>
-            <span class="lineup-status-pill">${escapeHtml(fit.label)}</span>
+        <section class="lineup-editor-group">
+          <h4>${escapeHtml(lineName)}</h4>
+          <div class="lineup-editor-rows">
+            ${starters.map((starter) => {
+              const currentPlayer = playerById(career, starter.playerId);
+              const fit = compatibility(currentPlayer, starter.position);
+              const candidates = sortCandidates(players, starter.position);
+              const options = [
+                `<option value="">Aucun joueur</option>`,
+                ...candidates.map((player) => {
+                  const disabled = selected.has(player.id) && player.id !== starter.playerId;
+                  return `<option value="${escapeHtml(player.id)}" ${player.id === starter.playerId ? "selected" : ""} ${disabled ? "disabled" : ""}>${escapeHtml(optionLabel(player, starter.position))}</option>`;
+                })
+              ].join("");
+
+              return `
+                <article class="lineup-row lineup-status-${fit.className}">
+                  <div class="lineup-row-position">
+                    <strong>${escapeHtml(starter.label)}</strong>
+                    <span>${escapeHtml(getPositionLabel(starter.position))}</span>
+                  </div>
+                  <div class="lineup-row-player">
+                    <strong>${currentPlayer ? escapeHtml(currentPlayer.name) : "Poste vide"}</strong>
+                    <span>${playerLine(currentPlayer)}</span>
+                  </div>
+                  <select class="lineup-player-select" data-lineup-slot="${escapeHtml(starter.slotId)}">${options}</select>
+                  <span class="lineup-status-pill">${escapeHtml(fit.label)}</span>
+                </article>
+              `;
+            }).join("")}
           </div>
-          <select class="lineup-player-select" data-lineup-slot="${escapeHtml(starter.slotId)}">${options}</select>
-          <p>${currentPlayer ? "OVR " + safeText(currentPlayer.overall) + " · " + escapeHtml(currentPlayer.name) : "Aucun titulaire choisi"}</p>
-        </article>
+        </section>
       `;
     }).join("");
   }
@@ -297,17 +433,11 @@
       return;
     }
 
-    const categories = [
-      ["AG", "BU", "AD"],
-      ["MOC", "MC", "MDC"],
-      ["DG", "DC", "DD"],
-      ["GK"]
-    ];
-    const lines = categories.map((positions) => career.lineup.starters.filter((starter) => positions.includes(starter.position))).filter((line) => line.length);
-
+    const lines = pitchLines(career.lineup.formation, career.lineup.starters);
     container.innerHTML = lines.map((line) => `
-      <div class="pitch-line lineup-pitch-line">
-        ${line.map((starter) => {
+      <div class="pitch-line lineup-pitch-line lineup-pitch-${escapeHtml(line.className)}">
+        <span class="lineup-pitch-label">${escapeHtml(line.name)}</span>
+        ${line.starters.map((starter) => {
           const player = playerById(career, starter.playerId);
           const fit = compatibility(player, starter.position);
           const label = player ? player.name.split(" ").slice(-1)[0] : "Libre";
@@ -354,9 +484,18 @@
   };
 
   function changeFormation(formation) {
-    if (!formations()[formation]) return;
+    if (!FORMATION_BLUEPRINTS[formation]) return;
     updateActiveCareer((career) => {
       career.lineup = defaultLineup(career, formation);
+      career.lineup.updatedAt = new Date().toISOString();
+    });
+    window.refreshUI();
+  }
+
+  function autoComposeLineup() {
+    updateActiveCareer((career) => {
+      const currentFormation = career.lineup && FORMATION_BLUEPRINTS[career.lineup.formation] ? career.lineup.formation : DEFAULT_FORMATION;
+      career.lineup = defaultLineup(career, currentFormation);
       career.lineup.updatedAt = new Date().toISOString();
     });
     window.refreshUI();
@@ -384,8 +523,10 @@
     if (formationButtons && !formationButtons.dataset.bound) {
       formationButtons.dataset.bound = "true";
       formationButtons.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-formation]");
-        if (button) changeFormation(button.dataset.formation);
+        const formationButton = event.target.closest("[data-formation]");
+        const actionButton = event.target.closest("[data-lineup-action]");
+        if (formationButton) changeFormation(formationButton.dataset.formation);
+        if (actionButton && actionButton.dataset.lineupAction === "auto") autoComposeLineup();
       });
     }
 
