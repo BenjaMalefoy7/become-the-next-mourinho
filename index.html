@@ -59,71 +59,92 @@
         </div>
 
         <div class="form-preview form-grid">
-          <label>
-            Nom de la carrière
+          <label class="form-field">
+            <span class="field-label">Nom de la carrière</span>
             <input id="career-name" type="text" placeholder="Ex : Carrière Dragon FC" required />
           </label>
 
-          <label>
-            Nom du manager
+          <label class="form-field">
+            <span class="field-label">Nom du manager</span>
             <input id="manager-name" type="text" placeholder="Ex : Benjamin" required />
           </label>
 
-          <label>
-            Nom du club
+          <label class="form-field">
+            <span class="field-label">Nom du club</span>
             <input id="club-name" type="text" placeholder="Ex : Dragon FC" required />
           </label>
 
-          <label>
-            Nom court
+          <label class="form-field">
+            <span class="field-label">Nom court</span>
             <input id="club-short-name" type="text" placeholder="Ex : DFC" maxlength="5" required />
           </label>
 
-          <label>
-            Badge temporaire
-            <select id="club-badge" required>
-              <option value="⚽">⚽ Ballon</option>
-              <option value="🐉" selected>🐉 Dragon</option>
-              <option value="🦁">🦁 Lion</option>
-              <option value="🦅">🦅 Aigle</option>
-              <option value="🐺">🐺 Loup</option>
-              <option value="🦊">🦊 Renard</option>
-              <option value="🐻">🐻 Ours</option>
-              <option value="🐍">🐍 Serpent</option>
-              <option value="🦈">🦈 Requin</option>
-              <option value="🦌">🦌 Cerf</option>
-              <option value="🔥">🔥 Feu</option>
-              <option value="⚡">⚡ Éclair</option>
-              <option value="🛡️">🛡️ Bouclier</option>
-              <option value="👑">👑 Couronne</option>
-              <option value="🌟">🌟 Étoile</option>
-              <option value="🏰">🏰 Château</option>
-              <option value="💎">💎 Diamant</option>
-              <option value="🏴">🏴 Drapeau</option>
-            </select>
-          </label>
+          <div class="form-field">
+            <span class="field-label">Badge temporaire</span>
+            <input id="club-badge" type="hidden" value="🐉" />
+            <div class="custom-select" id="club-badge-select" data-input="club-badge">
+              <button class="custom-select-trigger" type="button">
+                <span class="custom-select-value" data-selected-label>🐉 Dragon</span>
+                <span class="custom-select-arrow">▾</span>
+              </button>
+              <div class="custom-select-menu" role="listbox">
+                <button type="button" class="custom-select-option" data-value="⚽" data-label="⚽ Ballon">⚽ Ballon</button>
+                <button type="button" class="custom-select-option active" data-value="🐉" data-label="🐉 Dragon">🐉 Dragon</button>
+                <button type="button" class="custom-select-option" data-value="🦁" data-label="🦁 Lion">🦁 Lion</button>
+                <button type="button" class="custom-select-option" data-value="🦅" data-label="🦅 Aigle">🦅 Aigle</button>
+                <button type="button" class="custom-select-option" data-value="🐺" data-label="🐺 Loup">🐺 Loup</button>
+                <button type="button" class="custom-select-option" data-value="🦊" data-label="🦊 Renard">🦊 Renard</button>
+                <button type="button" class="custom-select-option" data-value="🐻" data-label="🐻 Ours">🐻 Ours</button>
+                <button type="button" class="custom-select-option" data-value="🐍" data-label="🐍 Serpent">🐍 Serpent</button>
+                <button type="button" class="custom-select-option" data-value="🦈" data-label="🦈 Requin">🦈 Requin</button>
+                <button type="button" class="custom-select-option" data-value="🦌" data-label="🦌 Cerf">🦌 Cerf</button>
+                <button type="button" class="custom-select-option" data-value="🔥" data-label="🔥 Feu">🔥 Feu</button>
+                <button type="button" class="custom-select-option" data-value="⚡" data-label="⚡ Éclair">⚡ Éclair</button>
+                <button type="button" class="custom-select-option" data-value="🛡️" data-label="🛡️ Bouclier">🛡️ Bouclier</button>
+                <button type="button" class="custom-select-option" data-value="👑" data-label="👑 Couronne">👑 Couronne</button>
+                <button type="button" class="custom-select-option" data-value="🌟" data-label="🌟 Étoile">🌟 Étoile</button>
+                <button type="button" class="custom-select-option" data-value="🏰" data-label="🏰 Château">🏰 Château</button>
+                <button type="button" class="custom-select-option" data-value="💎" data-label="💎 Diamant">💎 Diamant</button>
+                <button type="button" class="custom-select-option" data-value="🏴" data-label="🏴 Drapeau">🏴 Drapeau</button>
+              </div>
+            </div>
+          </div>
 
-          <label>
-            Club remplacé
-            <select id="replaced-club" required></select>
-          </label>
+          <div class="form-field">
+            <span class="field-label">Club remplacé</span>
+            <input id="replaced-club" type="hidden" value="" />
+            <div class="custom-select" id="replaced-club-select" data-input="replaced-club">
+              <button class="custom-select-trigger" type="button">
+                <span class="custom-select-value" data-selected-label>Choisir un club</span>
+                <span class="custom-select-arrow">▾</span>
+              </button>
+              <div class="custom-select-menu" role="listbox"></div>
+            </div>
+          </div>
 
-          <label>
-            Difficulté
-            <select id="difficulty" required>
-              <option value="outsider">Petit club outsider</option>
-              <option value="ambitious" selected>Club ambitieux</option>
-              <option value="giant">Nouveau géant</option>
-            </select>
-          </label>
+          <div class="form-field">
+            <span class="field-label">Difficulté</span>
+            <input id="difficulty" type="hidden" value="ambitious" />
+            <div class="custom-select" id="difficulty-select" data-input="difficulty">
+              <button class="custom-select-trigger" type="button">
+                <span class="custom-select-value" data-selected-label>Club ambitieux</span>
+                <span class="custom-select-arrow">▾</span>
+              </button>
+              <div class="custom-select-menu" role="listbox">
+                <button type="button" class="custom-select-option" data-value="outsider" data-label="Petit club outsider">Petit club outsider</button>
+                <button type="button" class="custom-select-option active" data-value="ambitious" data-label="Club ambitieux">Club ambitieux</button>
+                <button type="button" class="custom-select-option" data-value="giant" data-label="Nouveau géant">Nouveau géant</button>
+              </div>
+            </div>
+          </div>
 
-          <label>
-            Couleur principale
+          <label class="form-field">
+            <span class="field-label">Couleur principale</span>
             <input id="primary-color" type="color" value="#2ee987" />
           </label>
 
-          <label>
-            Couleur secondaire
+          <label class="form-field">
+            <span class="field-label">Couleur secondaire</span>
             <input id="secondary-color" type="color" value="#ffffff" />
           </label>
         </div>
@@ -184,7 +205,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.3.2 — Création de carrière améliorée</div>
+      <div class="sidebar-footer">V0.3.3 — Menus custom</div>
     </aside>
 
     <main class="main-content">
@@ -203,7 +224,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.3.2 améliore le menu de création de carrière.</p>
+            <p id="dashboard-description">La V0.3.3 remplace les menus natifs par des menus custom lisibles.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -217,8 +238,8 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.3.2</h3>
-            <p>Le badge temporaire se choisit maintenant via un menu d’emoji, et les listes déroulantes sont lisibles.</p>
+            <h3>Statut V0.3.3</h3>
+            <p>Les choix badge, club remplacé et difficulté utilisent maintenant des menus custom contrôlés par le jeu.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
