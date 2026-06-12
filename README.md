@@ -1,14 +1,18 @@
-# Become the next Mourinho — V0.3
+# Become the next Mourinho — V0.3.1
 
 Jeu privé de gestion football jouable directement dans le navigateur.
 
 ## Version actuelle
 
-V0.3 pose les premières vraies fondations de données du jeu.
+V0.3.1 corrige le parcours d’entrée dans le jeu.
 
 Cette version contient :
 
-- la page d’accueil ajoutée en V0.2.1 ;
+- une vraie page d’accueil au lancement ;
+- un menu pré-jeu séparé pour créer une carrière ;
+- un menu pré-jeu séparé pour les sauvegardes ;
+- la sidebar uniquement après lancement ou chargement d’une carrière ;
+- le retrait de “Nouvelle carrière” et “Sauvegardes” de la navigation manager ;
 - la création de carrière ;
 - les sauvegardes multiples avec `localStorage` ;
 - une structure propre pour la Premier League 2025/2026 ;
@@ -36,9 +40,9 @@ Sinon, il suffit d'ouvrir `index.html` dans un navigateur.
 
 ## Fichiers
 
-- `index.html` : structure de l'application.
+- `index.html` : structure de l'application et des menus pré-jeu.
 - `style.css` : style provisoire.
-- `app.js` : logique d’accueil, navigation, création de carrière, sauvegardes et génération d’état de carrière.
+- `app.js` : logique d’accueil, création de carrière, sauvegardes, navigation manager et génération d’état de carrière.
 - `data.js` : données structurées du championnat, des clubs, des postes et des formations.
 
 ## Note sur le style visuel
