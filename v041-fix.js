@@ -1,46 +1,94 @@
-// V0.4.1 hotfix
-// Corrige les cas où l'onglet Effectif retombait sur les 3 joueurs de démonstration
-// au lieu d'afficher ou générer l'effectif complet de carrière.
+// V0.4.2 hotfix
+// Corrige la désynchronisation entre l'interface manager et la carrière active.
+// Si l'ID actif est absent ou invalide, le jeu reprend une sauvegarde valide.
+// Il répare aussi les effectifs incomplets créés avant la V0.4.1.
 
-const BTM_PATCH_VERSION = "0.4.1";
+const BTM_PATCH_VERSION = "0.4.2";
 
-function btmRepairActiveCareerSquad() {
-  const careers = loadCareers();
-  if (!careers.length) return null;
+function btmGetBestCareerFallback(careers) {
+  if (!Array.isArray(careers) || !careers.length) return null;
 
-  let activeId = getActiveCareerId();
-  if (!activeId) {
-    activeId = careers[0].id;
-    setActiveCareerId(activeId);
-  }
+  return careers.slice().sort(function(a, b) {
+    return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+  })[0];
+}
 
-  const careerIndex = careers.findIndex(function(career) {
-    return career.id === activeId;
-  });
+function btmRepairCareerSquad(career) {
+  if (!career || !career.club) return career;
 
-  if (careerIndex === -1) return null;
-
-  const career = careers[careerIndex];
   const shouldUseGeneratedSquad = !career.squadSource || career.squadSource === "generated";
-  const hasIncompleteSquad = !Array.isArray(career.players) || career.players.length < SQUAD_TEMPLATE.length;
+  const expectedSquadSize = Array.isArray(SQUAD_TEMPLATE) ? SQUAD_TEMPLATE.length : 24;
+  const hasIncompleteSquad = !Array.isArray(career.players) || career.players.length < expectedSquadSize;
 
-  if (shouldUseGeneratedSquad && hasIncompleteSquad && career.club) {
+  if (shouldUseGeneratedSquad && hasIncompleteSquad) {
     career.players = generateStartingSquad(career.club, career.difficulty || "ambitious");
     career.finances = career.finances || {};
     career.finances.wageBudget = calculateWageBill(career.players);
     career.version = BTM_PATCH_VERSION;
     career.updatedAt = new Date().toISOString();
-    careers[careerIndex] = career;
-    saveCareers(careers);
+    return Object.assign({}, career, { __btmRepaired: true });
   }
 
   return career;
 }
 
+function btmRepairActiveCareerSquad() {
+  const careers = loadCareers();
+  if (!careers.length) {
+    setActiveCareerId(null);
+    return null;
+  }
+
+  let activeId = getActiveCareerId();
+  let careerIndex = careers.findIndex(function(career) {
+    return career.id === activeId;
+  });
+
+  if (careerIndex === -1) {
+    const fallbackCareer = btmGetBestCareerFallback(careers);
+    if (!fallbackCareer) {
+      setActiveCareerId(null);
+      return null;
+    }
+
+    activeId = fallbackCareer.id;
+    setActiveCareerId(activeId);
+    careerIndex = careers.findIndex(function(career) {
+      return career.id === activeId;
+    });
+  }
+
+  if (careerIndex === -1) return null;
+
+  const repairedCareer = btmRepairCareerSquad(careers[careerIndex]);
+
+  if (repairedCareer && repairedCareer.__btmRepaired) {
+    delete repairedCareer.__btmRepaired;
+    careers[careerIndex] = repairedCareer;
+    saveCareers(careers);
+    return repairedCareer;
+  }
+
+  return careers[careerIndex];
+}
+
+const btmOriginalGetActiveCareer = getActiveCareer;
+getActiveCareer = function() {
+  const career = btmOriginalGetActiveCareer();
+  if (career) return career;
+  return btmRepairActiveCareerSquad();
+};
+
 const btmOriginalRefreshUI = refreshUI;
 refreshUI = function() {
   btmRepairActiveCareerSquad();
   btmOriginalRefreshUI();
+};
+
+const btmOriginalEnterApp = enterApp;
+enterApp = function(screenId) {
+  btmRepairActiveCareerSquad();
+  btmOriginalEnterApp(screenId || "dashboard");
 };
 
 renderPlayersPreview = function() {
