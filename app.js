@@ -5,8 +5,6 @@ const STORAGE_KEYS = {
 
 const screenTitles = {
   dashboard: "Dashboard",
-  saves: "Sauvegardes",
-  club: "Nouvelle carrière",
   squad: "Effectif",
   lineup: "Composition",
   calendar: "Calendrier",
@@ -179,21 +177,35 @@ function getCareerToContinue() {
   return careers[0] || null;
 }
 
-function showWelcome() {
-  const welcomeScreen = document.getElementById("welcome-screen");
-  const appShell = document.getElementById("app-shell");
+function showMenuScreen(screenId) {
+  document.querySelectorAll(".menu-screen").forEach(function(screen) {
+    screen.classList.toggle("app-hidden", screen.id !== screenId);
+  });
 
-  if (welcomeScreen) welcomeScreen.classList.remove("app-hidden");
+  const appShell = document.getElementById("app-shell");
   if (appShell) appShell.classList.add("app-hidden");
 
-  updateWelcome();
+  refreshUI();
+}
+
+function showWelcome() {
+  showMenuScreen("welcome-screen");
+}
+
+function showCreateCareerMenu() {
+  showMenuScreen("career-setup-screen");
+}
+
+function showSavesMenu() {
+  showMenuScreen("saves-menu-screen");
 }
 
 function enterApp(screenId) {
-  const welcomeScreen = document.getElementById("welcome-screen");
-  const appShell = document.getElementById("app-shell");
+  document.querySelectorAll(".menu-screen").forEach(function(screen) {
+    screen.classList.add("app-hidden");
+  });
 
-  if (welcomeScreen) welcomeScreen.classList.add("app-hidden");
+  const appShell = document.getElementById("app-shell");
   if (appShell) appShell.classList.remove("app-hidden");
 
   refreshUI();
@@ -204,7 +216,7 @@ function continueCareer() {
   const career = getCareerToContinue();
 
   if (!career) {
-    enterApp("saves");
+    showSavesMenu();
     return;
   }
 
@@ -355,7 +367,7 @@ function renderSaves() {
       <div class="empty-state compact-empty">
         <span>💾</span>
         <h4>Aucune carrière sauvegardée</h4>
-        <p>Crée ta première carrière depuis l’accueil ou via Nouvelle carrière.</p>
+        <p>Crée ta première carrière depuis Nouvelle partie.</p>
       </div>
     `;
     return;
@@ -446,7 +458,7 @@ function createCareerFromForm(event) {
 
   const career = {
     id: createId("career"),
-    version: "0.3",
+    version: "0.3.1",
     dataVersion: "premier_league_2025_2026_v0_3",
     careerName: careerName,
     mode: "custom_club",
@@ -526,21 +538,21 @@ function bindButtons() {
   const welcomeNewButton = document.getElementById("welcome-new-career-btn");
   const welcomeContinueButton = document.getElementById("welcome-continue-btn");
   const welcomeSavesButton = document.getElementById("welcome-saves-btn");
+  const backFromCreateButton = document.getElementById("back-from-create-btn");
+  const backFromSavesButton = document.getElementById("back-from-saves-btn");
   const homeButton = document.getElementById("home-btn");
-  const newCareerButton = document.getElementById("new-career-btn");
   const createFromSavesButton = document.getElementById("create-from-saves-btn");
-  const goSavesButton = document.getElementById("go-saves-btn");
   const fillDemoButton = document.getElementById("fill-demo-career-btn");
   const careerForm = document.getElementById("career-form");
   const savesList = document.getElementById("saves-list");
 
-  if (welcomeNewButton) welcomeNewButton.addEventListener("click", function() { enterApp("club"); });
+  if (welcomeNewButton) welcomeNewButton.addEventListener("click", showCreateCareerMenu);
   if (welcomeContinueButton) welcomeContinueButton.addEventListener("click", continueCareer);
-  if (welcomeSavesButton) welcomeSavesButton.addEventListener("click", function() { enterApp("saves"); });
+  if (welcomeSavesButton) welcomeSavesButton.addEventListener("click", showSavesMenu);
+  if (backFromCreateButton) backFromCreateButton.addEventListener("click", showWelcome);
+  if (backFromSavesButton) backFromSavesButton.addEventListener("click", showWelcome);
   if (homeButton) homeButton.addEventListener("click", showWelcome);
-  if (newCareerButton) newCareerButton.addEventListener("click", function() { showScreen("club"); });
-  if (createFromSavesButton) createFromSavesButton.addEventListener("click", function() { showScreen("club"); });
-  if (goSavesButton) goSavesButton.addEventListener("click", function() { showScreen("saves"); });
+  if (createFromSavesButton) createFromSavesButton.addEventListener("click", showCreateCareerMenu);
   if (fillDemoButton) fillDemoButton.addEventListener("click", fillDemoCareer);
   if (careerForm) careerForm.addEventListener("submit", createCareerFromForm);
 
