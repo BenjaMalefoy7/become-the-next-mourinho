@@ -1,32 +1,48 @@
-# Become the next Mourinho — V0.1
+# Become the next Mourinho — V0.2
 
-Première base visuelle du jeu de gestion football privé.
+Jeu privé de gestion football jouable directement dans le navigateur.
 
-## Contenu
+## Version actuelle
 
-- `index.html` : structure de l'application.
-- `style.css` : design moderne sportif.
-- `app.js` : navigation entre les écrans et données de démo.
-- `data.js` : données temporaires pour l'aperçu.
+V0.2 ajoute la première vraie couche fonctionnelle :
+
+- création d'une carrière ;
+- mode actif : créer son club ;
+- choix du club de Premier League remplacé ;
+- choix de difficulté ;
+- budget de départ selon la difficulté ;
+- sauvegardes multiples avec `localStorage` ;
+- chargement d'une carrière ;
+- suppression d'une carrière ;
+- dashboard mis à jour selon la carrière active.
 
 ## Comment lancer
 
-1. Ouvre le repository sur GitHub.
-2. Télécharge ou clone le projet si besoin.
-3. Ouvre `index.html` dans Chrome, Edge ou Firefox.
-4. Teste la navigation dans le menu.
+Le projet peut être ouvert via GitHub Pages si le repo est configuré pour publier depuis la branche `main` et le dossier `/root`.
 
-## Objectif V0.1
+Sinon, il suffit d'ouvrir `index.html` dans un navigateur.
 
-Cette version ne contient pas encore la vraie logique du jeu.
-Elle sert à poser une base propre pour :
+## Fichiers
 
-- l'écran d'accueil ;
-- la navigation ;
-- les futurs écrans ;
-- l'identité visuelle ;
-- les fichiers de base.
+- `index.html` : structure de l'application.
+- `style.css` : style provisoire.
+- `app.js` : logique de navigation, création de carrière et sauvegardes.
+- `data.js` : données temporaires de démo.
+
+## Note sur le style visuel
+
+Le style actuel est provisoire. Il sert uniquement à avancer sur les mécaniques de jeu.
+
+Une vraie direction artistique sera décidée plus tard avec des exemples visuels, afin d'éviter un rendu trop proche d'un dashboard professionnel.
 
 ## Prochaine étape
 
-V0.2 : création de carrière et sauvegardes multiples avec `localStorage`.
+V0.3 : structurer les vraies données de jeu.
+
+Objectifs prévus :
+
+- définir les structures propres pour les clubs ;
+- préparer la structure des joueurs ;
+- préparer la structure du championnat ;
+- poser les bases de la Premier League 2025/2026 ;
+- préparer la future intégration d'un dataset FIFA / EA FC / SoFIFA.
