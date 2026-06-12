@@ -3,7 +3,8 @@ const STORAGE_KEYS = {
   activeCareerId: "btm_active_career_id_v02"
 };
 
-const APP_VERSION = "0.4";
+const APP_VERSION = "0.4.4";
+const DATA_SCHEMA_VERSION = "premier_league_2025_2026_v0_4_4";
 
 const screenTitles = {
   dashboard: "Dashboard",
@@ -18,7 +19,6 @@ const screenTitles = {
 };
 
 const POSITION_ORDER = ["GK", "DD", "DC", "DG", "MDC", "MC", "MOC", "AD", "AG", "BU"];
-
 const SQUAD_TEMPLATE = [
   "GK", "GK", "GK",
   "DD", "DD", "DC", "DC", "DC", "DC", "DG", "DG",
@@ -43,8 +43,17 @@ const NATIONALITIES = [
   "Brésil", "Argentine", "Sénégal", "Côte d’Ivoire", "Ghana", "Maroc", "Croatie", "Danemark"
 ];
 
+function safeText(value, fallback = "—") {
+  return value === undefined || value === null || value === "" ? fallback : String(value);
+}
+
+function setText(id, value) {
+  const node = document.getElementById(id);
+  if (node) node.textContent = safeText(value);
+}
+
 function formatMoney(value) {
-  if (typeof value !== "number") return "—";
+  if (typeof value !== "number" || Number.isNaN(value)) return "—";
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency: "EUR",
@@ -54,10 +63,12 @@ function formatMoney(value) {
 
 function formatDate(value) {
   if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
   return new Intl.DateTimeFormat("fr-FR", {
     dateStyle: "medium",
     timeStyle: "short"
-  }).format(new Date(value));
+  }).format(date);
 }
 
 function createId(prefix) {
@@ -74,7 +85,7 @@ function slugify(value) {
 }
 
 function escapeHtml(value) {
-  return String(value || "")
+  return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -91,20 +102,18 @@ function clamp(value, min, max) {
 }
 
 function getDifficultyLabel(value) {
-  const labels = {
+  return {
     outsider: "Petit club outsider",
     ambitious: "Club ambitieux",
     giant: "Nouveau géant"
-  };
-  return labels[value] || value || "—";
+  }[value] || value || "—";
 }
 
 function getSquadSourceLabel(value) {
-  const labels = {
+  return {
     generated: "Effectif neuf généré",
     replaced_club: "Effectif du club remplacé"
-  };
-  return labels[value] || labels.generated;
+  }[value] || "Effectif neuf généré";
 }
 
 function getDifficultySettings(value) {
@@ -156,14 +165,37 @@ function getDifficultySettings(value) {
   return settings[value] || settings.ambitious;
 }
 
+function getPremierLeague() {
+  return typeof PREMIER_LEAGUE !== "undefined" ? PREMIER_LEAGUE : {
+    id: "premier_league_2025_2026",
+    name: "Premier League",
+    country: "England",
+    season: "2025/2026",
+    teamsCount: 20,
+    matchdays: 38,
+    matchesPerTeam: 38,
+    pointsWin: 3,
+    pointsDraw: 1,
+    pointsLoss: 0
+  };
+}
+
 function getPremierLeagueClubs() {
   return Array.isArray(PREMIER_LEAGUE_CLUBS) ? PREMIER_LEAGUE_CLUBS : [];
 }
 
+function getExpectedTeamsCount() {
+  const league = getPremierLeague();
+  return Number(league.teamsCount) || getPremierLeagueClubs().length || 20;
+}
+
 function getClubById(clubId) {
-  return getPremierLeagueClubs().find(function(club) {
-    return club.id === clubId;
-  }) || null;
+  return getPremierLeagueClubs().find((club) => club.id === clubId) || null;
+}
+
+function getPositionLabel(position) {
+  if (typeof POSITION_LABELS !== "undefined" && POSITION_LABELS[position]) return POSITION_LABELS[position];
+  return position;
 }
 
 function getSecondaryPositions(position) {
@@ -180,16 +212,6 @@ function getSecondaryPositions(position) {
     BU: ["AG", "AD"]
   };
   return map[position] || [];
-}
-
-function getPositionLabel(position) {
-  if (Array.isArray(FOOTBALL_POSITIONS)) {
-    const found = FOOTBALL_POSITIONS.find(function(item) {
-      return item.id === position;
-    });
-    if (found) return found.label;
-  }
-  return position;
 }
 
 function createPlayerName(index) {
@@ -236,7 +258,7 @@ function generateStartingSquad(club, difficulty) {
   const settings = getDifficultySettings(difficulty);
   const usedNames = new Set();
 
-  return SQUAD_TEMPLATE.map(function(position, index) {
+  return SQUAD_TEMPLATE.map((position, index) => {
     let name = createPlayerName(index);
     let guard = 0;
 
@@ -244,6 +266,7 @@ function generateStartingSquad(club, difficulty) {
       name = createPlayerName(index + guard + 1);
       guard += 1;
     }
+
     usedNames.add(name);
 
     const overall = randomInt(settings.overallMin, settings.overallMax);
@@ -255,21 +278,21 @@ function generateStartingSquad(club, difficulty) {
 
     return {
       id: createId("player"),
-      name: name,
+      name,
       clubId: club.id,
       club: club.name,
       nationality: NATIONALITIES[randomInt(0, NATIONALITIES.length - 1)],
-      age: age,
+      age,
       primaryPosition: position,
       secondaryPositions: getSecondaryPositions(position),
-      overall: overall,
+      overall,
       attack: stats.attack,
       defense: stats.defense,
       physical: stats.physical,
       mental: stats.mental,
-      potential: potential,
-      salary: salary,
-      value: value,
+      potential,
+      salary,
+      value,
       contractYears: randomInt(1, 5),
       morale: "Normal",
       condition: 100,
@@ -280,38 +303,63 @@ function generateStartingSquad(club, difficulty) {
 
 function calculateWageBill(players) {
   if (!Array.isArray(players)) return 0;
-  return players.reduce(function(total, player) {
-    return total + (Number(player.salary) || 0);
-  }, 0);
+  return players.reduce((total, player) => total + (Number(player.salary) || 0), 0);
+}
+
+function getCareerWageBill(career) {
+  if (!career || !career.finances) return calculateWageBill(career ? career.players : []);
+  if (typeof career.finances.wageBill === "number") return career.finances.wageBill;
+  if (typeof career.finances.wageBudget === "number") return career.finances.wageBudget;
+  return calculateWageBill(career.players);
 }
 
 function sortPlayers(players) {
-  return players.slice().sort(function(a, b) {
+  return players.slice().sort((a, b) => {
     const aOrder = POSITION_ORDER.indexOf(a.primaryPosition);
     const bOrder = POSITION_ORDER.indexOf(b.primaryPosition);
-    return (aOrder === -1 ? 99 : aOrder) - (bOrder === -1 ? 99 : bOrder) || b.overall - a.overall;
+    return (aOrder === -1 ? 99 : aOrder) - (bOrder === -1 ? 99 : bOrder) || (b.overall || 0) - (a.overall || 0);
   });
 }
 
 function createInitialStandings(teams) {
-  return teams.map(function(team) {
-    return {
-      clubId: team.id,
-      club: team.name,
-      played: 0,
-      wins: 0,
-      draws: 0,
-      losses: 0,
-      goalsFor: 0,
-      goalsAgainst: 0,
-      gd: 0,
-      points: 0
-    };
-  });
+  return (Array.isArray(teams) ? teams : []).map((team) => ({
+    clubId: team.id,
+    club: team.name,
+    played: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    gd: 0,
+    points: 0
+  }));
+}
+
+function getReservedClubIds(replacedClubId) {
+  return new Set(getPremierLeagueClubs()
+    .filter((club) => club.id !== replacedClubId)
+    .map((club) => club.id));
+}
+
+function makeUniqueCustomClubId(clubName, replacedClubId, currentId) {
+  const reservedIds = getReservedClubIds(replacedClubId);
+  const base = slugify(clubName) || "custom_club";
+
+  if (currentId && !reservedIds.has(currentId)) return currentId;
+  if (!reservedIds.has(base)) return base;
+
+  let suffix = 1;
+  let candidate = base + "_custom";
+  while (reservedIds.has(candidate)) {
+    candidate = base + "_custom_" + suffix;
+    suffix += 1;
+  }
+  return candidate;
 }
 
 function createLeagueTeams(customClub, replacedClubId) {
-  return getPremierLeagueClubs().map(function(club) {
+  return getPremierLeagueClubs().map((club) => {
     if (club.id === replacedClubId) {
       return Object.assign({}, customClub, {
         replacedClubId: club.id,
@@ -319,60 +367,201 @@ function createLeagueTeams(customClub, replacedClubId) {
         isCustom: true
       });
     }
-
     return Object.assign({}, club, { isCustom: false });
   });
 }
 
-function getFirstOpponentName(teams, clubId) {
-  const opponent = teams.find(function(team) {
-    return team.id !== clubId;
-  });
+function getOpponents(career) {
+  if (!career || !Array.isArray(career.clubs)) return [];
+  return career.clubs.filter((team) => team.id !== career.club.id);
+}
+
+function getFirstOpponentName(careerOrTeams, clubId) {
+  if (Array.isArray(careerOrTeams)) {
+    const opponent = careerOrTeams.find((team) => team.id !== clubId);
+    return opponent ? opponent.name : "Adversaire à définir";
+  }
+
+  const opponent = getOpponents(careerOrTeams)[0];
   return opponent ? opponent.name : "Adversaire à définir";
+}
+
+function readStorage(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn("Lecture localStorage impossible.", error);
+    return null;
+  }
+}
+
+function writeStorage(key, value, options = {}) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.warn("Écriture localStorage impossible.", error);
+    if (!options.silent) {
+      window.alert("Impossible d’enregistrer la sauvegarde dans ce navigateur. Le stockage local est peut-être bloqué ou plein.");
+    }
+    return false;
+  }
+}
+
+function removeStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn("Suppression localStorage impossible.", error);
+  }
 }
 
 function loadCareers() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEYS.careers)) || [];
+    const parsed = JSON.parse(readStorage(STORAGE_KEYS.careers));
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.warn("Impossible de lire les carrières.", error);
     return [];
   }
 }
 
-function saveCareers(careers) {
-  localStorage.setItem(STORAGE_KEYS.careers, JSON.stringify(careers));
+function saveCareers(careers, options = {}) {
+  const value = JSON.stringify(Array.isArray(careers) ? careers : []);
+  return writeStorage(STORAGE_KEYS.careers, value, options);
 }
 
 function getActiveCareerId() {
-  return localStorage.getItem(STORAGE_KEYS.activeCareerId);
+  return readStorage(STORAGE_KEYS.activeCareerId);
 }
 
 function setActiveCareerId(id) {
   if (!id) {
-    localStorage.removeItem(STORAGE_KEYS.activeCareerId);
-    return;
+    removeStorage(STORAGE_KEYS.activeCareerId);
+    return true;
   }
-  localStorage.setItem(STORAGE_KEYS.activeCareerId, id);
+  return writeStorage(STORAGE_KEYS.activeCareerId, id, { silent: true });
 }
 
-function getActiveCareer() {
+function isValidCareer(career) {
+  return Boolean(career && typeof career === "object" && career.id && career.club && career.club.name);
+}
+
+function getBestCareerFallback(careers) {
+  const validCareers = (Array.isArray(careers) ? careers : []).filter(isValidCareer);
+  if (!validCareers.length) return null;
+  return validCareers.slice().sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))[0];
+}
+
+function repairCareerIfNeeded(career) {
+  if (!isValidCareer(career)) return { career, changed: false };
+
+  let changed = false;
+  career.finances = career.finances || {};
+  career.squadSource = career.squadSource || "generated";
+
+  const oldClubId = career.club.id;
+  const fixedClubId = makeUniqueCustomClubId(career.club.name, career.replacedClubId, oldClubId);
+  if (fixedClubId !== oldClubId) {
+    career.club.id = fixedClubId;
+    if (Array.isArray(career.players)) {
+      career.players.forEach((player) => {
+        if (!player.clubId || player.clubId === oldClubId) player.clubId = fixedClubId;
+        if (!player.club || player.club === career.club.name) player.club = career.club.name;
+      });
+    }
+    if (Array.isArray(career.standings)) {
+      career.standings.forEach((team) => {
+        if (team.clubId === oldClubId) team.clubId = fixedClubId;
+      });
+    }
+    changed = true;
+  }
+
+  const shouldUseGeneratedSquad = career.squadSource === "generated";
+  const hasNoSquad = !Array.isArray(career.players) || career.players.length === 0;
+
+  if (shouldUseGeneratedSquad && hasNoSquad) {
+    career.players = generateStartingSquad(career.club, career.difficulty || "ambitious");
+    changed = true;
+  }
+
+  if (!career.league && getPremierLeague()) {
+    career.league = getPremierLeague();
+    changed = true;
+  }
+
+  const expectedTeamsCount = getExpectedTeamsCount();
+  if (!Array.isArray(career.clubs) || career.clubs.length !== expectedTeamsCount || !career.clubs.some((club) => club.id === career.club.id)) {
+    career.clubs = createLeagueTeams(career.club, career.replacedClubId);
+    changed = true;
+  }
+
+  if (!Array.isArray(career.standings) || !career.standings.length) {
+    career.standings = createInitialStandings(career.clubs);
+    changed = true;
+  }
+
+  const wageBill = calculateWageBill(career.players);
+  if (career.finances.wageBill !== wageBill || career.finances.wageBudget !== wageBill) {
+    career.finances.wageBill = wageBill;
+    career.finances.wageBudget = wageBill;
+    changed = true;
+  }
+
+  if (career.version !== APP_VERSION) {
+    career.version = APP_VERSION;
+    changed = true;
+  }
+
+  if (career.dataVersion !== DATA_SCHEMA_VERSION) {
+    career.dataVersion = DATA_SCHEMA_VERSION;
+    changed = true;
+  }
+
+  if (changed) career.updatedAt = new Date().toISOString();
+  return { career, changed };
+}
+
+function getResolvedCareer() {
   const careers = loadCareers();
-  const activeId = getActiveCareerId();
-  return careers.find(function(career) {
-    return career.id === activeId;
-  }) || null;
+
+  if (!careers.length) {
+    setActiveCareerId(null);
+    return null;
+  }
+
+  let activeId = getActiveCareerId();
+  let index = careers.findIndex((career) => career.id === activeId && isValidCareer(career));
+
+  if (index === -1) {
+    const fallback = getBestCareerFallback(careers);
+    if (!fallback) {
+      setActiveCareerId(null);
+      return null;
+    }
+    activeId = fallback.id;
+    setActiveCareerId(activeId);
+    index = careers.findIndex((career) => career.id === activeId && isValidCareer(career));
+  }
+
+  if (index === -1) return null;
+
+  const result = repairCareerIfNeeded(careers[index]);
+  if (result.changed) {
+    careers[index] = result.career;
+    saveCareers(careers, { silent: true });
+  }
+
+  return result.career;
 }
 
 function getCareerToContinue() {
-  const careers = loadCareers();
-  const activeCareer = getActiveCareer();
-  if (activeCareer) return activeCareer;
-  return careers[0] || null;
+  return getResolvedCareer();
 }
 
 function closeCustomSelects(exceptElement) {
-  document.querySelectorAll(".custom-select.open").forEach(function(select) {
+  document.querySelectorAll(".custom-select.open").forEach((select) => {
     if (select !== exceptElement) select.classList.remove("open");
   });
 }
@@ -385,30 +574,25 @@ function setCustomSelectValue(selectId, value, label) {
   const hiddenInput = inputId ? document.getElementById(inputId) : null;
   const labelNode = select.querySelector("[data-selected-label]");
   const options = Array.from(select.querySelectorAll(".custom-select-option"));
-  const matchedOption = options.find(function(option) {
-    return option.dataset.value === value;
-  });
-
+  const matchedOption = options.find((option) => option.dataset.value === value);
   const finalValue = value || (matchedOption ? matchedOption.dataset.value : "");
   const finalLabel = label || (matchedOption ? matchedOption.dataset.label || matchedOption.textContent.trim() : finalValue);
 
   if (hiddenInput) hiddenInput.value = finalValue;
   if (labelNode) labelNode.textContent = finalLabel;
 
-  options.forEach(function(option) {
-    option.classList.toggle("active", option.dataset.value === finalValue);
-  });
+  options.forEach((option) => option.classList.toggle("active", option.dataset.value === finalValue));
 }
 
 function bindCustomSelects() {
-  document.querySelectorAll(".custom-select").forEach(function(select) {
+  document.querySelectorAll(".custom-select").forEach((select) => {
     const trigger = select.querySelector(".custom-select-trigger");
     const menu = select.querySelector(".custom-select-menu");
     const inputId = select.dataset.input;
     const hiddenInput = inputId ? document.getElementById(inputId) : null;
 
     if (trigger) {
-      trigger.addEventListener("click", function(event) {
+      trigger.addEventListener("click", (event) => {
         event.stopPropagation();
         const willOpen = !select.classList.contains("open");
         closeCustomSelects(select);
@@ -417,10 +601,9 @@ function bindCustomSelects() {
     }
 
     if (menu) {
-      menu.addEventListener("click", function(event) {
+      menu.addEventListener("click", (event) => {
         const option = event.target.closest(".custom-select-option");
         if (!option) return;
-
         setCustomSelectValue(select.id, option.dataset.value, option.dataset.label || option.textContent.trim());
         select.classList.remove("open");
       });
@@ -430,11 +613,8 @@ function bindCustomSelects() {
     if (currentValue) setCustomSelectValue(select.id, currentValue);
   });
 
-  document.addEventListener("click", function() {
-    closeCustomSelects(null);
-  });
-
-  document.addEventListener("keydown", function(event) {
+  document.addEventListener("click", () => closeCustomSelects(null));
+  document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeCustomSelects(null);
   });
 }
@@ -443,16 +623,13 @@ function populateReplacedClubs() {
   const select = document.getElementById("replaced-club-select");
   const menu = select ? select.querySelector(".custom-select-menu") : null;
   const clubs = getPremierLeagueClubs();
-
   if (!menu) return;
 
-  menu.innerHTML = clubs.map(function(club) {
-    return `<button type="button" class="custom-select-option" data-value="${escapeHtml(club.id)}" data-label="${escapeHtml(club.name)}">${escapeHtml(club.name)}</button>`;
-  }).join("");
+  menu.innerHTML = clubs.map((club) => `
+    <button type="button" class="custom-select-option" data-value="${escapeHtml(club.id)}" data-label="${escapeHtml(club.name)}">${escapeHtml(club.name)}</button>
+  `).join("");
 
-  if (clubs.length) {
-    setCustomSelectValue("replaced-club-select", clubs[0].id, clubs[0].name);
-  }
+  if (clubs.length) setCustomSelectValue("replaced-club-select", clubs[0].id, clubs[0].name);
 }
 
 function resetCareerFormVisualValues() {
@@ -460,12 +637,15 @@ function resetCareerFormVisualValues() {
   setCustomSelectValue("club-badge-select", "🐉", "🐉 Dragon");
   setCustomSelectValue("difficulty-select", "ambitious", "Club ambitieux");
   if (firstClub) setCustomSelectValue("replaced-club-select", firstClub.id, firstClub.name);
-  document.getElementById("primary-color").value = "#2ee987";
-  document.getElementById("secondary-color").value = "#ffffff";
+
+  const primaryColor = document.getElementById("primary-color");
+  const secondaryColor = document.getElementById("secondary-color");
+  if (primaryColor) primaryColor.value = "#2ee987";
+  if (secondaryColor) secondaryColor.value = "#ffffff";
 }
 
 function showMenuScreen(screenId) {
-  document.querySelectorAll(".menu-screen").forEach(function(screen) {
+  document.querySelectorAll(".menu-screen").forEach((screen) => {
     screen.classList.toggle("app-hidden", screen.id !== screenId);
   });
 
@@ -473,7 +653,8 @@ function showMenuScreen(screenId) {
   if (appShell) appShell.classList.add("app-hidden");
 
   closeCustomSelects(null);
-  refreshUI();
+  updateWelcome();
+  renderSaves();
 }
 
 function showWelcome() {
@@ -489,138 +670,145 @@ function showSavesMenu() {
 }
 
 function enterApp(screenId) {
-  document.querySelectorAll(".menu-screen").forEach(function(screen) {
-    screen.classList.add("app-hidden");
-  });
-
-  const appShell = document.getElementById("app-shell");
-  if (appShell) appShell.classList.remove("app-hidden");
-
-  closeCustomSelects(null);
-  refreshUI();
-  showScreen(screenId || "dashboard");
-}
-
-function continueCareer() {
-  const career = getCareerToContinue();
-
+  const career = getResolvedCareer();
   if (!career) {
     showSavesMenu();
     return;
   }
 
+  document.querySelectorAll(".menu-screen").forEach((screen) => screen.classList.add("app-hidden"));
+
+  const appShell = document.getElementById("app-shell");
+  if (appShell) appShell.classList.remove("app-hidden");
+
+  closeCustomSelects(null);
+  showScreen(screenId || "dashboard");
+}
+
+function continueCareer() {
+  const career = getCareerToContinue();
+  if (!career) {
+    showSavesMenu();
+    return;
+  }
   setActiveCareerId(career.id);
   enterApp("dashboard");
 }
 
 function updateWelcome() {
   const careers = loadCareers();
+  const validCareers = careers.filter(isValidCareer);
   const career = getCareerToContinue();
   const status = document.getElementById("welcome-status");
   const continueButton = document.getElementById("welcome-continue-btn");
 
-  if (continueButton) continueButton.disabled = careers.length === 0;
+  if (continueButton) continueButton.disabled = validCareers.length === 0;
   if (!status) return;
 
   if (!career) {
-    status.textContent = "Aucune carrière sauvegardée. Lance une nouvelle partie pour commencer.";
+    const invalidCount = careers.length - validCareers.length;
+    status.textContent = invalidCount > 0
+      ? "Aucune carrière valide à continuer. Certaines sauvegardes semblent corrompues."
+      : "Aucune carrière sauvegardée. Lance une nouvelle partie pour commencer.";
     return;
   }
 
-  status.textContent = "Dernière carrière : " + career.careerName + " · " + career.club.name + " · " + getDifficultyLabel(career.difficulty);
+  status.textContent = "Dernière carrière : " + safeText(career.careerName) + " · " + safeText(career.club?.name) + " · " + getDifficultyLabel(career.difficulty);
 }
 
 function showScreen(screenId) {
-  document.querySelectorAll(".screen").forEach(function(screen) {
-    screen.classList.toggle("active", screen.id === screenId);
-  });
-
-  document.querySelectorAll(".nav-btn").forEach(function(button) {
-    button.classList.toggle("active", button.dataset.screen === screenId);
-  });
+  document.querySelectorAll(".screen").forEach((screen) => screen.classList.toggle("active", screen.id === screenId));
+  document.querySelectorAll(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.screen === screenId));
 
   const title = document.getElementById("page-title");
   if (title) title.textContent = screenTitles[screenId] || "Dashboard";
+
+  refreshUI();
 }
 
-function updateDashboard() {
-  const career = getActiveCareer();
-
+function updateDashboard(career = getResolvedCareer()) {
   if (!career) {
-    document.getElementById("dashboard-title").textContent = "Aucune carrière active.";
-    document.getElementById("dashboard-description").textContent = "Retourne à l’accueil pour lancer une nouvelle partie ou charger une sauvegarde.";
-    document.getElementById("active-career-badge").innerHTML = "<span>PL</span><strong>25/26</strong>";
-    document.getElementById("active-career-badge").style.background = "rgba(46, 233, 135, 0.10)";
-    document.getElementById("active-career-badge").style.borderColor = "rgba(46, 233, 135, 0.22)";
-    document.getElementById("kpi-club").textContent = "Aucune carrière";
-    document.getElementById("kpi-money").textContent = "—";
-    document.getElementById("kpi-difficulty").textContent = "—";
-    document.getElementById("kpi-next-match").textContent = "—";
-    document.getElementById("finance-balance").textContent = "—";
-    document.getElementById("finance-transfer-budget").textContent = "—";
-    const wageBillNode = document.getElementById("finance-wage-bill");
-    if (wageBillNode) wageBillNode.textContent = "—";
-    updateDemoMatches("Ton club");
+    setText("dashboard-title", "Aucune carrière active.");
+    setText("dashboard-description", "Retourne à l’accueil pour lancer une nouvelle partie ou charger une sauvegarde.");
+    setText("kpi-club", "Aucune carrière");
+    setText("kpi-money", "—");
+    setText("kpi-difficulty", "—");
+    setText("kpi-next-match", "—");
+    setText("finance-balance", "—");
+    setText("finance-transfer-budget", "—");
+    setText("finance-wage-bill", "—");
+    updateDemoMatches(null);
     return;
   }
 
   const leagueName = career.league ? career.league.name : "Premier League";
-  const teamsCount = career.clubs ? career.clubs.length : 20;
+  const teamsCount = Array.isArray(career.clubs) ? career.clubs.length : getExpectedTeamsCount();
   const replacedLabel = career.replacedClubName || career.replacedClub || "—";
   const playersCount = Array.isArray(career.players) ? career.players.length : 0;
-  const wageBill = career.finances && career.finances.wageBudget ? career.finances.wageBudget : calculateWageBill(career.players);
+  const wageBill = getCareerWageBill(career);
 
-  document.getElementById("dashboard-title").textContent = career.club.name + " — Saison " + career.season;
-  document.getElementById("dashboard-description").textContent = "Manager : " + career.managerName + " · " + leagueName + " · " + teamsCount + " clubs · " + playersCount + " joueurs · Club remplacé : " + replacedLabel;
-  document.getElementById("active-career-badge").innerHTML = "<span>" + escapeHtml(career.club.shortName) + "</span><strong>" + escapeHtml(career.club.badge) + "</strong>";
-  document.getElementById("active-career-badge").style.background = career.club.primaryColor + "22";
-  document.getElementById("active-career-badge").style.borderColor = career.club.primaryColor + "55";
-  document.getElementById("kpi-club").textContent = career.club.name;
-  document.getElementById("kpi-money").textContent = formatMoney(career.finances.transferBudget);
-  document.getElementById("kpi-difficulty").textContent = getDifficultyLabel(career.difficulty);
-  document.getElementById("kpi-next-match").textContent = career.nextMatch;
-  document.getElementById("finance-balance").textContent = formatMoney(career.finances.balance);
-  document.getElementById("finance-transfer-budget").textContent = formatMoney(career.finances.transferBudget);
-  const wageBillNode = document.getElementById("finance-wage-bill");
-  if (wageBillNode) wageBillNode.textContent = formatMoney(wageBill);
-  updateDemoMatches(career.club.name);
+  setText("dashboard-title", career.club.name + " — Saison " + safeText(career.season, getPremierLeague().season));
+  setText("dashboard-description", "Manager : " + safeText(career.managerName) + " · " + leagueName + " · " + teamsCount + " clubs · " + playersCount + " joueurs · Club remplacé : " + replacedLabel);
+  setText("kpi-club", career.club.name);
+  setText("kpi-money", formatMoney(career.finances?.transferBudget));
+  setText("kpi-difficulty", getDifficultyLabel(career.difficulty));
+  setText("kpi-next-match", career.nextMatch);
+  setText("finance-balance", formatMoney(career.finances?.balance));
+  setText("finance-transfer-budget", formatMoney(career.finances?.transferBudget));
+  setText("finance-wage-bill", formatMoney(wageBill));
+
+  const badge = document.getElementById("active-career-badge");
+  if (badge) {
+    badge.innerHTML = "<span>" + escapeHtml(career.club.shortName) + "</span><strong>" + escapeHtml(career.club.badge) + "</strong>";
+    badge.style.background = career.club.primaryColor + "22";
+    badge.style.borderColor = career.club.primaryColor + "55";
+  }
+
+  updateDemoMatches(career);
 }
 
-function updateDemoMatches(clubName) {
-  const safeClubName = clubName || "Ton club";
-  const matchTitle = document.getElementById("match-preview-title");
-  const calendarOne = document.getElementById("calendar-demo-match-1");
-  const calendarTwo = document.getElementById("calendar-demo-match-2");
-  const calendarThree = document.getElementById("calendar-demo-match-3");
+function updateDemoMatches(career) {
+  const clubName = career && career.club ? career.club.name : "Ton club";
+  const opponents = getOpponents(career);
+  const opponentA = opponents[0]?.name || "Arsenal";
+  const opponentB = opponents[1]?.name || "Liverpool";
+  const opponentC = opponents[2]?.name || "Manchester City";
 
-  if (matchTitle) matchTitle.textContent = safeClubName + " vs Arsenal";
-  if (calendarOne) calendarOne.textContent = safeClubName + " vs Arsenal";
-  if (calendarTwo) calendarTwo.textContent = "Liverpool vs " + safeClubName;
-  if (calendarThree) calendarThree.textContent = safeClubName + " vs Manchester City";
+  setText("match-preview-title", clubName + " vs " + opponentA);
+  setText("calendar-demo-match-1", clubName + " vs " + opponentA);
+  setText("calendar-demo-match-2", opponentB + " vs " + clubName);
+  setText("calendar-demo-match-3", clubName + " vs " + opponentC);
 }
 
-function renderPlayersPreview() {
+function renderPlayersPreview(career = getResolvedCareer()) {
   const container = document.getElementById("players-preview");
   if (!container) return;
 
-  const activeCareer = getActiveCareer();
-  const careerPlayers = activeCareer && Array.isArray(activeCareer.players) ? activeCareer.players : [];
-
-  if (activeCareer && !careerPlayers.length) {
+  if (!career) {
     container.innerHTML = `
       <div class="empty-state compact-empty">
         <span>👥</span>
-        <h4>Aucun effectif sur cette sauvegarde</h4>
-        <p>Cette carrière a probablement été créée avant la V0.4. Crée une nouvelle carrière pour générer un effectif de départ.</p>
+        <h4>Aucune carrière active</h4>
+        <p>Retourne à l’accueil, crée une nouvelle partie ou charge une sauvegarde.</p>
       </div>
     `;
     return;
   }
 
-  const players = careerPlayers.length ? sortPlayers(careerPlayers) : DEMO_PLAYERS;
-  const clubName = activeCareer ? activeCareer.club.name : "Ton club";
+  const players = Array.isArray(career.players) ? sortPlayers(career.players) : [];
 
-  container.innerHTML = players.map(function(player) {
+  if (!players.length) {
+    container.innerHTML = `
+      <div class="empty-state compact-empty">
+        <span>👥</span>
+        <h4>Aucun effectif disponible</h4>
+        <p>Cette sauvegarde utilise peut-être une option d’effectif qui n’est pas encore branchée.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = players.map((player) => {
     const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length
       ? " · Sec. " + player.secondaryPositions.join("/")
       : "";
@@ -628,43 +816,43 @@ function renderPlayersPreview() {
     return `
       <article class="player-card">
         <h4>${escapeHtml(player.name)}</h4>
-        <p>${escapeHtml(clubName)} · ${escapeHtml(getPositionLabel(player.primaryPosition))}${secondary} · ${player.age} ans · ${escapeHtml(player.nationality)}</p>
+        <p>${escapeHtml(career.club.name)} · ${escapeHtml(getPositionLabel(player.primaryPosition))}${secondary} · ${safeText(player.age)} ans · ${escapeHtml(player.nationality)}</p>
         <div class="stat-row">
-          <span>OVR<br><strong>${player.overall}</strong></span>
-          <span>ATT<br><strong>${player.attack}</strong></span>
-          <span>DEF<br><strong>${player.defense}</strong></span>
-          <span>PHY<br><strong>${player.physical}</strong></span>
-          <span>POT<br><strong>${player.potential}</strong></span>
+          <span>OVR<br><strong>${safeText(player.overall)}</strong></span>
+          <span>ATT<br><strong>${safeText(player.attack)}</strong></span>
+          <span>DEF<br><strong>${safeText(player.defense)}</strong></span>
+          <span>PHY<br><strong>${safeText(player.physical)}</strong></span>
+          <span>POT<br><strong>${safeText(player.potential)}</strong></span>
         </div>
-        <p class="save-meta">Valeur : ${formatMoney(player.value)} · Salaire : ${formatMoney(player.salary)} · Contrat : ${player.contractYears} an(s) · ${escapeHtml(player.injuryStatus)}</p>
+        <p class="save-meta">Valeur : ${formatMoney(player.value)} · Salaire : ${formatMoney(player.salary)} · Contrat : ${safeText(player.contractYears)} an(s) · ${escapeHtml(player.injuryStatus || "Disponible")}</p>
       </article>
     `;
   }).join("");
 }
 
-function renderStandingsPreview() {
+function renderStandingsPreview(career = getResolvedCareer()) {
   const tbody = document.getElementById("standings-preview");
   if (!tbody) return;
 
-  const activeCareer = getActiveCareer();
-  const standings = activeCareer && Array.isArray(activeCareer.standings)
-    ? activeCareer.standings
-    : DEMO_STANDINGS;
+  const standings = career && Array.isArray(career.standings) ? career.standings : [];
 
-  tbody.innerHTML = standings.map(function(team, index) {
-    return `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${escapeHtml(team.club)}</td>
-        <td>${team.played}</td>
-        <td>${team.wins}</td>
-        <td>${team.draws}</td>
-        <td>${team.losses}</td>
-        <td>${team.gd}</td>
-        <td>${team.points}</td>
-      </tr>
-    `;
-  }).join("");
+  if (!standings.length) {
+    tbody.innerHTML = "<tr><td colspan='8'>Aucun classement disponible.</td></tr>";
+    return;
+  }
+
+  tbody.innerHTML = standings.map((team, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${escapeHtml(team.club)}</td>
+      <td>${safeText(team.played, 0)}</td>
+      <td>${safeText(team.wins, 0)}</td>
+      <td>${safeText(team.draws, 0)}</td>
+      <td>${safeText(team.losses, 0)}</td>
+      <td>${safeText(team.gd, 0)}</td>
+      <td>${safeText(team.points, 0)}</td>
+    </tr>
+  `).join("");
 }
 
 function renderSaves() {
@@ -685,17 +873,35 @@ function renderSaves() {
     return;
   }
 
-  container.innerHTML = careers.map(function(career) {
+  container.innerHTML = careers.map((career) => {
+    if (!isValidCareer(career)) {
+      return `
+        <article class="save-card broken-save">
+          <div class="save-main">
+            <div class="save-badge">⚠️</div>
+            <div>
+              <div class="save-title-row"><h4>Sauvegarde illisible</h4><span class='status-pill'>Corrompue</span></div>
+              <p>Cette sauvegarde ne contient pas les données minimales du club.</p>
+              <p class="save-meta">ID : ${escapeHtml(career?.id || "inconnu")}</p>
+            </div>
+          </div>
+          <div class="save-actions">
+            ${career?.id ? `<button class="danger-btn" data-delete-career="${escapeHtml(career.id)}">Supprimer</button>` : ""}
+          </div>
+        </article>
+      `;
+    }
+
     const activeClass = career.id === activeId ? " active-save" : "";
     const leagueName = career.league ? career.league.name : "Premier League";
-    const teamsCount = career.clubs ? career.clubs.length : 20;
+    const teamsCount = Array.isArray(career.clubs) ? career.clubs.length : getExpectedTeamsCount();
     const playersCount = Array.isArray(career.players) ? career.players.length : 0;
 
     return `
       <article class="save-card${activeClass}">
         <div class="save-main">
-          <div class="save-badge" style="background:${career.club.primaryColor}22;border-color:${career.club.primaryColor}66;">
-            ${escapeHtml(career.club.badge)}
+          <div class="save-badge" style="background:${escapeHtml(career.club.primaryColor || "#2ee987")}22;border-color:${escapeHtml(career.club.primaryColor || "#2ee987")}66;">
+            ${escapeHtml(career.club.badge || "⚽")}
           </div>
           <div>
             <div class="save-title-row">
@@ -703,12 +909,12 @@ function renderSaves() {
               ${career.id === activeId ? "<span class='status-pill'>Active</span>" : ""}
             </div>
             <p>${escapeHtml(career.club.name)} · ${escapeHtml(career.managerName)} · ${getDifficultyLabel(career.difficulty)}</p>
-            <p class="save-meta">${leagueName} · ${teamsCount} clubs · ${playersCount} joueurs · ${getSquadSourceLabel(career.squadSource)} · Objectif : ${career.objective} · Dernière sauvegarde : ${formatDate(career.updatedAt)}</p>
+            <p class="save-meta">${escapeHtml(leagueName)} · ${teamsCount} clubs · ${playersCount} joueurs · ${getSquadSourceLabel(career.squadSource)} · Objectif : ${escapeHtml(career.objective)} · Dernière sauvegarde : ${formatDate(career.updatedAt)}</p>
           </div>
         </div>
         <div class="save-actions">
-          <button class="secondary-btn" data-load-career="${career.id}">Charger</button>
-          <button class="danger-btn" data-delete-career="${career.id}">Supprimer</button>
+          <button class="secondary-btn" data-load-career="${escapeHtml(career.id)}">Charger</button>
+          <button class="danger-btn" data-delete-career="${escapeHtml(career.id)}">Supprimer</button>
         </div>
       </article>
     `;
@@ -716,14 +922,25 @@ function renderSaves() {
 }
 
 function fillDemoCareer() {
-  document.getElementById("career-name").value = "Carrière Dragon FC";
-  document.getElementById("manager-name").value = "Benjamin";
-  document.getElementById("club-name").value = "Dragon FC";
-  document.getElementById("club-short-name").value = "DFC";
+  const fields = {
+    "career-name": "Carrière Dragon FC",
+    "manager-name": "Benjamin",
+    "club-name": "Dragon FC",
+    "club-short-name": "DFC"
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+    const node = document.getElementById(id);
+    if (node) node.value = value;
+  });
+
   setCustomSelectValue("club-badge-select", "🐉", "🐉 Dragon");
   setCustomSelectValue("difficulty-select", "ambitious", "Club ambitieux");
-  document.getElementById("primary-color").value = "#2ee987";
-  document.getElementById("secondary-color").value = "#ffffff";
+
+  const primary = document.getElementById("primary-color");
+  const secondary = document.getElementById("secondary-color");
+  if (primary) primary.value = "#2ee987";
+  if (secondary) secondary.value = "#ffffff";
 }
 
 function createCareerFromForm(event) {
@@ -742,6 +959,7 @@ function createCareerFromForm(event) {
   const primaryColor = document.getElementById("primary-color").value;
   const secondaryColor = document.getElementById("secondary-color").value;
   const settings = getDifficultySettings(difficulty);
+  const league = getPremierLeague();
   const now = new Date().toISOString();
 
   if (!careerName || !managerName || !clubName || !shortName) {
@@ -755,16 +973,16 @@ function createCareerFromForm(event) {
   }
 
   const customClub = {
-    id: slugify(clubName) || createId("custom_club"),
+    id: makeUniqueCustomClubId(clubName, replacedClubId),
     name: clubName,
-    shortName: shortName,
-    badge: badge,
+    shortName,
+    badge,
     country: "England",
     league: "Premier League",
     reputation: settings.reputation,
     budget: settings.clubBudget,
-    primaryColor: primaryColor,
-    secondaryColor: secondaryColor,
+    primaryColor,
+    secondaryColor,
     stadiumName: "Stade à définir",
     isCustom: true
   };
@@ -777,20 +995,20 @@ function createCareerFromForm(event) {
   const career = {
     id: createId("career"),
     version: APP_VERSION,
-    dataVersion: "premier_league_2025_2026_v0_4",
-    careerName: careerName,
+    dataVersion: DATA_SCHEMA_VERSION,
+    careerName,
     mode: "custom_club",
-    managerName: managerName,
-    season: PREMIER_LEAGUE.season,
+    managerName,
+    season: league.season,
     matchday: 1,
-    difficulty: difficulty,
+    difficulty,
     objective: settings.objective,
     squadLevel: settings.squadLevel,
-    squadSource: squadSource,
-    replacedClubId: replacedClubId,
+    squadSource,
+    replacedClubId,
     replacedClubName: replacedClub.name,
     nextMatch: clubName + " vs " + nextOpponentName,
-    league: PREMIER_LEAGUE,
+    league,
     clubs: leagueTeams,
     standings: createInitialStandings(leagueTeams),
     fixtures: [],
@@ -799,6 +1017,7 @@ function createCareerFromForm(event) {
     finances: {
       balance: settings.startMoney,
       transferBudget: settings.transferBudget,
+      wageBill,
       wageBudget: wageBill
     },
     createdAt: now,
@@ -807,47 +1026,59 @@ function createCareerFromForm(event) {
 
   const careers = loadCareers();
   careers.unshift(career);
-  saveCareers(careers);
+  if (!saveCareers(careers)) return;
   setActiveCareerId(career.id);
 
   document.getElementById("career-form").reset();
   resetCareerFormVisualValues();
-
   enterApp("dashboard");
 }
 
 function loadCareer(careerId) {
+  const careers = loadCareers();
+  const career = careers.find((item) => item.id === careerId);
+  if (!isValidCareer(career)) {
+    window.alert("Cette sauvegarde semble corrompue et ne peut pas être chargée.");
+    renderSaves();
+    return;
+  }
   setActiveCareerId(careerId);
   enterApp("dashboard");
 }
 
 function deleteCareer(careerId) {
-  const career = loadCareers().find(function(item) {
-    return item.id === careerId;
-  });
-
+  const careers = loadCareers();
+  const career = careers.find((item) => item.id === careerId);
   if (!career) return;
 
-  const confirmation = window.confirm("Supprimer la carrière '" + career.careerName + "' ?");
+  const label = isValidCareer(career) ? career.careerName : "cette sauvegarde illisible";
+  const confirmation = window.confirm("Supprimer la carrière '" + label + "' ?");
   if (!confirmation) return;
 
-  const remainingCareers = loadCareers().filter(function(item) {
-    return item.id !== careerId;
-  });
-
-  saveCareers(remainingCareers);
+  const remainingCareers = careers.filter((item) => item.id !== careerId);
+  if (!saveCareers(remainingCareers)) return;
 
   if (getActiveCareerId() === careerId) {
-    setActiveCareerId(remainingCareers[0] ? remainingCareers[0].id : null);
+    const fallback = getBestCareerFallback(remainingCareers);
+    setActiveCareerId(fallback ? fallback.id : null);
   }
 
   refreshUI();
 }
 
 function bindNavigation() {
-  document.querySelectorAll(".nav-btn").forEach(function(button) {
-    button.addEventListener("click", function() {
-      showScreen(button.dataset.screen);
+  document.querySelectorAll(".nav-btn").forEach((button) => {
+    button.addEventListener("click", () => showScreen(button.dataset.screen));
+  });
+}
+
+function bindModeCards() {
+  document.querySelectorAll(".mode-card input[type='radio']").forEach((radio) => {
+    radio.addEventListener("change", () => {
+      const name = radio.name;
+      document.querySelectorAll(".mode-card input[name='" + name + "']").forEach((input) => {
+        input.closest(".mode-card")?.classList.toggle("active", input.checked);
+      });
     });
   });
 }
@@ -875,10 +1106,9 @@ function bindButtons() {
   if (careerForm) careerForm.addEventListener("submit", createCareerFromForm);
 
   if (savesList) {
-    savesList.addEventListener("click", function(event) {
+    savesList.addEventListener("click", (event) => {
       const loadButton = event.target.closest("[data-load-career]");
       const deleteButton = event.target.closest("[data-delete-career]");
-
       if (loadButton) loadCareer(loadButton.dataset.loadCareer);
       if (deleteButton) deleteCareer(deleteButton.dataset.deleteCareer);
     });
@@ -886,18 +1116,21 @@ function bindButtons() {
 }
 
 function refreshUI() {
+  const career = getResolvedCareer();
   updateWelcome();
-  updateDashboard();
+  updateDashboard(career);
   renderSaves();
-  renderPlayersPreview();
-  renderStandingsPreview();
+  renderPlayersPreview(career);
+  renderStandingsPreview(career);
 }
 
 function initApp() {
   populateReplacedClubs();
   bindNavigation();
   bindButtons();
+  bindModeCards();
   bindCustomSelects();
+  resetCareerFormVisualValues();
   refreshUI();
   showWelcome();
 }
