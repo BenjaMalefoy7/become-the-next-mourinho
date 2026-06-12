@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Become the next Mourinho</title>
-  <link rel="stylesheet" href="style.css?v=044" />
+  <link rel="stylesheet" href="style.css?v=050" />
+  <link rel="stylesheet" href="lineup.css?v=050" />
 </head>
 <body>
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -60,7 +61,7 @@
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.4 génère un effectif neuf. Plus tard, tu pourras aussi garder l’effectif réel du club remplacé.</p>
+          <p>La V0.5 génère un effectif neuf. Plus tard, tu pourras aussi garder l’effectif réel du club remplacé.</p>
         </div>
 
         <div class="mode-grid">
@@ -223,7 +224,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.4.4 — Stabilisation</div>
+      <div class="sidebar-footer">V0.5 — Composition</div>
     </aside>
 
     <main class="main-content">
@@ -242,7 +243,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.4.4 stabilise les sauvegardes, l’effectif et le chargement des assets.</p>
+            <p id="dashboard-description">La V0.5 ajoute la première vraie composition d’équipe.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -256,12 +257,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.4.4</h3>
-            <p>Version de stabilisation : sauvegardes protégées, effectif sécurisé, IDs de clubs uniques et cache CSS/JS mieux contrôlé.</p>
+            <h3>Statut V0.5</h3>
+            <p>Tu peux maintenant choisir une formation, sélectionner ton onze, voir les remplaçants et sauvegarder automatiquement ta composition.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.5 : commencer à exploiter l’effectif avec une première composition d’équipe.</p>
+            <p>V0.6 : générer un calendrier plus complet pour préparer la simulation de match.</p>
           </article>
         </div>
       </section>
@@ -272,12 +273,25 @@
       </section>
 
       <section class="screen" id="lineup">
-        <div class="section-header"><h3>Composition</h3><p>Choix de formation et titulaires.</p></div>
-        <div class="pitch-card">
-          <div class="pitch-line"><span>AG</span><span>BU</span><span>AD</span></div>
-          <div class="pitch-line"><span>MC</span><span>MC</span><span>MC</span></div>
-          <div class="pitch-line"><span>DG</span><span>DC</span><span>DC</span><span>DD</span></div>
-          <div class="pitch-line"><span>GK</span></div>
+        <div class="section-header section-header-row">
+          <div>
+            <h3>Composition</h3>
+            <p>Choisis une formation, place tes titulaires et vérifie les joueurs hors poste. La composition est sauvegardée automatiquement.</p>
+          </div>
+          <div class="formation-buttons" id="formation-buttons"></div>
+        </div>
+
+        <div class="lineup-warning" id="lineup-warning"></div>
+        <div class="lineup-summary kpi-grid" id="lineup-summary"></div>
+
+        <div class="lineup-layout">
+          <div class="lineup-slots" id="lineup-slots"></div>
+          <div class="pitch-card lineup-pitch" id="lineup-pitch"></div>
+          <article class="lineup-bench panel">
+            <h3>Remplaçants</h3>
+            <p>Les meilleurs joueurs non titulaires sont listés ici automatiquement.</p>
+            <div id="lineup-bench"></div>
+          </article>
         </div>
       </section>
 
@@ -311,7 +325,8 @@
     </main>
   </div>
 
-  <script src="data.js?v=044"></script>
+  <script src="data.js?v=050"></script>
   <script src="app.js?v=044"></script>
+  <script src="lineup-v050.js?v=050"></script>
 </body>
 </html>
