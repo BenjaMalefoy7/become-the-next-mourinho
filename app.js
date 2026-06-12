@@ -38,6 +38,15 @@ function createId(prefix) {
   return prefix + "_" + Date.now() + "_" + Math.random().toString(16).slice(2);
 }
 
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
 function getDifficultyLabel(value) {
   const labels = {
     outsider: "Petit club outsider",
@@ -53,23 +62,80 @@ function getDifficultySettings(value) {
       startMoney: 25000000,
       transferBudget: 12000000,
       objective: "Maintien",
-      squadLevel: "Faible / moyen"
+      squadLevel: "Faible / moyen",
+      reputation: 62,
+      clubBudget: 35000000
     },
     ambitious: {
       startMoney: 85000000,
       transferBudget: 45000000,
       objective: "Top 10 / Top 8",
-      squadLevel: "Correct / ambitieux"
+      squadLevel: "Correct / ambitieux",
+      reputation: 74,
+      clubBudget: 90000000
     },
     giant: {
       startMoney: 220000000,
       transferBudget: 140000000,
       objective: "Top 4 / Titre",
-      squadLevel: "Très fort"
+      squadLevel: "Très fort",
+      reputation: 88,
+      clubBudget: 220000000
     }
   };
 
   return settings[value] || settings.ambitious;
+}
+
+function getPremierLeagueClubs() {
+  return Array.isArray(PREMIER_LEAGUE_CLUBS) ? PREMIER_LEAGUE_CLUBS : [];
+}
+
+function getClubById(clubId) {
+  return getPremierLeagueClubs().find(function(club) {
+    return club.id === clubId;
+  }) || null;
+}
+
+function createInitialStandings(teams) {
+  return teams.map(function(team) {
+    return {
+      clubId: team.id,
+      club: team.name,
+      played: 0,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      gd: 0,
+      points: 0
+    };
+  });
+}
+
+function createLeagueTeams(customClub, replacedClubId) {
+  return getPremierLeagueClubs().map(function(club) {
+    if (club.id === replacedClubId) {
+      return Object.assign({}, customClub, {
+        replacedClubId: club.id,
+        replacedClubName: club.name,
+        isCustom: true
+      });
+    }
+
+    return Object.assign({}, club, {
+      isCustom: false
+    });
+  });
+}
+
+function getFirstOpponentName(teams, clubId) {
+  const opponent = teams.find(function(team) {
+    return team.id !== clubId;
+  });
+
+  return opponent ? opponent.name : "Adversaire à définir";
 }
 
 function loadCareers() {
@@ -197,8 +263,12 @@ function updateDashboard() {
     return;
   }
 
+  const leagueName = career.league ? career.league.name : "Premier League";
+  const teamsCount = career.clubs ? career.clubs.length : 20;
+  const replacedLabel = career.replacedClubName || career.replacedClub || "—";
+
   document.getElementById("dashboard-title").textContent = career.club.name + " — Saison " + career.season;
-  document.getElementById("dashboard-description").textContent = "Manager : " + career.managerName + " · Objectif : " + career.objective + " · Club remplacé : " + career.replacedClub;
+  document.getElementById("dashboard-description").textContent = "Manager : " + career.managerName + " · " + leagueName + " · " + teamsCount + " clubs · Club remplacé : " + replacedLabel;
   document.getElementById("active-career-badge").innerHTML = "<span>" + career.club.shortName + "</span><strong>" + career.club.badge + "</strong>";
   document.getElementById("active-career-badge").style.background = career.club.primaryColor + "22";
   document.getElementById("active-career-badge").style.borderColor = career.club.primaryColor + "55";
@@ -228,11 +298,14 @@ function renderPlayersPreview() {
   const container = document.getElementById("players-preview");
   if (!container) return;
 
+  const activeCareer = getActiveCareer();
+  const clubName = activeCareer ? activeCareer.club.name : "Ton club";
+
   container.innerHTML = DEMO_PLAYERS.map(function(player) {
     return `
       <article class="player-card">
         <h4>${player.name}</h4>
-        <p>${player.primaryPosition} · ${player.age} ans · ${player.nationality}</p>
+        <p>${clubName} · ${player.primaryPosition} · ${player.age} ans · ${player.nationality}</p>
         <div class="stat-row">
           <span>OVR<br><strong>${player.overall}</strong></span>
           <span>ATT<br><strong>${player.attack}</strong></span>
@@ -250,14 +323,9 @@ function renderStandingsPreview() {
   if (!tbody) return;
 
   const activeCareer = getActiveCareer();
-  const clubName = activeCareer ? activeCareer.club.name : "Ton club";
-
-  const standings = DEMO_STANDINGS.map(function(team) {
-    if (team.club === "Ton club") {
-      return Object.assign({}, team, { club: clubName });
-    }
-    return team;
-  });
+  const standings = activeCareer && Array.isArray(activeCareer.standings)
+    ? activeCareer.standings
+    : DEMO_STANDINGS;
 
   tbody.innerHTML = standings.map(function(team, index) {
     return `
@@ -295,6 +363,9 @@ function renderSaves() {
 
   container.innerHTML = careers.map(function(career) {
     const activeClass = career.id === activeId ? " active-save" : "";
+    const leagueName = career.league ? career.league.name : "Premier League";
+    const teamsCount = career.clubs ? career.clubs.length : 20;
+
     return `
       <article class="save-card${activeClass}">
         <div class="save-main">
@@ -307,7 +378,7 @@ function renderSaves() {
               ${career.id === activeId ? "<span class='status-pill'>Active</span>" : ""}
             </div>
             <p>${career.club.name} · ${career.managerName} · ${getDifficultyLabel(career.difficulty)}</p>
-            <p class="save-meta">Objectif : ${career.objective} · Dernière sauvegarde : ${formatDate(career.updatedAt)}</p>
+            <p class="save-meta">${leagueName} · ${teamsCount} clubs · Objectif : ${career.objective} · Dernière sauvegarde : ${formatDate(career.updatedAt)}</p>
           </div>
         </div>
         <div class="save-actions">
@@ -323,8 +394,8 @@ function populateReplacedClubs() {
   const select = document.getElementById("replaced-club");
   if (!select) return;
 
-  select.innerHTML = PREMIER_LEAGUE_CLUBS.map(function(club) {
-    return `<option value="${club}">${club}</option>`;
+  select.innerHTML = getPremierLeagueClubs().map(function(club) {
+    return `<option value="${club.id}">${club.name}</option>`;
   }).join("");
 }
 
@@ -347,37 +418,53 @@ function createCareerFromForm(event) {
   const clubName = document.getElementById("club-name").value.trim();
   const shortName = document.getElementById("club-short-name").value.trim().toUpperCase();
   const badge = document.getElementById("club-badge").value.trim() || "⚽";
-  const replacedClub = document.getElementById("replaced-club").value;
+  const replacedClubId = document.getElementById("replaced-club").value;
+  const replacedClub = getClubById(replacedClubId);
   const difficulty = document.getElementById("difficulty").value;
   const primaryColor = document.getElementById("primary-color").value;
   const secondaryColor = document.getElementById("secondary-color").value;
   const settings = getDifficultySettings(difficulty);
   const now = new Date().toISOString();
 
+  const customClub = {
+    id: slugify(clubName) || createId("custom_club"),
+    name: clubName,
+    shortName: shortName,
+    badge: badge,
+    country: "England",
+    league: "Premier League",
+    reputation: settings.reputation,
+    budget: settings.clubBudget,
+    primaryColor: primaryColor,
+    secondaryColor: secondaryColor,
+    stadiumName: "Stade à définir",
+    isCustom: true
+  };
+
+  const leagueTeams = createLeagueTeams(customClub, replacedClubId);
+  const nextOpponentName = getFirstOpponentName(leagueTeams, customClub.id);
+
   const career = {
     id: createId("career"),
-    version: "0.2.1",
+    version: "0.3",
+    dataVersion: "premier_league_2025_2026_v0_3",
     careerName: careerName,
     mode: "custom_club",
     managerName: managerName,
-    season: "2025/2026",
+    season: PREMIER_LEAGUE.season,
     matchday: 1,
     difficulty: difficulty,
     objective: settings.objective,
     squadLevel: settings.squadLevel,
-    replacedClub: replacedClub,
-    nextMatch: clubName + " vs Arsenal",
-    club: {
-      id: clubName.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""),
-      name: clubName,
-      shortName: shortName,
-      badge: badge,
-      country: "England",
-      league: "Premier League",
-      primaryColor: primaryColor,
-      secondaryColor: secondaryColor,
-      stadiumName: "Stade à définir"
-    },
+    replacedClubId: replacedClubId,
+    replacedClubName: replacedClub ? replacedClub.name : "Club inconnu",
+    nextMatch: clubName + " vs " + nextOpponentName,
+    league: PREMIER_LEAGUE,
+    clubs: leagueTeams,
+    standings: createInitialStandings(leagueTeams),
+    fixtures: [],
+    players: [],
+    club: customClub,
     finances: {
       balance: settings.startMoney,
       transferBudget: settings.transferBudget,
@@ -472,6 +559,7 @@ function refreshUI() {
   updateWelcome();
   updateDashboard();
   renderSaves();
+  renderPlayersPreview();
   renderStandingsPreview();
 }
 
@@ -479,7 +567,6 @@ function initApp() {
   populateReplacedClubs();
   bindNavigation();
   bindButtons();
-  renderPlayersPreview();
   refreshUI();
   showWelcome();
 }
