@@ -1,10 +1,10 @@
-# Become the next Mourinho — V0.5
+# Become the next Mourinho — V0.5.1
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
 ## Version actuelle
 
-V0.5 ajoute la première vraie fonctionnalité liée à l’effectif : la composition d’équipe.
+V0.5.1 stabilise et améliore l'écran Composition introduit en V0.5.
 
 La base actuelle contient :
 
@@ -20,16 +20,15 @@ La base actuelle contient :
 - classement initial généré depuis la carrière active ;
 - composition d’équipe sauvegardée dans la carrière.
 
-## Nouveautés V0.5
+## Nouveautés V0.5.1
 
-- choix d’une formation parmi les formations déjà prévues ;
-- génération automatique d’un onze de départ lors de la création ou migration d’une carrière ;
-- sélection manuelle des titulaires poste par poste ;
-- prévention des doublons dans le onze ;
-- calcul simple de la note du onze ;
-- affichage des moyennes attaque/défense ;
-- alertes si un poste est vide ou si un joueur est hors poste ;
-- banc/remplaçants généré automatiquement avec les meilleurs joueurs non titulaires.
+- correction de l'affichage terrain du 4-4-2 : il affiche bien 2 attaquants, 4 milieux, 4 défenseurs et 1 gardien ;
+- double check des formations disponibles avec des lignes de jeu plus cohérentes ;
+- écran Composition plus compact ;
+- postes regroupés par lignes : gardien, défense, milieu, attaque ;
+- liste des joueurs mieux triée selon la compatibilité avec le poste ;
+- bouton Auto-composer pour régénérer automatiquement un onze cohérent ;
+- terrain plus lisible avec des lignes de jeu nommées.
 
 ## Stabilisation déjà présente
 
@@ -62,9 +61,9 @@ Sinon, il suffit d'ouvrir `index.html` dans un navigateur.
 - `style.css` : style provisoire et menus custom.
 - `lineup.css` : styles spécifiques à la composition d’équipe.
 - `app.js` : logique d’accueil, création de carrière, sauvegardes, navigation manager, menus custom, génération d’effectif et stabilisation.
-- `lineup-v050.js` : logique de composition d’équipe pour la V0.5.
+- `lineup-v050.js` : logique de composition d’équipe, actuellement stabilisée en V0.5.1.
 - `data.js` : données structurées du championnat, des clubs, des postes et des formations.
 
 ## Prochaine étape
 
-V0.6 : générer un calendrier plus complet pour préparer la simulation de match.
+Selon les retours : V0.5.2 pour peaufiner la composition, ou V0.6 pour générer un calendrier plus complet avant la simulation de match.
