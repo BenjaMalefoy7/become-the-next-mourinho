@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Become the next Mourinho</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">BTM</div>
+        <div>
+          <h1>Become the next Mourinho</h1>
+          <p>Private Manager Game</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
+        <button class="nav-btn" data-screen="saves">Sauvegardes</button>
+        <button class="nav-btn" data-screen="club">Club</button>
+        <button class="nav-btn" data-screen="squad">Effectif</button>
+        <button class="nav-btn" data-screen="lineup">Composition</button>
+        <button class="nav-btn" data-screen="calendar">Calendrier</button>
+        <button class="nav-btn" data-screen="standings">Classement</button>
+        <button class="nav-btn" data-screen="match">Match</button>
+        <button class="nav-btn" data-screen="transfers">Recrutement</button>
+        <button class="nav-btn" data-screen="finances">Finances</button>
+        <button class="nav-btn" data-screen="training">Entraînement</button>
+      </nav>
+
+      <div class="sidebar-footer">V0.1 — Base visuelle</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Carrière actuelle</p>
+          <h2 id="page-title">Dashboard</h2>
+        </div>
+        <div class="topbar-actions">
+          <button class="secondary-btn" id="reset-demo-btn">Reset démo</button>
+          <button class="primary-btn" id="new-career-btn">Nouvelle carrière</button>
+        </div>
+      </header>
+
+      <section class="screen active" id="dashboard">
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow">Bienvenue manager</p>
+            <h3>Construis ton club, gagne ta place, deviens une légende.</h3>
+            <p>Cette V0.1 pose la base visuelle du jeu. Les prochains ajouts brancheront les sauvegardes, la création de carrière et les vraies données.</p>
+          </div>
+          <div class="hero-score"><span>PL</span><strong>25/26</strong></div>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="kpi-card"><p>Club</p><strong id="kpi-club">Aucune carrière</strong></article>
+          <article class="kpi-card"><p>Trésorerie</p><strong id="kpi-money">—</strong></article>
+          <article class="kpi-card"><p>Classement</p><strong id="kpi-position">—</strong></article>
+          <article class="kpi-card"><p>Prochain match</p><strong id="kpi-next-match">—</strong></article>
+        </div>
+
+        <div class="panel-grid">
+          <article class="panel"><h3>Objectif V0.1</h3><p>Avoir une interface navigable et agréable avant de connecter la vraie logique.</p></article>
+          <article class="panel"><h3>Prochaine évolution</h3><p>V0.2 : création de carrière, plusieurs sauvegardes et stockage local.</p></article>
+        </div>
+      </section>
+
+      <section class="screen" id="saves"><div class="section-header"><h3>Sauvegardes</h3><p>Plusieurs carrières seront gérées ici.</p></div><div class="empty-state"><span>💾</span><h4>Aucune sauvegarde pour le moment</h4><p>La V0.2 ajoutera la création et le chargement de carrières.</p></div></section>
+      <section class="screen" id="club"><div class="section-header"><h3>Club</h3><p>Identité, difficulté, couleurs, stade et objectif de saison.</p></div><div class="form-preview"><label>Nom du club<input type="text" placeholder="Ex : Dragon FC" disabled /></label><label>Manager<input type="text" placeholder="Ex : Benjamin" disabled /></label><label>Difficulté<select disabled><option>Petit club outsider</option><option>Club ambitieux</option><option>Nouveau géant</option></select></label></div></section>
+      <section class="screen" id="squad"><div class="section-header"><h3>Effectif</h3><p>Cartes joueurs, stats, moral, fatigue et blessures.</p></div><div class="players-grid" id="players-preview"></div></section>
+      <section class="screen" id="lineup"><div class="section-header"><h3>Composition</h3><p>Choix de formation et titulaires.</p></div><div class="pitch-card"><div class="pitch-line"><span>AG</span><span>BU</span><span>AD</span></div><div class="pitch-line"><span>MC</span><span>MC</span><span>MC</span></div><div class="pitch-line"><span>DG</span><span>DC</span><span>DC</span><span>DD</span></div><div class="pitch-line"><span>GK</span></div></div></section>
+      <section class="screen" id="calendar"><div class="section-header"><h3>Calendrier</h3><p>38 journées générées automatiquement plus tard.</p></div><div class="table-card"><table><thead><tr><th>Journée</th><th>Match</th><th>Statut</th></tr></thead><tbody><tr><td>1</td><td>Ton club vs Arsenal</td><td>À venir</td></tr><tr><td>2</td><td>Liverpool vs Ton club</td><td>À venir</td></tr><tr><td>3</td><td>Ton club vs Manchester City</td><td>À venir</td></tr></tbody></table></div></section>
+      <section class="screen" id="standings"><div class="section-header"><h3>Classement</h3><p>Le classement dynamique arrivera avec la simulation.</p></div><div class="table-card"><table><thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Diff</th><th>Pts</th></tr></thead><tbody id="standings-preview"></tbody></table></div></section>
+      <section class="screen" id="match"><div class="section-header"><h3>Match</h3><p>Simulation instantanée ou résumé animé.</p></div><div class="match-card"><div><p class="eyebrow">Prochain match</p><h3>Ton club vs Arsenal</h3></div><div class="match-actions"><button class="primary-btn" disabled>Jouer rapidement</button><button class="secondary-btn" disabled>Voir le match</button></div></div></section>
+      <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La V0.9 ajoutera les offres, refus et contre-offres.</p></div></section>
+      <section class="screen" id="finances"><div class="section-header"><h3>Finances</h3><p>Budget transfert, salaires, sponsors et primes.</p></div><div class="kpi-grid"><article class="kpi-card"><p>Solde</p><strong>—</strong></article><article class="kpi-card"><p>Budget transfert</p><strong>—</strong></article><article class="kpi-card"><p>Masse salariale</p><strong>—</strong></article><article class="kpi-card"><p>Sponsors</p><strong>—</strong></article></div></section>
+      <section class="screen" id="training"><div class="section-header"><h3>Entraînement</h3><p>Focus par groupe de joueurs.</p></div><div class="panel-grid"><article class="panel"><h3>Gardiens</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Défenseurs</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Milieux</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Attaquants</h3><p>Focus à choisir plus tard.</p></article></div></section>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
