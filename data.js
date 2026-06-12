@@ -1,5 +1,28 @@
-// Données temporaires V0.1.
+// Données temporaires V0.2.
 // La vraie base Premier League 2025/2026 sera ajoutée plus tard.
+
+const PREMIER_LEAGUE_CLUBS = [
+  "Arsenal",
+  "Aston Villa",
+  "Bournemouth",
+  "Brentford",
+  "Brighton & Hove Albion",
+  "Burnley",
+  "Chelsea",
+  "Crystal Palace",
+  "Everton",
+  "Fulham",
+  "Leeds United",
+  "Liverpool",
+  "Manchester City",
+  "Manchester United",
+  "Newcastle United",
+  "Nottingham Forest",
+  "Sunderland",
+  "Tottenham Hotspur",
+  "West Ham United",
+  "Wolverhampton Wanderers"
+];
 
 const DEMO_PLAYERS = [
   {
