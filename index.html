@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Become the next Mourinho</title>
   <link rel="stylesheet" href="style.css?v=050" />
-  <link rel="stylesheet" href="lineup.css?v=052" />
+  <link rel="stylesheet" href="lineup.css?v=053" />
+  <link rel="stylesheet" href="calendar.css?v=060" />
 </head>
 <body>
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -40,12 +41,12 @@
         <button class="secondary-btn" id="back-from-create-btn" type="button">Retour accueil</button>
       </div>
 
-      <div class="section-header">
-        <h3>Mode de départ</h3>
-        <p>Pour l’instant, seul le mode “Créer mon club” est actif. Le choix d’un club réel sera branché plus tard.</p>
-      </div>
-
       <form class="career-form" id="career-form">
+        <div class="section-header">
+          <h3>Mode de départ</h3>
+          <p>Pour l’instant, seul le mode “Créer mon club” est actif. Le choix d’un club réel sera branché plus tard.</p>
+        </div>
+
         <div class="mode-grid">
           <label class="mode-card active">
             <input type="radio" name="careerMode" value="custom" checked />
@@ -55,13 +56,13 @@
           <label class="mode-card disabled-mode">
             <input type="radio" name="careerMode" value="real" disabled />
             <strong>Choisir un club réel</strong>
-            <span>Prévu pour la V1.1.</span>
+            <span>Prévu plus tard.</span>
           </label>
         </div>
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.5 génère un effectif neuf. Plus tard, tu pourras aussi garder l’effectif réel du club remplacé.</p>
+          <p>La V0.6 utilise un effectif neuf généré et un calendrier complet de Premier League.</p>
         </div>
 
         <div class="mode-grid">
@@ -112,19 +113,9 @@
                 <button type="button" class="custom-select-option" data-value="🦁" data-label="🦁 Lion">🦁 Lion</button>
                 <button type="button" class="custom-select-option" data-value="🦅" data-label="🦅 Aigle">🦅 Aigle</button>
                 <button type="button" class="custom-select-option" data-value="🐺" data-label="🐺 Loup">🐺 Loup</button>
-                <button type="button" class="custom-select-option" data-value="🦊" data-label="🦊 Renard">🦊 Renard</button>
-                <button type="button" class="custom-select-option" data-value="🐻" data-label="🐻 Ours">🐻 Ours</button>
-                <button type="button" class="custom-select-option" data-value="🐍" data-label="🐍 Serpent">🐍 Serpent</button>
-                <button type="button" class="custom-select-option" data-value="🦈" data-label="🦈 Requin">🦈 Requin</button>
-                <button type="button" class="custom-select-option" data-value="🦌" data-label="🦌 Cerf">🦌 Cerf</button>
                 <button type="button" class="custom-select-option" data-value="🔥" data-label="🔥 Feu">🔥 Feu</button>
                 <button type="button" class="custom-select-option" data-value="⚡" data-label="⚡ Éclair">⚡ Éclair</button>
-                <button type="button" class="custom-select-option" data-value="🛡️" data-label="🛡️ Bouclier">🛡️ Bouclier</button>
                 <button type="button" class="custom-select-option" data-value="👑" data-label="👑 Couronne">👑 Couronne</button>
-                <button type="button" class="custom-select-option" data-value="🌟" data-label="🌟 Étoile">🌟 Étoile</button>
-                <button type="button" class="custom-select-option" data-value="🏰" data-label="🏰 Château">🏰 Château</button>
-                <button type="button" class="custom-select-option" data-value="💎" data-label="💎 Diamant">💎 Diamant</button>
-                <button type="button" class="custom-select-option" data-value="🏴" data-label="🏴 Drapeau">🏴 Drapeau</button>
               </div>
             </div>
           </div>
@@ -224,7 +215,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.5.2 — Composition</div>
+      <div class="sidebar-footer">V0.6 — Calendrier</div>
     </aside>
 
     <main class="main-content">
@@ -243,7 +234,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.5.2 corrige les rôles de côté dans les formations.</p>
+            <p id="dashboard-description">La V0.6 ajoute un calendrier complet de Premier League.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -257,12 +248,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.5.2</h3>
-            <p>Les formations utilisent maintenant des rôles plus cohérents : un 4-4-2 à plat affiche MG / MC / MC / MD au milieu.</p>
+            <h3>Statut V0.6</h3>
+            <p>La carrière possède maintenant un calendrier complet de 38 journées, avec matchs aller-retour.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.6 : générer un calendrier plus complet pour préparer la simulation de match.</p>
+            <p>V0.7 : préparer l’avant-match, choisir la composition à utiliser et lancer la simulation simple.</p>
           </article>
         </div>
       </section>
@@ -296,17 +287,7 @@
       </section>
 
       <section class="screen" id="calendar">
-        <div class="section-header"><h3>Calendrier</h3><p>38 journées générées automatiquement plus tard.</p></div>
-        <div class="table-card">
-          <table>
-            <thead><tr><th>Journée</th><th>Match</th><th>Statut</th></tr></thead>
-            <tbody>
-              <tr><td>1</td><td id="calendar-demo-match-1">Ton club vs Arsenal</td><td>À venir</td></tr>
-              <tr><td>2</td><td id="calendar-demo-match-2">Liverpool vs Ton club</td><td>À venir</td></tr>
-              <tr><td>3</td><td id="calendar-demo-match-3">Ton club vs Manchester City</td><td>À venir</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.6…</p></div>
       </section>
 
       <section class="screen" id="standings">
@@ -316,7 +297,7 @@
 
       <section class="screen" id="match">
         <div class="section-header"><h3>Match</h3><p>Simulation instantanée ou résumé animé.</p></div>
-        <div class="match-card"><div><p class="eyebrow">Prochain match</p><h3 id="match-preview-title">Ton club vs Arsenal</h3></div><div class="match-actions"><button class="primary-btn" disabled>Jouer rapidement</button><button class="secondary-btn" disabled>Voir le match</button></div></div>
+        <div class="match-card"><div><p class="eyebrow">Prochain match</p><h3 id="match-preview-title">—</h3></div><div class="match-actions"><button class="primary-btn" disabled>Jouer rapidement</button><button class="secondary-btn" disabled>Voir le match</button></div></div>
       </section>
 
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La V0.9 ajoutera les offres, refus et contre-offres.</p></div></section>
@@ -325,8 +306,9 @@
     </main>
   </div>
 
-  <script src="data.js?v=050"></script>
+  <script src="data.js?v=060"></script>
   <script src="app.js?v=044"></script>
-  <script src="lineup-v050.js?v=052"></script>
+  <script src="lineup-v050.js?v=053"></script>
+  <script src="calendar-v060.js?v=060"></script>
 </body>
 </html>
