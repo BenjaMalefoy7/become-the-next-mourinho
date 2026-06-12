@@ -1,0 +1,231 @@
+.formation-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.formation-btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.formation-btn:hover,
+.formation-btn.active {
+  color: var(--text);
+  background: var(--green-soft);
+  border-color: rgba(46, 233, 135, 0.34);
+}
+
+.lineup-warning {
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(46, 233, 135, 0.22);
+  border-radius: var(--radius-md);
+  background: rgba(46, 233, 135, 0.10);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.lineup-warning-danger {
+  border-color: rgba(246, 201, 109, 0.28);
+  background: rgba(246, 201, 109, 0.09);
+}
+
+.lineup-summary {
+  margin-bottom: 18px;
+}
+
+.lineup-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(340px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.lineup-slots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.lineup-slot-card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.lineup-slot-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.lineup-slot-header strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.lineup-slot-header span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-top: 3px;
+}
+
+.lineup-status-pill {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.lineup-status-good .lineup-status-pill {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.lineup-status-warning .lineup-status-pill {
+  color: var(--gold);
+  background: rgba(246, 201, 109, 0.10);
+}
+
+.lineup-status-danger .lineup-status-pill {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.lineup-player-select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #1a3329;
+  color: var(--text);
+  font-weight: 800;
+  outline: none;
+}
+
+.lineup-player-select:focus {
+  border-color: rgba(46, 233, 135, 0.70);
+  box-shadow: 0 0 0 4px rgba(46, 233, 135, 0.12);
+}
+
+.lineup-slot-card p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.lineup-pitch {
+  min-height: 640px;
+  gap: 16px;
+}
+
+.lineup-pitch-line {
+  gap: clamp(10px, 3vw, 44px);
+}
+
+.lineup-pitch-player {
+  width: 86px !important;
+  height: 72px !important;
+  border-radius: 22px !important;
+  padding: 8px;
+  display: grid !important;
+  gap: 2px;
+  place-items: center;
+  font-size: 0.74rem;
+  line-height: 1.05;
+  text-align: center;
+  color: #07110d !important;
+}
+
+.lineup-pitch-player small {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.68;
+  font-weight: 950;
+}
+
+.lineup-pitch-player.lineup-status-warning {
+  background: rgba(246, 201, 109, 0.92) !important;
+}
+
+.lineup-pitch-player.lineup-status-danger {
+  background: rgba(255, 102, 120, 0.92) !important;
+}
+
+.lineup-bench {
+  grid-column: 2;
+}
+
+#lineup-bench {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.bench-player {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--line);
+}
+
+.bench-player strong {
+  font-size: 0.95rem;
+}
+
+.bench-player span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-align: right;
+}
+
+@media (max-width: 1180px) {
+  .lineup-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lineup-bench {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .formation-buttons {
+    justify-content: flex-start;
+  }
+
+  .lineup-slots {
+    grid-template-columns: 1fr;
+  }
+
+  .lineup-pitch-player {
+    width: 74px !important;
+  }
+
+  .bench-player {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .bench-player span {
+    text-align: left;
+  }
+}
