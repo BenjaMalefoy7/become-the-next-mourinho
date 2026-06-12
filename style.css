@@ -31,7 +31,6 @@ body {
 
 button, input, select { font: inherit; }
 button { cursor: pointer; }
-
 .app-hidden { display: none !important; }
 
 .welcome-screen {
@@ -72,6 +71,11 @@ button { cursor: pointer; }
   flex-direction: column;
   justify-content: space-between;
   gap: 34px;
+}
+
+.setup-card {
+  width: min(1180px, 100%);
+  min-height: auto;
 }
 
 .welcome-brand {
@@ -357,10 +361,7 @@ button { cursor: pointer; }
 }
 
 .info-banner strong { color: var(--gold); }
-
-.career-form {
-  padding: 22px;
-}
+.career-form { padding: 22px; }
 
 .mode-grid {
   display: grid;
@@ -403,14 +404,37 @@ button { cursor: pointer; }
 .form-preview input, .form-preview select {
   width: 100%;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
+  background-color: #1a3329;
   color: var(--text);
   border-radius: 14px;
   padding: 14px;
+  min-height: 56px;
+  outline: none;
+}
+
+.form-preview select {
+  appearance: auto;
+  color-scheme: dark;
+  font-weight: 800;
+}
+
+.form-preview select option {
+  background-color: #10241d;
+  color: #eef8f2;
+  font-weight: 700;
+}
+
+.form-preview select:focus, .form-preview input:focus {
+  border-color: rgba(46, 233, 135, 0.70);
+  box-shadow: 0 0 0 4px rgba(46, 233, 135, 0.12);
+}
+
+.form-preview input::placeholder {
+  color: rgba(238, 248, 242, 0.42);
 }
 
 .form-preview input[type="color"] {
-  min-height: 48px;
+  min-height: 56px;
   padding: 8px;
 }
 
