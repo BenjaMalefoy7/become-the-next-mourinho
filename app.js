@@ -122,9 +122,7 @@ function createLeagueTeams(customClub, replacedClubId) {
       });
     }
 
-    return Object.assign({}, club, {
-      isCustom: false
-    });
+    return Object.assign({}, club, { isCustom: false });
   });
 }
 
@@ -132,7 +130,6 @@ function getFirstOpponentName(teams, clubId) {
   const opponent = teams.find(function(team) {
     return team.id !== clubId;
   });
-
   return opponent ? opponent.name : "Adversaire à définir";
 }
 
@@ -158,7 +155,6 @@ function setActiveCareerId(id) {
     localStorage.removeItem(STORAGE_KEYS.activeCareerId);
     return;
   }
-
   localStorage.setItem(STORAGE_KEYS.activeCareerId, id);
 }
 
@@ -230,10 +226,7 @@ function updateWelcome() {
   const status = document.getElementById("welcome-status");
   const continueButton = document.getElementById("welcome-continue-btn");
 
-  if (continueButton) {
-    continueButton.disabled = careers.length === 0;
-  }
-
+  if (continueButton) continueButton.disabled = careers.length === 0;
   if (!status) return;
 
   if (!career) {
@@ -253,7 +246,8 @@ function showScreen(screenId) {
     button.classList.toggle("active", button.dataset.screen === screenId);
   });
 
-  document.getElementById("page-title").textContent = screenTitles[screenId] || "Dashboard";
+  const title = document.getElementById("page-title");
+  if (title) title.textContent = screenTitles[screenId] || "Dashboard";
 }
 
 function updateDashboard() {
@@ -429,7 +423,7 @@ function createCareerFromForm(event) {
   const managerName = document.getElementById("manager-name").value.trim();
   const clubName = document.getElementById("club-name").value.trim();
   const shortName = document.getElementById("club-short-name").value.trim().toUpperCase();
-  const badge = document.getElementById("club-badge").value.trim() || "⚽";
+  const badge = document.getElementById("club-badge").value || "⚽";
   const replacedClubId = document.getElementById("replaced-club").value;
   const replacedClub = getClubById(replacedClubId);
   const difficulty = document.getElementById("difficulty").value;
@@ -458,7 +452,7 @@ function createCareerFromForm(event) {
 
   const career = {
     id: createId("career"),
-    version: "0.3.1",
+    version: "0.3.2",
     dataVersion: "premier_league_2025_2026_v0_3",
     careerName: careerName,
     mode: "custom_club",
@@ -492,6 +486,7 @@ function createCareerFromForm(event) {
   setActiveCareerId(career.id);
 
   document.getElementById("career-form").reset();
+  document.getElementById("club-badge").value = "🐉";
   document.getElementById("primary-color").value = "#2ee987";
   document.getElementById("secondary-color").value = "#ffffff";
 
