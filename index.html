@@ -58,6 +58,24 @@
           </label>
         </div>
 
+        <div class="section-header">
+          <h3>Effectif de départ</h3>
+          <p>La V0.4 génère un effectif neuf. Plus tard, tu pourras aussi garder l’effectif réel du club remplacé.</p>
+        </div>
+
+        <div class="mode-grid">
+          <label class="mode-card active">
+            <input type="radio" name="squadSource" value="generated" checked />
+            <strong>Effectif neuf généré</strong>
+            <span>Le jeu crée 24 joueurs fictifs adaptés à la difficulté choisie.</span>
+          </label>
+          <label class="mode-card disabled-mode">
+            <input type="radio" name="squadSource" value="replaced_club" disabled />
+            <strong>Garder l’effectif du club remplacé</strong>
+            <span>Disponible quand les vrais effectifs Premier League seront intégrés.</span>
+          </label>
+        </div>
+
         <div class="form-preview form-grid">
           <label class="form-field">
             <span class="field-label">Nom de la carrière</span>
@@ -205,7 +223,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.3.3 — Menus custom</div>
+      <div class="sidebar-footer">V0.4 — Effectif de départ</div>
     </aside>
 
     <main class="main-content">
@@ -224,7 +242,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.3.3 remplace les menus natifs par des menus custom lisibles.</p>
+            <p id="dashboard-description">La V0.4 génère un effectif de départ selon la difficulté choisie.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -238,18 +256,18 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.3.3</h3>
-            <p>Les choix badge, club remplacé et difficulté utilisent maintenant des menus custom contrôlés par le jeu.</p>
+            <h3>Statut V0.4</h3>
+            <p>Chaque nouvelle carrière peut maintenant générer 24 joueurs fictifs selon la difficulté choisie.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.4 : générer l’effectif de départ du club créé selon la difficulté choisie.</p>
+            <p>V0.5 : commencer à exploiter l’effectif avec une première composition d’équipe.</p>
           </article>
         </div>
       </section>
 
       <section class="screen" id="squad">
-        <div class="section-header"><h3>Effectif</h3><p>Cartes joueurs, stats, moral, fatigue et blessures.</p></div>
+        <div class="section-header"><h3>Effectif</h3><p>Liste des joueurs générés pour ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div>
         <div class="players-grid" id="players-preview"></div>
       </section>
 
@@ -288,7 +306,7 @@
       </section>
 
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La V0.9 ajoutera les offres, refus et contre-offres.</p></div></section>
-      <section class="screen" id="finances"><div class="section-header"><h3>Finances</h3><p>Budget transfert, salaires, sponsors et primes.</p></div><div class="kpi-grid"><article class="kpi-card"><p>Solde</p><strong id="finance-balance">—</strong></article><article class="kpi-card"><p>Budget transfert</p><strong id="finance-transfer-budget">—</strong></article><article class="kpi-card"><p>Masse salariale</p><strong>—</strong></article><article class="kpi-card"><p>Sponsors</p><strong>—</strong></article></div></section>
+      <section class="screen" id="finances"><div class="section-header"><h3>Finances</h3><p>Budget transfert, salaires, sponsors et primes.</p></div><div class="kpi-grid"><article class="kpi-card"><p>Solde</p><strong id="finance-balance">—</strong></article><article class="kpi-card"><p>Budget transfert</p><strong id="finance-transfer-budget">—</strong></article><article class="kpi-card"><p>Masse salariale</p><strong id="finance-wage-bill">—</strong></article><article class="kpi-card"><p>Sponsors</p><strong>—</strong></article></div></section>
       <section class="screen" id="training"><div class="section-header"><h3>Entraînement</h3><p>Focus par groupe de joueurs.</p></div><div class="panel-grid"><article class="panel"><h3>Gardiens</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Défenseurs</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Milieux</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Attaquants</h3><p>Focus à choisir plus tard.</p></article></div></section>
     </main>
   </div>
