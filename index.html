@@ -7,7 +7,33 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-shell">
+  <section class="welcome-screen" id="welcome-screen">
+    <div class="welcome-card">
+      <div class="welcome-brand">
+        <div class="brand-badge welcome-badge">BTM</div>
+        <p class="eyebrow">Private football manager game</p>
+      </div>
+
+      <div class="welcome-copy">
+        <h1>Become the next Mourinho</h1>
+        <p>
+          Crée ton club, prends les décisions du manager et construis ta légende en Premier League.
+        </p>
+      </div>
+
+      <div class="welcome-actions">
+        <button class="primary-btn welcome-main-btn" id="welcome-new-career-btn">Nouvelle partie</button>
+        <button class="secondary-btn welcome-main-btn" id="welcome-continue-btn">Continuer</button>
+        <button class="secondary-btn welcome-main-btn" id="welcome-saves-btn">Mes sauvegardes</button>
+      </div>
+
+      <div class="welcome-status" id="welcome-status">
+        Aucune carrière chargée pour le moment.
+      </div>
+    </div>
+  </section>
+
+  <div class="app-shell app-hidden" id="app-shell">
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-badge">BTM</div>
@@ -31,7 +57,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.2 — Carrières & sauvegardes</div>
+      <div class="sidebar-footer">V0.2.1 — Accueil & carrières</div>
     </aside>
 
     <main class="main-content">
@@ -41,6 +67,7 @@
           <h2 id="page-title">Dashboard</h2>
         </div>
         <div class="topbar-actions">
+          <button class="secondary-btn" id="home-btn">Accueil</button>
           <button class="secondary-btn" id="go-saves-btn">Mes sauvegardes</button>
           <button class="primary-btn" id="new-career-btn">Nouvelle carrière</button>
         </div>
@@ -52,7 +79,7 @@
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
             <p id="dashboard-description">
-              Crée une carrière pour commencer. Cette V0.2 ajoute les sauvegardes multiples en localStorage.
+              Crée une carrière pour commencer. Cette V0.2.1 ajoute une vraie page d’accueil avant l’interface manager.
             </p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
@@ -67,8 +94,8 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.2</h3>
-            <p>Tu peux maintenant créer plusieurs carrières, les charger et les supprimer.</p>
+            <h3>Statut V0.2.1</h3>
+            <p>Le jeu démarre maintenant sur une vraie page d’accueil avec Nouvelle partie, Continuer et Sauvegardes.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
@@ -96,7 +123,7 @@
       <section class="screen" id="club">
         <div class="section-header">
           <h3>Nouvelle carrière</h3>
-          <p>Pour la V0.2, le mode pleinement actif est “Créer mon club”. Le mode club réel est préparé mais sera branché plus tard.</p>
+          <p>Pour la V0.2.1, le mode pleinement actif est “Créer mon club”. Le mode club réel est préparé mais sera branché plus tard.</p>
         </div>
 
         <form class="career-form" id="career-form">
