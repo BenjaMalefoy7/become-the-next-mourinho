@@ -12,6 +12,20 @@ function getClubNameById(career, clubId) {
   return club ? club.name : "Club inconnu";
 }
 
+function getUserMatchVenue(match, clubId) {
+  if (!match || !clubId) return "—";
+  if (match.homeClubId === clubId) return "Domicile";
+  if (match.awayClubId === clubId) return "Extérieur";
+  return "—";
+}
+
+function getUserMatchVenueClass(match, clubId) {
+  if (!match || !clubId) return "neutral";
+  if (match.homeClubId === clubId) return "home";
+  if (match.awayClubId === clubId) return "away";
+  return "neutral";
+}
+
 function createFixtureId(matchday, index, homeId, awayId) {
   return "md" + matchday + "_" + index + "_" + homeId + "_" + awayId;
 }
@@ -105,6 +119,19 @@ function getMatchLabel(match) {
   return match.homeClubName + " vs " + match.awayClubName;
 }
 
+function getUserMatchLabel(match, clubId) {
+  if (!match) return "—";
+  const venue = getUserMatchVenue(match, clubId);
+  return venue !== "—" ? venue + " · " + getMatchLabel(match) : getMatchLabel(match);
+}
+
+function renderVenuePill(match, clubId) {
+  const venue = getUserMatchVenue(match, clubId);
+  const className = getUserMatchVenueClass(match, clubId);
+  if (venue === "—") return "";
+  return `<span class="calendar-venue-pill ${className}">${venue}</span>`;
+}
+
 function persistCalendarCareer(career) {
   if (!career || typeof loadCareers !== "function" || typeof saveCareers !== "function") return;
   const careers = loadCareers();
@@ -142,22 +169,23 @@ function ensureCareerCalendar(career) {
 
 function updateCalendarDashboard(career) {
   if (!career) return;
+  const clubId = getCareerClubId(career);
   const nextMatch = getNextCareerMatch(career);
-  const nextLabel = getMatchLabel(nextMatch);
+  const nextLabel = getUserMatchLabel(nextMatch, clubId);
   if (typeof setText === "function") {
     setText("kpi-next-match", nextLabel);
-    setText("match-preview-title", nextLabel);
-    setText("dashboard-description", "Manager : " + safeText(career.managerName) + " · " + safeText(career.league?.name, "Premier League") + " · Journée " + safeText(nextMatch?.matchday, career.matchday || 1) + " · Calendrier 38 journées généré");
+    setText("match-preview-title", getMatchLabel(nextMatch));
+    setText("dashboard-description", "Manager : " + safeText(career.managerName) + " · " + safeText(career.league?.name, "Premier League") + " · Journée " + safeText(nextMatch?.matchday, career.matchday || 1) + " · " + safeText(getUserMatchVenue(nextMatch, clubId), "Match à venir"));
   }
 
   const statusPanels = document.querySelectorAll("#dashboard .panel h3");
-  if (statusPanels[0]) statusPanels[0].textContent = "Statut V0.6";
+  if (statusPanels[0]) statusPanels[0].textContent = "Statut V0.7.1";
   const firstPanelText = document.querySelector("#dashboard .panel p");
-  if (firstPanelText) firstPanelText.textContent = "La carrière possède maintenant un calendrier complet de 38 journées, avec matchs aller-retour.";
+  if (firstPanelText) firstPanelText.textContent = "La carrière possède un calendrier complet de 38 journées, avec indication domicile/extérieur.";
 
   if (statusPanels[1]) statusPanels[1].textContent = "Prochaine évolution";
   const panelTexts = document.querySelectorAll("#dashboard .panel p");
-  if (panelTexts[1]) panelTexts[1].textContent = "V0.7 : préparer l’avant-match, choisir la composition à utiliser et lancer la simulation simple.";
+  if (panelTexts[1]) panelTexts[1].textContent = "V0.8 : lancer la première simulation simple et enregistrer le résultat du match.";
 }
 
 function getMatchdayMatches(career, matchday) {
@@ -191,7 +219,7 @@ function renderCalendarV060(career) {
     <div class="section-header section-header-row calendar-topbar">
       <div>
         <h3>Calendrier</h3>
-        <p>Premier League ${escapeHtml(career.season || "2025/2026")} · 38 journées générées automatiquement · matchs aller-retour.</p>
+        <p>Premier League ${escapeHtml(career.season || "2025/2026")} · 38 journées générées automatiquement · domicile/extérieur visible pour ton club.</p>
       </div>
       <div class="calendar-actions">
         <button class="secondary-btn" id="calendar-prev-day" type="button">← Journée précédente</button>
@@ -202,15 +230,19 @@ function renderCalendarV060(career) {
 
     <div class="calendar-kpis kpi-grid">
       <article class="kpi-card"><p>Journée affichée</p><strong>${selectedCalendarMatchday}/38</strong></article>
-      <article class="kpi-card"><p>Ton match</p><strong>${escapeHtml(userMatch ? getMatchLabel(userMatch) : "Repos")}</strong></article>
-      <article class="kpi-card"><p>Prochain match</p><strong>${escapeHtml(getMatchLabel(nextMatch))}</strong></article>
+      <article class="kpi-card"><p>Lieu de ton match</p><strong>${escapeHtml(userMatch ? getUserMatchVenue(userMatch, clubId) : "Repos")}</strong></article>
+      <article class="kpi-card"><p>Prochain match</p><strong>${escapeHtml(getUserMatchLabel(nextMatch, clubId))}</strong></article>
       <article class="kpi-card"><p>Matchs journée</p><strong>${matches.length}</strong></article>
     </div>
 
     <div class="calendar-layout">
       <article class="panel calendar-main-card">
         <div class="calendar-day-header">
-          <div><p class="eyebrow">Journée ${selectedCalendarMatchday}</p><h3>${escapeHtml(userMatch ? getMatchLabel(userMatch) : "Aucun match pour ton club")}</h3></div>
+          <div>
+            <p class="eyebrow">Journée ${selectedCalendarMatchday}</p>
+            <h3>${escapeHtml(userMatch ? getMatchLabel(userMatch) : "Aucun match pour ton club")}</h3>
+            <div class="calendar-user-venue">${userMatch ? renderVenuePill(userMatch, clubId) : `<span class="calendar-venue-pill neutral">Repos</span>`}</div>
+          </div>
           <span class="status-pill">À venir</span>
         </div>
         <div class="calendar-match-list">
@@ -221,7 +253,10 @@ function renderCalendarV060(career) {
                 <span class="calendar-club home">${escapeHtml(match.homeClubName)}</span>
                 <span class="calendar-versus">vs</span>
                 <span class="calendar-club away">${escapeHtml(match.awayClubName)}</span>
-                <span class="calendar-status">${match.played ? "Joué" : "À venir"}</span>
+                <span class="calendar-status-stack">
+                  ${isUserMatch ? renderVenuePill(match, clubId) : ""}
+                  <span class="calendar-status">${match.played ? "Joué" : "À venir"}</span>
+                </span>
               </div>
             `;
           }).join("")}
@@ -234,7 +269,7 @@ function renderCalendarV060(career) {
           ${fixtures.filter((match) => (match.homeClubId === clubId || match.awayClubId === clubId) && !match.played).slice(0, 5).map((match) => `
             <button type="button" class="calendar-next-item" data-calendar-day="${match.matchday}">
               <span>J${match.matchday}</span>
-              <strong>${escapeHtml(getMatchLabel(match))}</strong>
+              <strong><em class="calendar-next-venue ${getUserMatchVenueClass(match, clubId)}">${escapeHtml(getUserMatchVenue(match, clubId))}</em>${escapeHtml(getMatchLabel(match))}</strong>
             </button>
           `).join("")}
         </div>
