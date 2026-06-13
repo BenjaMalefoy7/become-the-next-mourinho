@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="lineup.css?v=053" />
   <link rel="stylesheet" href="calendar.css?v=071" />
   <link rel="stylesheet" href="prematch.css?v=070" />
+  <link rel="stylesheet" href="match.css?v=080" />
 </head>
 <body>
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -63,7 +64,7 @@
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.7 utilise un effectif neuf généré, une composition sauvegardée et un calendrier complet.</p>
+          <p>La V0.8 utilise un effectif généré, un calendrier complet et une première simulation simple.</p>
         </div>
 
         <div class="mode-grid">
@@ -216,7 +217,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.7 — Pré-match</div>
+      <div class="sidebar-footer">V0.8 — Simulation</div>
     </aside>
 
     <main class="main-content">
@@ -235,7 +236,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.7 ajoute un vrai écran pré-match relié au calendrier.</p>
+            <p id="dashboard-description">La V0.8 ajoute une première simulation simple de match.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -249,12 +250,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.7</h3>
-            <p>La carrière possède un calendrier complet et un écran de pré-match relié à ta composition.</p>
+            <h3>Statut V0.8</h3>
+            <p>Tu peux maintenant simuler le prochain match de ton club et sauvegarder le résultat.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.8 : lancer la première simulation simple et enregistrer le résultat du match.</p>
+            <p>V0.9 : calculer le classement complet après chaque journée.</p>
           </article>
         </div>
       </section>
@@ -288,7 +289,7 @@
       </section>
 
       <section class="screen" id="calendar">
-        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.7.1…</p></div>
+        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.8…</p></div>
       </section>
 
       <section class="screen" id="standings">
@@ -297,7 +298,7 @@
       </section>
 
       <section class="screen" id="match">
-        <div class="section-header"><h3>Match</h3><p>Chargement du pré-match V0.7…</p></div>
+        <div class="section-header"><h3>Match</h3><p>Chargement de la simulation V0.8…</p></div>
       </section>
 
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La V0.9 ajoutera les offres, refus et contre-offres.</p></div></section>
@@ -311,5 +312,6 @@
   <script src="lineup-v050.js?v=053"></script>
   <script src="calendar-v060.js?v=071"></script>
   <script src="prematch-v070.js?v=070"></script>
+  <script src="match-v080.js?v=080"></script>
 </body>
 </html>
