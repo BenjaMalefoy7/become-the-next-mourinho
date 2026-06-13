@@ -1,4 +1,4 @@
-const MATCHDAY_VERSION = "0.9.1";
+const MATCHDAY_VERSION = "0.9.2";
 
 function mdEscape(value) {
   if (typeof escapeHtml === "function") return escapeHtml(value);
@@ -165,6 +165,24 @@ function mdStandingsZone(rank, totalTeams = 20) {
   return { key: "neutral", label: "", shortLabel: "—", className: "standings-zone-neutral" };
 }
 
+function mdStandingsLegendHtml() {
+  return `
+    <div class="standings-legend-card panel">
+      <div>
+        <p class="eyebrow">Légende des zones</p>
+        <h3>Qualifications et relégation</h3>
+        <p>Règles simplifiées pour cette première version Premier League. Les coupes nationales pourront modifier ces places plus tard.</p>
+      </div>
+      <div class="standings-zone-legend">
+        <div class="standings-legend-item legend-ucl"><strong>C1</strong><span>1er à 4e</span><small>Ligue des Champions</small></div>
+        <div class="standings-legend-item legend-uel"><strong>C3</strong><span>5e</span><small>Europa League</small></div>
+        <div class="standings-legend-item legend-uecl"><strong>C4</strong><span>6e</span><small>Conference League</small></div>
+        <div class="standings-legend-item legend-relegation"><strong>REL</strong><span>18e à 20e</span><small>Relégation</small></div>
+      </div>
+    </div>
+  `;
+}
+
 function saveSimulatedMatchdayV090() {
   if (typeof loadCareers !== "function" || typeof saveCareers !== "function") return { ok: false, message: "Sauvegarde indisponible." };
   const active = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
@@ -243,17 +261,12 @@ function renderStandingsV090(career) {
     <div class="section-header section-header-row standings-header">
       <div>
         <h3>Classement</h3>
-        <p>Classement calculé automatiquement à partir des matchs joués. Les zones européennes et la relégation sont colorées.</p>
+        <p>Classement calculé automatiquement à partir des matchs joués.</p>
       </div>
       <div class="standings-rank-pill">${userRow ? `${userRow.rank}e / ${standings.length}` : "—"}</div>
     </div>
 
-    <div class="standings-zone-legend">
-      <span class="legend-ucl">1-4 · Ligue des Champions</span>
-      <span class="legend-uel">5 · Europa League</span>
-      <span class="legend-uecl">6 · Conference League</span>
-      <span class="legend-relegation">18-20 · Relégation</span>
-    </div>
+    ${mdStandingsLegendHtml()}
 
     <div class="kpi-grid standings-kpis">
       <article class="kpi-card"><p>Journées jouées</p><strong>${playedMatchdays}/38</strong></article>
@@ -273,7 +286,7 @@ function renderStandingsV090(career) {
               <tr class="${classes}">
                 <td>${row.rank}</td>
                 <td><strong>${mdEscape(row.name)}</strong></td>
-                <td><span class="standings-zone-pill ${zone.className}">${mdEscape(zone.shortLabel)}</span></td>
+                <td><span class="standings-zone-pill ${zone.className}" title="${mdEscape(zone.label || "Milieu de tableau")}">${mdEscape(zone.shortLabel)}</span></td>
                 <td>${row.played}</td>
                 <td>${row.wins}</td>
                 <td>${row.draws}</td>
@@ -299,16 +312,16 @@ function decorateV090SimulationButton() {
 
 function updateV090Texts(career) {
   const footer = document.querySelector(".sidebar-footer");
-  if (footer) footer.textContent = "V0.9.1 — Zones classement";
+  if (footer) footer.textContent = "V0.9.2 — Légende classement";
   const rank = career ? mdGetUserRank(career) : null;
   if (typeof setText === "function") {
     const rankText = rank ? ` · rang ${rank.rank}/${computeDynamicStandings(career).length}` : "";
-    setText("dashboard-description", "V0.9.1 : classement dynamique avec zones européennes et relégation" + rankText + ".");
+    setText("dashboard-description", "V0.9.2 : classement dynamique avec légende des zones" + rankText + ".");
   }
   const panels = document.querySelectorAll("#dashboard .panel h3");
   const texts = document.querySelectorAll("#dashboard .panel p");
-  if (panels[0]) panels[0].textContent = "Statut V0.9.1";
-  if (texts[0]) texts[0].textContent = "Le classement indique maintenant les zones européennes, la relégation et ton club reste surligné.";
+  if (panels[0]) panels[0].textContent = "Statut V0.9.2";
+  if (texts[0]) texts[0].textContent = "Le classement affiche une légende claire pour les places européennes et la relégation.";
   if (panels[1]) panels[1].textContent = "Prochaine évolution";
   if (texts[1]) texts[1].textContent = "V1.0 : enrichir le moteur avec stats de match, tirs, possession et résumé plus vivant.";
 }
