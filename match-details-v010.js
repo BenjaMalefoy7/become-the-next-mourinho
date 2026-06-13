@@ -228,3 +228,132 @@ function detailSummary(career, match, result, stats) {
     renderMatchDetails(career);
   });
 })();
+
+const NOTEBOOK_THEME_VERSION = "0.11";
+
+(function initNotebookThemeV011() {
+  function ntNormalizeHex(value, fallback) {
+    const raw = String(value || "").trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+    if (/^#[0-9a-fA-F]{3}$/.test(raw)) return "#" + raw.slice(1).split("").map((char) => char + char).join("");
+    return fallback;
+  }
+
+  function ntHexToRgb(hex) {
+    const safe = ntNormalizeHex(hex, "#173650").slice(1);
+    return {
+      r: parseInt(safe.slice(0, 2), 16),
+      g: parseInt(safe.slice(2, 4), 16),
+      b: parseInt(safe.slice(4, 6), 16)
+    };
+  }
+
+  function ntReadableSecondary(primary, secondary) {
+    const safeSecondary = ntNormalizeHex(secondary, "#f8f3e8");
+    if (safeSecondary.toLowerCase() !== primary.toLowerCase()) return safeSecondary;
+    const rgb = ntHexToRgb(primary);
+    const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+    return luminance > 0.55 ? "#111820" : "#f8f3e8";
+  }
+
+  function ntApplyClubColors(career) {
+    const root = document.documentElement;
+    const club = career?.club || {};
+    const primary = ntNormalizeHex(club.primaryColor, "#173650");
+    const secondary = ntReadableSecondary(primary, club.secondaryColor || "#f8f3e8");
+    const rgb = ntHexToRgb(primary);
+
+    root.style.setProperty("--club-primary", primary);
+    root.style.setProperty("--club-secondary", secondary);
+    root.style.setProperty("--club-primary-rgb", `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+
+    const brandBadge = document.querySelector(".brand-badge");
+    if (brandBadge && club.shortName) brandBadge.textContent = String(club.shortName).slice(0, 3).toUpperCase();
+  }
+
+  function ntCurrentScreenId() {
+    return document.querySelector(".screen.active")?.id || "dashboard";
+  }
+
+  function ntTabForScreen(screenId) {
+    if (["squad"].includes(screenId)) return "squad";
+    if (["standings", "calendar", "finances", "training"].includes(screenId)) return "analysis";
+    if (["transfers"].includes(screenId)) return "scout";
+    if (["lineup", "match"].includes(screenId)) return "tactical";
+    return "tactical";
+  }
+
+  function ntEnsureTabs() {
+    const shell = document.getElementById("app-shell");
+    if (!shell || shell.querySelector(".notebook-tabs")) return;
+
+    const tabs = document.createElement("div");
+    tabs.className = "notebook-tabs";
+    tabs.innerHTML = [
+      ["tactical", "Tactical"],
+      ["squad", "Squad"],
+      ["analysis", "Analysis"],
+      ["scout", "Scout reports"],
+      ["archive", "Archive"]
+    ].map(([key, label]) => `<span class="notebook-tab" data-notebook-tab="${key}">${label}</span>`).join("");
+
+    shell.appendChild(tabs);
+  }
+
+  function ntUpdateTabs() {
+    const active = ntTabForScreen(ntCurrentScreenId());
+    document.querySelectorAll("[data-notebook-tab]").forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.notebookTab === active);
+    });
+  }
+
+  function ntEnsureSticky(career) {
+    const shell = document.getElementById("app-shell");
+    if (!shell) return;
+    let sticky = shell.querySelector(".notebook-sticky");
+    if (!sticky) {
+      sticky = document.createElement("div");
+      sticky.className = "notebook-sticky";
+      shell.appendChild(sticky);
+    }
+
+    const clubName = career?.club?.shortName || career?.club?.name || "BTM";
+    sticky.innerHTML = `Plan ${detailEscape(clubName)}<br>- rester compact<br>- gagner les duels<br>- garder le contrôle`;
+  }
+
+  function ntUpdateCopy(career) {
+    const footer = document.querySelector(".sidebar-footer");
+    if (footer) footer.textContent = "V0.11 — Coach Notebook";
+
+    if (typeof setText === "function") {
+      setText("dashboard-description", "V0.11 : nouvelle direction artistique Coach Notebook, classeur dynamique et ambiance war room tactique.");
+    }
+
+    const panels = document.querySelectorAll("#dashboard .panel h3");
+    const texts = document.querySelectorAll("#dashboard .panel p");
+    if (panels[0]) panels[0].textContent = "Base DA V0.11";
+    if (texts[0]) texts[0].textContent = "Le jeu adopte une base visuelle carnet de coach : papier, onglets, notes, classeur et couleurs du club.";
+    if (panels[1]) panels[1].textContent = "Prochaine étape";
+    if (texts[1]) texts[1].textContent = "Refondre l’écran Effectif avec liste compacte et dossier joueur, sans photos lourdes.";
+  }
+
+  function ntApplyTheme() {
+    const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
+    ntApplyClubColors(career);
+    ntEnsureTabs();
+    ntUpdateTabs();
+    ntEnsureSticky(career);
+    ntUpdateCopy(career);
+  }
+
+  const previousRefreshUI = typeof refreshUI === "function" ? refreshUI : null;
+  refreshUI = function refreshUINotebookV011() {
+    if (previousRefreshUI) previousRefreshUI();
+    ntApplyTheme();
+  };
+
+  document.addEventListener("DOMContentLoaded", ntApplyTheme);
+  document.addEventListener("click", (event) => {
+    if (event.target.closest(".nav-btn")) window.setTimeout(ntApplyTheme, 0);
+  });
+})();
