@@ -357,3 +357,22 @@ const NOTEBOOK_THEME_VERSION = "0.11";
     if (event.target.closest(".nav-btn")) window.setTimeout(ntApplyTheme, 0);
   });
 })();
+
+(function loadSquadDossierV012Assets() {
+  if (!document.querySelector('link[href*="squad-v012.css"]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "squad-v012.css?v=012";
+    document.head.appendChild(link);
+  }
+
+  if (!document.querySelector('script[src*="squad-v012.js"]')) {
+    const script = document.createElement("script");
+    script.src = "squad-v012.js?v=012";
+    script.async = false;
+    script.onload = () => {
+      if (typeof window.renderPlayersPreview === "function") window.renderPlayersPreview();
+    };
+    document.body.appendChild(script);
+  }
+})();
