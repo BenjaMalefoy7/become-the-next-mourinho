@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="calendar.css?v=071" />
   <link rel="stylesheet" href="prematch.css?v=070" />
   <link rel="stylesheet" href="match.css?v=080" />
+  <link rel="stylesheet" href="standings.css?v=090" />
 </head>
 <body>
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -64,7 +65,7 @@
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.8 utilise un effectif généré, un calendrier complet et une première simulation simple.</p>
+          <p>La V0.9 utilise un effectif neuf généré, une composition sauvegardée, un calendrier complet et un classement dynamique.</p>
         </div>
 
         <div class="mode-grid">
@@ -217,7 +218,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.8 — Simulation</div>
+      <div class="sidebar-footer">V0.9 — Classement</div>
     </aside>
 
     <main class="main-content">
@@ -236,7 +237,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.8 ajoute une première simulation simple de match.</p>
+            <p id="dashboard-description">La V0.9 ajoute un classement dynamique après chaque journée simulée.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -250,12 +251,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.8</h3>
-            <p>Tu peux maintenant simuler le prochain match de ton club et sauvegarder le résultat.</p>
+            <h3>Statut V0.9</h3>
+            <p>Quand tu simules ton match, les autres matchs de la journée sont aussi joués et le classement se met à jour.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.9 : calculer le classement complet après chaque journée.</p>
+            <p>V1.0 : enrichir le moteur avec stats de match, tirs, possession et résumé plus vivant.</p>
           </article>
         </div>
       </section>
@@ -289,19 +290,18 @@
       </section>
 
       <section class="screen" id="calendar">
-        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.8…</p></div>
+        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.6…</p></div>
       </section>
 
       <section class="screen" id="standings">
-        <div class="section-header"><h3>Classement</h3><p>Le classement initial affiche la structure de la ligue créée dans la carrière active.</p></div>
-        <div class="table-card"><table><thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>N</th><th>D</th><th>Diff</th><th>Pts</th></tr></thead><tbody id="standings-preview"></tbody></table></div>
+        <div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique V0.9…</p></div>
       </section>
 
       <section class="screen" id="match">
         <div class="section-header"><h3>Match</h3><p>Chargement de la simulation V0.8…</p></div>
       </section>
 
-      <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La V0.9 ajoutera les offres, refus et contre-offres.</p></div></section>
+      <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La prochaine grosse étape pourra ajouter les offres, refus et contre-offres.</p></div></section>
       <section class="screen" id="finances"><div class="section-header"><h3>Finances</h3><p>Budget transfert, salaires, sponsors et primes.</p></div><div class="kpi-grid"><article class="kpi-card"><p>Solde</p><strong id="finance-balance">—</strong></article><article class="kpi-card"><p>Budget transfert</p><strong id="finance-transfer-budget">—</strong></article><article class="kpi-card"><p>Masse salariale</p><strong id="finance-wage-bill">—</strong></article><article class="kpi-card"><p>Sponsors</p><strong>—</strong></article></div></section>
       <section class="screen" id="training"><div class="section-header"><h3>Entraînement</h3><p>Focus par groupe de joueurs.</p></div><div class="panel-grid"><article class="panel"><h3>Gardiens</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Défenseurs</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Milieux</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Attaquants</h3><p>Focus à choisir plus tard.</p></article></div></section>
     </main>
@@ -313,5 +313,6 @@
   <script src="calendar-v060.js?v=071"></script>
   <script src="prematch-v070.js?v=070"></script>
   <script src="match-v080.js?v=080"></script>
+  <script src="matchday-v090.js?v=090"></script>
 </body>
 </html>
