@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="prematch.css?v=070" />
   <link rel="stylesheet" href="match.css?v=080" />
   <link rel="stylesheet" href="standings.css?v=090" />
+  <link rel="stylesheet" href="match-details.css?v=010" />
 </head>
 <body>
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -65,7 +66,7 @@
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.9 utilise un effectif neuf généré, une composition sauvegardée, un calendrier complet et un classement dynamique.</p>
+          <p>La V0.10 garde la saison dynamique et enrichit les résultats avec des statistiques de match.</p>
         </div>
 
         <div class="mode-grid">
@@ -218,7 +219,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.9 — Classement</div>
+      <div class="sidebar-footer">V0.10 — Match enrichi</div>
     </aside>
 
     <main class="main-content">
@@ -237,7 +238,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.9 ajoute un classement dynamique après chaque journée simulée.</p>
+            <p id="dashboard-description">La V0.10 enrichit les résultats avec possession, tirs et xG simplifié.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -251,12 +252,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.9</h3>
-            <p>Quand tu simules ton match, les autres matchs de la journée sont aussi joués et le classement se met à jour.</p>
+            <h3>Statut V0.10</h3>
+            <p>Les résultats de match affichent maintenant des statistiques, un résumé et un homme du match.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V1.0 : enrichir le moteur avec stats de match, tirs, possession et résumé plus vivant.</p>
+            <p>V0.11 : améliorer la fatigue, la forme et la morale après les matchs.</p>
           </article>
         </div>
       </section>
@@ -298,7 +299,7 @@
       </section>
 
       <section class="screen" id="match">
-        <div class="section-header"><h3>Match</h3><p>Chargement de la simulation V0.8…</p></div>
+        <div class="section-header"><h3>Match</h3><p>Chargement de la simulation enrichie V0.10…</p></div>
       </section>
 
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La prochaine grosse étape pourra ajouter les offres, refus et contre-offres.</p></div></section>
@@ -314,5 +315,6 @@
   <script src="prematch-v070.js?v=070"></script>
   <script src="match-v080.js?v=080"></script>
   <script src="matchday-v090.js?v=090"></script>
+  <script src="match-details-v010.js?v=010"></script>
 </body>
 </html>
