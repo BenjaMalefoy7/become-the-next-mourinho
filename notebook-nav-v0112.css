@@ -1,143 +1,167 @@
-/* V0.11.2 — left binder tabs + entry screens */
+/* V0.11.3 — Coach Notebook navigation
+   Compact layer: left dividers replace the fake ring rail. */
+
 body.notebook-tabs-left {
   --binder-tab: #d6bd91;
-  --binder-tab-light: #f8edcf;
-  --binder-shadow: rgba(37, 25, 12, 0.22);
+  --binder-tab-light: #fff0c7;
+  --binder-tab-active: #fff9e9;
+  --binder-shadow: rgba(35, 23, 12, .22);
 }
 
 body.notebook-tabs-left .app-shell {
-  grid-template-columns: 248px minmax(0, 1fr);
-  padding: 20px 34px 20px 18px;
+  grid-template-columns: 272px minmax(0, 1fr);
+  padding: 22px 32px 22px 18px;
+  gap: 0;
+}
+
+body.notebook-tabs-left .app-shell::before,
+body.notebook-tabs-left .app-shell::after,
+body.notebook-tabs-left .sidebar::after,
+body.notebook-tabs-left .welcome-card::after {
+  display: none !important;
+  content: none !important;
 }
 
 body.notebook-tabs-left .sidebar {
-  padding: 24px 10px 24px 20px;
-  border-radius: 26px 0 0 26px;
   overflow: visible;
+  padding: 26px 0 24px 22px;
+  border-radius: 30px 0 0 30px;
+  border-right: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.12), transparent 28%, rgba(0,0,0,.34)),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 1px, transparent 1px 8px),
+    linear-gradient(165deg, color-mix(in srgb, var(--club-primary,#173650) 78%, #071019), color-mix(in srgb, var(--club-primary,#173650) 36%, #03070b)) !important;
+  box-shadow: 20px 0 38px rgba(0,0,0,.28), inset -22px 0 36px rgba(0,0,0,.28) !important;
 }
 
-body.notebook-tabs-left .sidebar::after {
+body.notebook-tabs-left .sidebar::before {
   content: "";
   position: absolute;
   top: 22px;
-  right: -10px;
+  right: -1px;
   bottom: 22px;
-  width: 16px;
+  width: 1px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255,255,255,.08), rgba(0,0,0,.38));
-  box-shadow: inset 4px 0 10px rgba(0,0,0,.25);
+  background: linear-gradient(180deg, transparent, rgba(255,247,232,.48), transparent);
+  box-shadow: 7px 0 18px rgba(0,0,0,.34);
   pointer-events: none;
 }
 
 body.notebook-tabs-left .sidebar .brand {
-  margin-right: 18px;
-  padding-right: 6px;
+  margin-right: 24px;
+  padding-right: 8px;
 }
 
 body.notebook-tabs-left .brand-badge {
-  width: 66px;
-  height: 66px;
-  font-size: 1.35rem;
+  width: 64px;
+  height: 64px;
+  font-size: 1.25rem;
 }
 
 body.notebook-tabs-left .brand h1 {
-  font-size: 1.9rem;
-  max-width: 176px;
+  max-width: 182px;
+  font-size: 1.85rem;
 }
 
 body.notebook-tabs-left .nav {
-  margin-top: 4px;
-  padding: 4px 0 4px 0;
-  gap: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px -34px 0 0;
+  padding: 4px 0;
+  position: relative;
+  z-index: 8;
 }
 
 body.notebook-tabs-left .nav-btn {
-  width: 194px;
-  min-height: 42px;
-  margin-left: 18px;
-  padding: 10px 12px 10px 18px;
-  border-radius: 11px 18px 18px 11px !important;
-  border: 1px solid rgba(55, 37, 18, .25) !important;
-  border-left: 8px solid rgba(var(--club-primary-rgb, 23, 54, 80), .88) !important;
-  background: linear-gradient(180deg, var(--binder-tab-light), var(--binder-tab)) !important;
-  color: #2b241b !important;
-  box-shadow: 4px 5px 0 var(--binder-shadow), inset 0 1px 0 rgba(255,255,255,.55) !important;
+  position: relative;
+  width: calc(100% - 14px) !important;
+  min-height: 44px;
+  margin-left: 0 !important;
+  padding: 11px 16px 11px 18px;
+  border-radius: 9px 18px 18px 9px !important;
+  border: 1px solid rgba(73, 49, 24, .24) !important;
+  border-left: 7px solid rgba(var(--club-primary-rgb, 23,54,80), .92) !important;
+  background: linear-gradient(180deg, var(--binder-tab-light), #d5b579) !important;
+  color: #251a10 !important;
+  box-shadow: 6px 6px 0 var(--binder-shadow), inset 0 1px 0 rgba(255,255,255,.62) !important;
   font-weight: 950;
-  letter-spacing: .02em;
+  letter-spacing: .025em;
   text-transform: uppercase;
-  transform: translateX(0) rotate(-.4deg);
+  transform: translateX(0) rotate(-.18deg) !important;
   transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
 }
 
-body.notebook-tabs-left .nav-btn:nth-child(2n) { transform: translateX(4px) rotate(.35deg); }
-body.notebook-tabs-left .nav-btn:nth-child(3n) { transform: translateX(1px) rotate(-.15deg); }
+body.notebook-tabs-left .nav-btn:nth-child(2n) { transform: translateX(6px) rotate(.22deg) !important; }
+body.notebook-tabs-left .nav-btn:nth-child(3n) { transform: translateX(2px) rotate(-.18deg) !important; }
+body.notebook-tabs-left .nav-btn:nth-child(4n) { transform: translateX(10px) rotate(.15deg) !important; }
 
 body.notebook-tabs-left .nav-btn::before {
-  content: "";
-  position: absolute;
-  left: -3px;
-  top: 8px;
-  bottom: 8px;
-  width: 3px;
-  border-radius: 999px;
-  background: rgba(0,0,0,.16);
+  display: none !important;
 }
 
 body.notebook-tabs-left .nav-btn::after {
   content: "";
   position: absolute;
-  right: -13px;
-  top: 7px;
-  bottom: 7px;
-  width: 14px;
-  border-radius: 0 14px 14px 0;
+  right: -17px;
+  top: 6px;
+  bottom: 6px;
+  width: 18px;
+  border-radius: 0 15px 15px 0;
   background: inherit;
-  border: 1px solid rgba(55, 37, 18, .20);
+  border: 1px solid rgba(73,49,24,.20);
   border-left: 0;
-  box-shadow: 4px 4px 0 rgba(37, 25, 12, .10);
+  box-shadow: 5px 4px 0 rgba(35,23,12,.12);
 }
 
 body.notebook-tabs-left .nav-btn:hover {
-  transform: translateX(12px) rotate(0deg);
-  box-shadow: 6px 6px 0 rgba(37, 25, 12, .24), inset 0 1px 0 rgba(255,255,255,.65) !important;
+  transform: translateX(16px) rotate(0deg) !important;
 }
 
 body.notebook-tabs-left .nav-btn.active {
-  z-index: 5;
-  width: 212px;
-  margin-left: 14px;
-  background: linear-gradient(180deg, #fff7e2, #ead4aa) !important;
-  color: #151a17 !important;
-  border-left-color: var(--club-primary, #173650) !important;
-  transform: translateX(20px) rotate(0deg) !important;
-  box-shadow: 8px 7px 0 rgba(37, 25, 12, .25), inset 0 0 0 1px rgba(255,255,255,.35) !important;
+  z-index: 12;
+  width: calc(100% + 10px) !important;
+  margin-left: 0 !important;
+  background: linear-gradient(180deg, var(--binder-tab-active), #e5c68d) !important;
+  color: #16110d !important;
+  transform: translateX(24px) rotate(0deg) !important;
+  box-shadow: 11px 8px 0 rgba(35,23,12,.28), inset 0 0 0 1px rgba(255,255,255,.42) !important;
 }
 
 body.notebook-tabs-left .nav-btn.active::before {
+  display: block !important;
   content: "";
-  background: var(--red-pen);
+  position: absolute;
+  left: 18px;
+  right: 28px;
+  bottom: 8px;
+  width: auto;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--red-pen, #af3e35) !important;
 }
 
 body.notebook-tabs-left .main-content {
-  margin-left: 10px;
-  padding-left: 50px;
+  margin-left: 0 !important;
+  padding-left: 40px !important;
+  border-radius: 0 30px 30px 0 !important;
+  border-left: 1px solid rgba(77,52,26,.20);
 }
 
-body.notebook-tabs-left .app-shell::before { left: 238px; }
-body.notebook-tabs-left .app-shell::after { left: 248px; }
-
 body.notebook-tabs-left .notebook-tabs {
-  opacity: .38;
-  transform: translateX(8px) scale(.94);
+  opacity: .18;
+  transform: translateX(14px) scale(.9);
   pointer-events: none;
 }
 
-body.notebook-tabs-left .notebook-tab:not(.active) { filter: saturate(.6); }
+body.notebook-tabs-left .notebook-tab:not(.active) {
+  filter: saturate(.55);
+}
 
 body.notebook-tabs-left .sidebar-footer {
-  margin-right: 20px;
+  margin: auto 28px 0 0;
   padding: 14px 12px 0 2px;
-  font-size: 1rem;
+  font-size: 0 !important;
 }
 
 body.notebook-tabs-left .sidebar-footer::before {
@@ -151,7 +175,14 @@ body.notebook-tabs-left .sidebar-footer::before {
   letter-spacing: .16em;
 }
 
-/* Entry screens: page guard / club dossier */
+body.notebook-tabs-left .sidebar-footer::after {
+  content: "V0.11.3 — Intercalaires carnet";
+  display: block;
+  font-size: .88rem;
+  color: rgba(255,247,232,.74);
+}
+
+/* Entry screens: keep the notebook vibe, remove the heavy fake binding holes */
 body.notebook-tabs-left .welcome-screen {
   background:
     radial-gradient(circle at 15% 12%, rgba(var(--club-primary-rgb, 23,54,80), .28), transparent 34%),
@@ -173,53 +204,22 @@ body.notebook-tabs-left .welcome-screen::before {
 body.notebook-tabs-left .welcome-card {
   width: min(1040px, 100%);
   min-height: 620px;
-  padding: clamp(28px, 5vw, 62px) clamp(28px, 5vw, 70px) clamp(28px, 5vw, 58px) clamp(96px, 10vw, 138px);
+  padding: clamp(28px, 5vw, 62px) clamp(28px, 5vw, 70px) clamp(28px, 5vw, 58px) clamp(38px, 5vw, 68px) !important;
   border-radius: 26px;
   border: 1px solid rgba(72, 48, 23, .28);
   background:
-    linear-gradient(90deg, transparent 0 90px, rgba(112,77,37,.12) 90px 91px, transparent 91px),
     linear-gradient(90deg, var(--paper-line-soft) 1px, transparent 1px),
     linear-gradient(var(--paper-line-soft) 1px, transparent 1px),
     var(--paper) !important;
-  background-size: auto, 34px 34px, 34px 34px, auto !important;
+  background-size: 34px 34px, 34px 34px, auto !important;
   color: var(--ink);
   box-shadow: 0 36px 90px rgba(0,0,0,.38), inset 0 0 0 1px rgba(255,255,255,.25);
   overflow: visible;
 }
 
 body.notebook-tabs-left .welcome-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 78px;
-  border-radius: 26px 0 0 26px;
-  background:
-    linear-gradient(90deg, rgba(255,255,255,.11), transparent 22%, rgba(0,0,0,.34)),
-    repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 1px, transparent 1px 8px),
-    linear-gradient(165deg, color-mix(in srgb, var(--club-primary,#173650) 72%, #071019), color-mix(in srgb, var(--club-primary,#173650) 35%, #03070b));
-  box-shadow: inset -18px 0 30px rgba(0,0,0,.28);
+  display: none !important;
 }
-
-body.notebook-tabs-left .welcome-card::after {
-  content: "";
-  position: absolute;
-  left: 64px;
-  top: 58px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 4px solid #8e6e44;
-  background: #24180f;
-  box-shadow:
-    0 118px 0 #24180f, 0 118px 0 4px #8e6e44,
-    0 236px 0 #24180f, 0 236px 0 4px #8e6e44,
-    0 354px 0 #24180f, 0 354px 0 4px #8e6e44,
-    0 472px 0 #24180f, 0 472px 0 4px #8e6e44;
-}
-
-body.notebook-tabs-left .welcome-card > * { position: relative; z-index: 1; }
 
 body.notebook-tabs-left .welcome-copy h1,
 body.notebook-tabs-left .welcome-brand h2 {
@@ -245,23 +245,12 @@ body.notebook-tabs-left .welcome-brand .eyebrow {
   color: var(--ink-soft) !important;
 }
 
-body.notebook-tabs-left .welcome-actions {
-  align-items: stretch;
-}
-
-body.notebook-tabs-left .welcome-main-btn,
-body.notebook-tabs-left #create-from-saves-btn,
-body.notebook-tabs-left #fill-demo-career-btn,
-body.notebook-tabs-left #back-from-create-btn,
-body.notebook-tabs-left #back-from-saves-btn {
-  border-radius: 7px !important;
-}
-
 body.notebook-tabs-left .welcome-main-btn {
   min-height: 64px;
   justify-content: flex-start;
   text-align: left;
   padding-left: 22px;
+  border-radius: 7px !important;
   border-left: 8px solid var(--club-primary, #173650) !important;
   background: linear-gradient(180deg, #fff7e2, #e1c99b) !important;
   color: #1f211e !important;
@@ -275,7 +264,6 @@ body.notebook-tabs-left .welcome-main-btn.primary-btn {
 
 body.notebook-tabs-left .setup-card {
   width: min(1240px, 100%);
-  padding-left: clamp(94px, 9vw, 130px);
 }
 
 body.notebook-tabs-left .career-form,
@@ -284,16 +272,6 @@ body.notebook-tabs-left .mode-card,
 body.notebook-tabs-left .save-card,
 body.notebook-tabs-left .info-banner {
   background: rgba(255,249,234,.72) !important;
-}
-
-body.notebook-tabs-left .mode-card,
-body.notebook-tabs-left .save-card {
-  transform: rotate(-.15deg);
-}
-
-body.notebook-tabs-left .mode-card:nth-child(2n),
-body.notebook-tabs-left .save-card:nth-child(2n) {
-  transform: rotate(.12deg);
 }
 
 body.notebook-tabs-left .mode-card.active,
@@ -329,39 +307,29 @@ body.notebook-tabs-left .save-actions {
 
   body.notebook-tabs-left .sidebar {
     border-radius: 20px;
+    padding: 18px;
+  }
+
+  body.notebook-tabs-left .sidebar::before,
+  body.notebook-tabs-left .nav-btn::after,
+  body.notebook-tabs-left .notebook-tabs {
+    display: none !important;
   }
 
   body.notebook-tabs-left .nav {
+    display: grid;
     grid-template-columns: repeat(2, minmax(130px, 1fr));
+    margin: 0;
   }
 
   body.notebook-tabs-left .nav-btn,
   body.notebook-tabs-left .nav-btn.active {
-    width: auto;
-    margin-left: 0;
+    width: auto !important;
     transform: none !important;
   }
 
-  body.notebook-tabs-left .nav-btn::after,
-  body.notebook-tabs-left .app-shell::before,
-  body.notebook-tabs-left .app-shell::after,
-  body.notebook-tabs-left .notebook-tabs {
-    display: none;
-  }
-
   body.notebook-tabs-left .main-content {
-    margin-left: 0;
-    padding: 24px;
-    border-radius: 20px;
-  }
-
-  body.notebook-tabs-left .welcome-card,
-  body.notebook-tabs-left .setup-card {
-    padding-left: 32px;
-  }
-
-  body.notebook-tabs-left .welcome-card::before,
-  body.notebook-tabs-left .welcome-card::after {
-    display: none;
+    padding: 24px !important;
+    border-radius: 20px !important;
   }
 }
