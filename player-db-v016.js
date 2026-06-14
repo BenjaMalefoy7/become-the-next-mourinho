@@ -1,0 +1,19 @@
+const BTM_PLAYER_DATABASE_VERSION="0.16";
+(function(){
+const first=["Adam","Alex","André","Ben","Daniel","Diego","Elias","Enzo","Felix","Hugo","Isaac","Ivan","Jules","Leo","Lucas","Malo","Mateo","Milan","Nico","Oscar","Rayan","Sam","Theo","Victor"];
+const last=["Araujo","Bakker","Costa","Diallo","Fernandes","Garcia","Hansen","Ito","Kovacs","Lemoine","Martins","Moreau","Novak","Okafor","Petrov","Reed","Santos","Silva","Traore","Turner","Varela","Warren"];
+const nats=["Angleterre","France","Belgique","Pays-Bas","Espagne","Portugal","Italie","Allemagne","Brésil","Argentine","Sénégal","Côte d’Ivoire","Ghana","Maroc","Croatie","Danemark"];
+const pos=["GK","DD","DC","DG","MDC","MC","MOC","AD","AG","BU"];
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}function cl(v,a,b){return Math.max(a,Math.min(b,v));}
+function id(p){return p+"_"+Date.now()+"_"+Math.random().toString(16).slice(2);}function pick(a){return a[ri(0,a.length-1)];}
+function stats(position,ovr){const m={GK:[-24,14,2,5],DC:[-12,12,8,3],DD:[-4,7,7,2],DG:[-4,7,7,2],MDC:[-4,8,5,5],MC:[2,2,3,7],MOC:[9,-6,0,7],AG:[10,-8,6,2],AD:[10,-8,6,2],BU:[13,-12,5,3]}[position]||[0,0,0,0];return{attack:cl(ovr+m[0]+ri(-3,3),35,99),defense:cl(ovr+m[1]+ri(-3,3),35,99),physical:cl(ovr+m[2]+ri(-3,3),35,99),mental:cl(ovr+m[3]+ri(-3,3),35,99)};}
+function value(ovr,pot,age){const base=Math.pow(Math.max(1,ovr-48),2)*22000;const bonus=Math.max(0,pot-ovr)*450000;const ageM=age<=23?1.18:age>=31?.72:1;return Math.round((base+bonus)*ageM/50000)*50000;}
+function salary(val,ovr){return Math.round((val*.075+ovr*4500)/10000)*10000;}
+function make(career,i){const position=pos[i%pos.length];const tier=Math.random();const ovr=tier>.92?ri(80,88):tier>.72?ri(74,81):tier>.38?ri(67,75):ri(58,68);const age=ri(18,34);const pot=cl(ovr+ri(0,age<=22?10:age>=30?3:7),ovr,94);const st=stats(position,ovr);const clubPool=(career?.clubs||[]).filter(c=>c.id!==career?.club?.id);const club=clubPool.length&&Math.random()>.18?pick(clubPool):null;const val=value(ovr,pot,age);return{id:id("dbp"),name:pick(first)+" "+pick(last),clubId:club?club.id:"free_agent",club:club?club.name:"Libre",nationality:pick(nats),age,primaryPosition:position,secondaryPositions:typeof getSecondaryPositions==="function"?getSecondaryPositions(position):[],overall:ovr,potential:pot,...st,value:val,salary:salary(val,ovr),contractYears:club?ri(1,5):0,morale:"Normal",condition:100,injuryStatus:"Disponible",listedPrice:Math.round(val*(.85+Math.random()*.55)/50000)*50000,scoutLevel:ri(35,85),databaseVersion:BTM_PLAYER_DATABASE_VERSION};}
+function active(){const id=typeof getActiveCareerId==="function"?getActiveCareerId():null;const careers=typeof loadCareers==="function"?loadCareers():[];const index=careers.findIndex(c=>c.id===id);return{careers,index,career:index>=0?careers[index]:null};}
+function save(a){if(a.index<0)return; a.career.updatedAt=new Date().toISOString();a.careers[a.index]=a.career;if(typeof saveCareers==="function")saveCareers(a.careers,{silent:true});}
+function ensure(career,count=240){if(!career)return null;career.playerDatabase=Array.isArray(career.playerDatabase)?career.playerDatabase:[];if(career.playerDatabase.length>=count)return career.playerDatabase;const missing=count-career.playerDatabase.length;for(let i=0;i<missing;i++)career.playerDatabase.push(make(career,career.playerDatabase.length+i));career.playerDatabaseVersion=BTM_PLAYER_DATABASE_VERSION;return career.playerDatabase;}
+window.btmEnsurePlayerDatabase=function(career,count){return ensure(career,count);};
+window.btmEnsurePlayerDatabasePersisted=function(){const a=active();if(!a.career)return null;ensure(a.career);save(a);return a.career.playerDatabase;};
+const prev=typeof refreshUI==="function"?refreshUI:null;refreshUI=function refreshUIPlayerDbV016(){if(prev)prev();const a=active();if(a.career&&!a.career.playerDatabase) {ensure(a.career,160);save(a);}};
+})();
