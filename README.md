@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.20
+# Become the next Mourinho — V0.21
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,24 +6,23 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.20 — Stabilisation du flow saison + Match Center unifié**
+**V0.21 — Début de migration loader plat + noms stables**
 
-Cette version stabilise la boucle principale après l’ajout rapide des modules V0.13 à V0.19.
+Cette version engage la migration technique vers des points d’entrée stables, tout en gardant une compatibilité prudente avec les anciens fichiers versionnés.
 
 ```text
-jour suivant
-jour de match bloquant
-Matchday Center
-validation composition
-validation plan
-simulation
-rapport post-match
-retour au calendrier jour par jour
+btm-flat-loader.js?v=021
+match-center.js?v=021
+season-flow.js?v=021
+mailbox.js?v=021
+player-db.js?v=021
+transfers.js?v=021
+training.js?v=021
 ```
 
 La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papier, onglets, dossiers, notes de coach et couleurs dynamiques du club.
 
-## Corrections V0.20
+## Stabilisation récente V0.20
 
 - passage au jour suivant bloqué si un match non joué est dû ;
 - bouton “Avancer au prochain match” remplacé par une logique “Aller au match” le jour même ;
@@ -33,6 +32,14 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papi
 - courrier réduit : plus de briefing automatique inutile tous les jours ;
 - anciens loaders de match récents retirés du chaînage dynamique ;
 - footer et texte dashboard réalignés sur V0.20.
+
+## Migration V0.21
+
+- ajout de `btm-flat-loader.js` ;
+- ajout des points d’entrée stables `match-center.js`, `season-flow.js`, `mailbox.js`, `player-db.js`, `transfers.js`, `training.js` ;
+- ajout des points d’entrée CSS stables correspondants ;
+- remplacement du mini-loader non-match dans `season-v015.js` par le loader plat central ;
+- conservation temporaire des anciens fichiers versionnés comme ponts de compatibilité.
 
 ## Fonctionnalités présentes
 
@@ -71,17 +78,17 @@ L’option “Garder l’effectif du club remplacé” est déjà prévue dans l
 
 Le projet a beaucoup itéré avec des fichiers versionnés dans leur nom. Cette méthode devient difficile à maintenir.
 
-La prochaine refonte technique devra basculer vers des noms de modules stables avec version en query string.
+La règle désormais : **nom de fichier stable + version en query string**.
 
-À faire :
+À privilégier :
 
 ```text
-match-center.js?v=020
-season-flow.js?v=020
-mailbox.js?v=020
-transfers.js?v=020
-training.js?v=020
-squad.js?v=020
+match-center.js?v=021
+season-flow.js?v=021
+mailbox.js?v=021
+transfers.js?v=021
+training.js?v=021
+squad.js?v=021
 ```
 
 À éviter désormais :
@@ -96,26 +103,21 @@ Objectif : éviter que README, CHANGELOG et notes techniques décrochent à chaq
 
 ## Fichiers principaux
 
-- `index.html` : structure de l’application, écrans d’entrée, shell principal et imports.
+- `index.html` : structure de l’application, écrans d’entrée, shell principal et imports historiques.
 - `style.css` : base générale historique.
 - `notebook-nav-v0112.css` : couche active Coach Notebook / intercalaires carnet.
 - `data.js` : données de championnat, clubs, postes et formations.
 - `app.js` : logique d’accueil, création, sauvegardes, navigation et génération d’effectif.
-- `lineup.css` + `lineup-v050.js` : composition d’équipe.
-- `calendar.css` + `calendar-v060.js` : calendrier généré.
-- `match.css` + `match-v080.js` : simulation simple.
-- `matchday-v090.js` : simulation de journée et classement dynamique.
-- `match-details.css` + `match-details-v010.js` : couche historique de statistiques et variables DA.
-- `squad-v012.js/css` : écran Effectif en dossier joueur.
-- `season-v013.js/css` : Match Center actuellement stabilisé en V0.20 malgré le nom historique.
-- `season-v014.js/css` : flow saison actuellement stabilisé en V0.20 malgré le nom historique.
-- `season-v015.js/css` : courrier actuellement stabilisé en V0.20 malgré le nom historique.
-- `player-db-v016.js` : base joueurs générée.
-- `transfers-v017.js/css` : marché des transferts.
-- `training-v018.js/css` : entraînements.
+- `btm-flat-loader.js` : point d’entrée stable V0.21 pour les modules récents.
+- `match-center.js/css` : point d’entrée stable vers le Match Center.
+- `season-flow.js/css` : point d’entrée stable vers le flow saison.
+- `mailbox.js/css` : point d’entrée stable vers le courrier.
+- `player-db.js` : point d’entrée stable vers la base joueurs.
+- `transfers.js/css` : point d’entrée stable vers les transferts.
+- `training.js/css` : point d’entrée stable vers l’entraînement.
 
 ## Prochaine étape recommandée
 
-**V0.21 — Loader plat + noms stables**
+**V0.22 — Index vraiment plat**
 
-Objectif : arrêter les noms de fichiers versionnés et charger les modules stables directement dans `index.html`. Cela évitera que les anciens modules se rechargent en chaîne et que la documentation décroche.
+Objectif : charger directement les modules stables dans `index.html`, puis supprimer progressivement les anciens loaders dynamiques et les ponts vers fichiers versionnés.
