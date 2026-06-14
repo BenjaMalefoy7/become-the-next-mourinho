@@ -1,4 +1,4 @@
-const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40E";
+const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40F";
 (function () {
   if (window.__BTM_MC_EXTRACTED__) return;
   window.__BTM_MC_EXTRACTED__ = true;
@@ -112,28 +112,39 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40E";
   function badge(team) {
     return `<div class="mc-v020-badge" style="background:${e(team.primaryColor || "#173650")};color:${e(team.secondaryColor || "#fff")}">${e(team.badge || team.shortName || "CLB")}</div>`;
   }
+  function sideLabel(career, teamId, side) {
+    const tags = [side];
+    if (career?.club?.id === teamId) tags.push("Ton club");
+    return tags.join(" · ");
+  }
+  function statPercent(homeValue, awayValue) {
+    const home = Math.max(0, Number(homeValue) || 0);
+    const away = Math.max(0, Number(awayValue) || 0);
+    const total = home + away;
+    if (!total) return 50;
+    return Math.max(5, Math.min(95, Math.round((home / total) * 100)));
+  }
   function reportHtml(career) {
     const result = enhanceReport(career);
     if (!result) return "";
     const home = clubById(career, result.homeClubId) || { name: result.homeClubName, shortName: "HOM" };
     const away = clubById(career, result.awayClubId) || { name: result.awayClubName, shortName: "AWY" };
     const stats = statPack(career, result);
-    const row = (label, homeValue, awayValue, suffix = "") => `
-      <div class="mc-v020-stat">
-        <b>${e(homeValue)}${suffix}</b>
-        <div><span>${e(label)}</span><div class="mc-v020-track"><div class="mc-v020-fill" style="width:${Math.max(5, Math.min(95, Number(homeValue) || 0))}%"></div></div></div>
-        <b>${e(awayValue)}${suffix}</b>
-      </div>`;
+    const row = (label, homeValue, awayValue, suffix = "") => {
+      const homeWidth = statPercent(homeValue, awayValue);
+      const awayWidth = 100 - homeWidth;
+      return `<div class="mc-v020-stat mc-v020-stat-dual"><b>${e(homeValue)}${suffix}</b><div><span>${e(label)}</span><div class="mc-v020-dual-track"><div class="mc-v020-fill-home" style="width:${homeWidth}%"></div><div class="mc-v020-fill-away" style="width:${awayWidth}%"></div></div></div><b>${e(awayValue)}${suffix}</b></div>`;
+    };
     return `<article class="mc-v020-card mc-v020-report">
       <span class="mc-v020-tag">Rapport final</span>
       <div class="mc-v020-score">
-        <div>${badge(home)}<h3>${e(result.homeClubName)}</h3></div>
+        <div>${badge(home)}<h3>${e(result.homeClubName)}</h3><p class="mc-v020-side-label">${e(sideLabel(career, result.homeClubId, "Domicile"))}</p></div>
         <div><strong>${s(result.homeGoals)} - ${s(result.awayGoals)}</strong><p>${e(result.resultForUser || "Résultat")}</p></div>
-        <div>${badge(away)}<h3>${e(result.awayClubName)}</h3></div>
+        <div>${badge(away)}<h3>${e(result.awayClubName)}</h3><p class="mc-v020-side-label">${e(sideLabel(career, result.awayClubId, "Extérieur"))}</p></div>
       </div>
       <div class="mc-v020-grid">
         <div><h3>Timeline</h3><div class="mc-v020-timeline">${(result.events || []).map((event) => `<div class="mc-v020-event"><b>${s(event.minute)}'</b><span>${e(event.text)}</span></div>`).join("")}</div></div>
-        <div><h3>Stats du match</h3><div class="mc-v020-stats">${row("Possession", stats.possession.home, stats.possession.away, "%")}${row("Tirs", stats.shots.home, stats.shots.away)}${row("Tirs cadrés", stats.shotsOnTarget.home, stats.shotsOnTarget.away)}${row("xG", stats.xg.home, stats.xg.away)}${row("Occasions", stats.dangerousChances.home, stats.dangerousChances.away)}</div><p class="mc-v020-note">Lecture coach : ${e(result.summary)}</p></div>
+        <div><h3>Stats du match</h3><div class="mc-v020-stat-head"><span>Domicile</span><span>Extérieur</span></div><div class="mc-v020-stats">${row("Possession", stats.possession.home, stats.possession.away, "%")}${row("Tirs", stats.shots.home, stats.shots.away)}${row("Tirs cadrés", stats.shotsOnTarget.home, stats.shotsOnTarget.away)}${row("xG", stats.xg.home, stats.xg.away)}${row("Occasions", stats.dangerousChances.home, stats.dangerousChances.away)}</div><p class="mc-v020-note">Lecture coach : ${e(result.summary)}</p></div>
       </div>
     </article>`;
   }
@@ -182,7 +193,7 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40E";
     prep[key] = prep[key] || { lineup: false, plan: false };
     const ready = canPrepare && prep[key].lineup && prep[key].plan;
     screen.innerHTML = `<div class="match-center-v020">
-      <div class="mc-v020-head"><div><span class="mc-v020-tag">Matchday Center V0.40E</span><h3>${e(matchLabel(match))}</h3><p>Journée ${s(match.matchday)} · ${e(userVenue(career, match))} · Préparer, valider, jouer.</p></div><div class="mc-v020-actions"><button class="secondary-btn" id="mc-edit">Modifier la compo</button><button class="primary-btn" id="prematch-launch" ${ready ? "" : "disabled"}>${ready ? "Lancer le match" : "Préparation incomplète"}</button></div></div>
+      <div class="mc-v020-head"><div><span class="mc-v020-tag">Matchday Center V0.40F</span><h3>${e(matchLabel(match))}</h3><p>Journée ${s(match.matchday)} · ${e(userVenue(career, match))} · Préparer, valider, jouer.</p></div><div class="mc-v020-actions"><button class="secondary-btn" id="mc-edit">Modifier la compo</button><button class="primary-btn" id="prematch-launch" ${ready ? "" : "disabled"}>${ready ? "Lancer le match" : "Préparation incomplète"}</button></div></div>
       <div class="mc-v020-board"><article class="mc-v020-club"><span class="mc-v020-tag">Nous</span><h2>${e(career.club?.name || "Ton club")}</h2><p>${e(level(career.club))} · ${e(userVenue(career, match))}</p></article><article class="mc-v020-vs"><strong>VS</strong><span>J${s(match.matchday)}</span></article><article class="mc-v020-club"><span class="mc-v020-tag">Adversaire</span><h2>${e(opp.name || "Adversaire")}</h2><p>${e(oppModel.style)} · réputation ${s(opp.reputation)}</p></article></div>
       <div class="mc-v020-grid">
         <article class="mc-v020-card"><h3>Notre XI</h3><div class="mc-v020-kpis"><div><span>Formation</span><strong>${e(stats.formation)}</strong></div><div><span>Note XI</span><strong>${s(stats.rating)}</strong></div><div><span>Condition</span><strong>${s(stats.condition)}%</strong></div><div><span>Titulaires</span><strong>${s(stats.startersCount)}/${s(stats.expectedCount)}</strong></div></div>${xiHtml(career, stats)}<div class="mc-v020-toggle"><button class="secondary-btn ${prep[key].lineup ? "active" : ""}" id="mc-ok-lineup">Valider la composition</button></div></article>
@@ -217,7 +228,7 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40E";
   if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("match-center", renderMatchCenter);
   else {
     const previous = typeof refreshUI === "function" ? refreshUI : null;
-    refreshUI = function refreshUIMatchCenterFallbackV040E() { if (previous) previous(); renderMatchCenter(); };
+    refreshUI = function refreshUIMatchCenterFallbackV040F() { if (previous) previous(); renderMatchCenter(); };
   }
 
   document.addEventListener("DOMContentLoaded", () => renderMatchCenter());
