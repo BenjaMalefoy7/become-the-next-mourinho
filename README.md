@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.24
+# Become the next Mourinho — V0.25
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,9 +6,9 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.24 — Extraction réelle du Match Center**
+**V0.25 — Extraction réelle de Season Flow**
 
-Cette version poursuit la transition propre engagée en V0.21–V0.23. `index.html` charge les modules via des noms stables et le premier gros pont historique a été réellement extrait : `match-center.js` et `match-center.css` ne redirigent plus vers `season-v013.js` / `season-v013.css`.
+Cette version poursuit la transition propre engagée en V0.21–V0.24. `index.html` charge les modules via des noms stables et le deuxième gros pont historique a été réellement extrait : `season-flow.js` et `season-flow.css` ne redirigent plus vers `season-v014.js` / `season-v014.css`.
 
 ## Fichiers chargés depuis index.html
 
@@ -21,7 +21,7 @@ calendar.js?v=023
 match-engine.js?v=023
 league-sim.js?v=023
 squad.js?v=023
-season-flow.js?v=023
+season-flow.js?v=025
 mailbox.js?v=023
 player-db.js?v=023
 transfers.js?v=023
@@ -29,7 +29,14 @@ training.js?v=023
 match-center.js?v=023
 ```
 
-> Note : le contenu de `match-center.js` est maintenant en V0.24 même si le cache-busting HTML reste encore `?v=023` sur cette passe. Faire `Ctrl + F5` pendant la transition.
+## Modules réellement extraits
+
+```text
+match-center.js   // code réel du Match Center
+match-center.css  // styles réels du Match Center
+season-flow.js    // code réel du rythme jour par jour
+season-flow.css   // styles réels du panneau saison
+```
 
 ## DA active
 
@@ -75,12 +82,12 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=024
-season-flow.js?v=024
-mailbox.js?v=024
-transfers.js?v=024
-training.js?v=024
-squad.js?v=024
+match-center.js?v=025
+season-flow.js?v=025
+mailbox.js?v=025
+transfers.js?v=025
+training.js?v=025
+squad.js?v=025
 ```
 
 À éviter désormais :
@@ -93,6 +100,6 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.25 — extraction réelle de Season Flow**
+**V0.26 — extraction réelle du Courrier**
 
-Objectif : faire pour `season-flow.js` ce qui vient d’être fait pour `match-center.js`, puis continuer avec `mailbox.js`, `lineup.js`, `calendar.js` et les moteurs de simulation.
+Objectif : faire pour `mailbox.js` ce qui vient d’être fait pour `match-center.js` et `season-flow.js`, puis continuer avec `lineup.js`, `calendar.js` et les moteurs de simulation.
