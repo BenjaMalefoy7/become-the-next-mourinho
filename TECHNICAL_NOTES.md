@@ -1,6 +1,6 @@
 # Notes techniques
 
-État après V0.25.
+État après V0.27.
 
 ## Direction active
 
@@ -12,13 +12,13 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papi
 - Le bouton “Avancer au prochain match” ne sert plus à skipper : il devient une logique “Aller au match” le jour même.
 - Les anciens blocs concurrents du type “Dernier rapport” ont été remplacés par un rendu unique du Match Center.
 - Le rapport post-match génère et conserve une timeline, des stats et une lecture coach.
-- `season-v015.js` réduit le spam courrier.
+- Le courrier a commencé à être réduit pour éviter le spam quotidien.
 
-## Ce qui a été engagé en V0.21
+## Ce qui a été engagé en V0.21–V0.23
 
-La V0.21 a commencé la migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
+Migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
 
-Points d’entrée stables créés :
+`index.html` passe maintenant par des points d’entrée stables :
 
 ```text
 match-center.js
@@ -27,83 +27,53 @@ mailbox.js
 player-db.js
 transfers.js
 training.js
+lineup.js
+calendar.js
+match-engine.js
+league-sim.js
 ```
 
-## Ce qui a changé en V0.22
-
-La V0.22 a rendu `index.html` plus explicite : les modules récents ont été chargés directement depuis le HTML via des points d’entrée stables.
-
-## Ce qui a changé en V0.23
-
-`index.html` ne charge plus directement les anciens modules de base. Il passe maintenant par les noms stables :
+## Extractions réelles déjà faites
 
 ```text
-data.js?v=060
-app.js?v=044
-theme.js?v=023
-lineup.js?v=023
-calendar.js?v=023
-match-engine.js?v=023
-league-sim.js?v=023
-squad.js?v=023
-season-flow.js?v=023
-mailbox.js?v=023
-player-db.js?v=023
-transfers.js?v=023
-training.js?v=023
-match-center.js?v=023
+V0.24 : match-center.js / match-center.css
+V0.25 : season-flow.js / season-flow.css
+V0.26 : mailbox.js / mailbox.css
+V0.27 : training.js / training.css
 ```
 
-## Ce qui a changé en V0.24
+Ces fichiers ne sont plus de simples ponts vers les anciens fichiers versionnés.
 
-Premier gros pont réellement extrait :
+## Ce qui change en V0.26
+
+`mailbox.js` contient maintenant directement :
 
 ```text
-match-center.js   // code réel du Match Center
-match-center.css  // styles réels du Match Center
+onglet Courrier
+liste de messages
+lecteur de message
+messages lus / non lus
+briefing veille / jour de match
+rapport après match
+notification transfert
 ```
 
-Ces fichiers ne sont plus de simples redirections vers :
+`mailbox.css` contient maintenant directement les styles du courrier. Il ne dépend plus de `season-v0151.css`.
+
+## Ce qui change en V0.27
+
+`training.js` contient maintenant directement :
 
 ```text
-season-v013.js
-season-v013.css
+plan d'entraînement par groupes
+focus gardiens / défense / milieu / attaque
+application des effets lors du passage réel d'un jour
+rendu de l'écran entraînement
 ```
 
-## Ce qui change en V0.25
+Correction importante : l'entraînement ne s'applique plus si `Jour suivant` est bloqué par un match à jouer.
 
-Deuxième gros pont réellement extrait :
-
-```text
-season-flow.js    // code réel du rythme jour par jour
-season-flow.css   // styles réels du panneau saison
-```
-
-Ces fichiers ne sont plus de simples redirections vers :
-
-```text
-season-v014.js
-season-v014.css
-```
-
-`season-flow.js` gère maintenant directement :
-
-```text
-date courante
-passage au jour suivant
-blocage si match dû
-accès au Match Center le jour même
-récupération condition
-génération limitée du courrier
-sauvegarde après passage de jour
-```
-
-`index.html` charge maintenant :
-
-```text
-season-flow.css?v=025
-season-flow.js?v=025
-```
+`training.css` contient maintenant directement les styles de l'entraînement. Il ne dépend plus de `training-v018.css`.
 
 ## Ponts de compatibilité restants
 
@@ -112,10 +82,8 @@ lineup.js       -> lineup-v050.js
 calendar.js     -> calendar-v060.js
 match-engine.js -> match-v080.js
 league-sim.js   -> matchday-v090.js
-mailbox.js      -> season-v015.js
 player-db.js    -> player-db-v016.js
 transfers.js    -> transfers-v017.js
-training.js     -> training-v018.js
 ```
 
 Cette compatibilité reste volontaire : on extrait les modules un par un pour éviter de casser la carrière, le calendrier et les sauvegardes.
@@ -127,12 +95,12 @@ Basculer vers des noms de modules stables et mettre la version uniquement dans l
 À privilégier :
 
 ```text
-match-center.js?v=025
-season-flow.js?v=025
-mailbox.js?v=025
-transfers.js?v=025
-training.js?v=025
-squad.js?v=025
+match-center.js?v=027
+season-flow.js?v=027
+mailbox.js?v=027
+transfers.js?v=027
+training.js?v=027
+squad.js?v=027
 ```
 
 À éviter désormais :
@@ -152,21 +120,20 @@ Plusieurs modules enrichissent ou remplacent encore `refreshUI`. Cela reste frag
 
 ## Prochaine étape technique recommandée
 
-### V0.26 — Extraction réelle du Courrier
+### V0.28 — Extraction réelle du Recrutement
 
-Objectif : copier le code utile de `season-v015.js` vers `mailbox.js`, puis retirer le pont.
+Objectif : copier le code utile de `transfers-v017.js` vers `transfers.js`, puis retirer le pont sans encore ajouter les fenêtres de mercato ou les négociations avancées.
 
 Priorité ensuite :
 
 ```text
+player-db.js
 lineup.js
 calendar.js
 match-engine.js
 league-sim.js
-training.js
-transfers.js
 ```
 
 ## Season Flow cible
 
-Le rythme jour par jour est maintenant centralisé dans `season-flow.js`. La future amélioration sera d’y relier plus proprement l’entraînement, avec un vrai orchestrateur de journée unique.
+Le rythme jour par jour est maintenant centralisé dans `season-flow.js`. La future amélioration sera d’y relier plus proprement l’entraînement avec un vrai orchestrateur de journée unique, au lieu de wrappers successifs.
