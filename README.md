@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.31
+# Become the next Mourinho — V0.32
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,21 +6,30 @@ Le projet avance en HTML/CSS/JavaScript vanilla, sans backend pour le moment. Le
 
 ## Version actuelle
 
-**V0.31 — Calendar registry cutover**
+**V0.32 — extraction réelle de Calendar**
 
-Cette passe stabilise le module Calendrier sans encore réécrire tout son ancien moteur historique.
+Cette passe retire le pont historique du calendrier.
 
-`calendar.js` charge encore temporairement `calendar-v060.js`, mais il neutralise son ancien wrapper `refreshUI` et enregistre le rendu du calendrier dans le registre central :
+Avant :
 
 ```text
-app.js
-→ theme.js installe le registre
-→ calendar.js charge la logique calendrier
-→ wrapper legacy neutralisé
-→ btmRegisterRender("calendar", renderCalendarV060)
+calendar.js
+→ chargeait calendar-v060.js
+→ neutralisait le wrapper legacy
+→ enregistrait renderCalendarV060 dans le registre
 ```
 
-Le calendrier ne fait que changer la journée affichée. Le vrai passage des jours reste piloté par `season-flow.js`.
+Maintenant :
+
+```text
+calendar.js
+→ contient directement la génération du calendrier
+→ contient directement le rendu calendrier
+→ passe par btmRegisterRender("calendar", ...)
+→ ne charge plus calendar-v060.js
+```
+
+Le calendrier ne fait toujours que changer la journée affichée. Le vrai passage des jours reste piloté par `season-flow.js`.
 
 ## Modules passés sur le registre
 
@@ -34,24 +43,6 @@ mailbox.js
 training.js
 match-center.js
 ```
-
-## Chaîne de match actuelle
-
-```text
-match-center.js
-→ appelle saveSimulatedMatch()
-
-season-flow.js
-→ vérifie que le match est jouable
-→ appelle btmSimulateUserMatch(career, userMatch)
-→ appelle btmSimulateOtherMatches(career, matchday, userFixtureId)
-→ appelle computeDynamicStandings(career)
-→ enrichit le rapport
-→ génère le courrier de match
-→ sauvegarde la carrière
-```
-
-Le Match Center reste le seul module qui dessine l’écran Match.
 
 ## Modules réellement extraits
 
@@ -67,21 +58,21 @@ training.css
 match-engine.js
 league-sim.js
 theme.js
+calendar.js
 ```
 
 ## Ponts ou compatibilités restants
 
 ```text
 lineup.js       -> compatibilité temporaire avec lineup-v050.js, wrapper neutralisé
-calendar.js     -> compatibilité temporaire avec calendar-v060.js, wrapper neutralisé
 player-db.js    -> player-db-v016.js
 transfers.js    -> transfers-v017.js
 ```
 
 ## Note cache
 
-`index.html` pointe maintenant vers `calendar.css?v=031` et `calendar.js?v=031`. Un **Ctrl + F5** reste recommandé après chaque refonte structurelle.
+`index.html` pointe encore vers `calendar.css?v=031` et `calendar.js?v=031`, mais le contenu réel de `calendar.js` est bien en V0.32. Un **Ctrl + F5** est nécessaire pour tester proprement.
 
 ## Prochaine étape recommandée
 
-**V0.32 — extraction réelle de Calendar ou nettoyage des orphelins**
+**V0.33 — extraction réelle de Lineup ou nettoyage ciblé des orphelins historiques.**
