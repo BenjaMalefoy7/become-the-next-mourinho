@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.11.4
+# Become the next Mourinho — V0.19.10
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,19 +6,22 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.11.4 — Stabilisation DA + nettoyage urgent**
+**V0.19.10 — Matchday Center + flow jour par jour + rapport de match forcé**
 
-Cette version clarifie la direction artistique validée : **Coach Notebook / Manager War Room**.
+Cette version marque le passage du prototype de match simple vers une vraie boucle de manager :
 
-La DA active repose maintenant sur :
+```text
+jour suivant
+jour de match
+Matchday Center
+validation composition
+validation plan
+simulation
+rapport post-match
+retour au calendrier
+```
 
-- une navigation gauche en intercalaires de carnet ;
-- une base visuelle papier / classeur via `notebook-nav-v0112.css` ;
-- des couleurs dynamiques pilotées par le club chargé ;
-- une interface plus proche d’un carnet de coach que d’un dashboard SaaS ;
-- des écrans d’entrée davantage orientés page de garde / dossier.
-
-Les anciens fichiers `notebook-theme.css`, `notebook-theme-v011.js` et `app-v043.js` ont été supprimés pour éviter les fichiers orphelins.
+La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papier, onglets, dossiers, notes de coach et couleurs dynamiques du club.
 
 ## Fonctionnalités déjà présentes
 
@@ -32,25 +35,55 @@ Les anciens fichiers `notebook-theme.css`, `notebook-theme-v011.js` et `app-v043
 - calendrier complet généré sur 38 journées ;
 - écran Composition avec terrain cliquable ;
 - compatibilité des postes principaux et secondaires ;
-- pré-match avec validation de la composition ;
+- saison jour par jour avec verrou de jour de match ;
+- Matchday Center avec analyse adverse ;
+- validation composition / plan de match ;
 - simulation simple du match ;
 - simulation complète d’une journée ;
 - classement dynamique recalculé depuis les matchs joués ;
 - zones de classement : C1, C3, C4, relégation ;
-- résumé enrichi de match : possession, tirs, tirs cadrés, xG simplifié, occasions dangereuses et homme du match ;
-- direction artistique Coach Notebook en cours d’intégration.
+- rapport post-match enrichi : score, timeline, possession, tirs, xG simplifié, occasions et lecture coach ;
+- courrier manager ;
+- base joueurs générée pour le recrutement ;
+- premier marché des transferts jouable ;
+- entraînement par groupes.
 
 ## Important
 
-Les budgets, réputations, valeurs joueurs et salaires sont des valeurs de gameplay provisoires.
+Les budgets, réputations, valeurs joueurs, salaires, statistiques de match et profils générés sont des valeurs de gameplay provisoires.
 
 Les vrais effectifs joueurs ne sont pas encore intégrés. Ils arriveront plus tard depuis un dataset propre.
 
 L’option “Garder l’effectif du club remplacé” est déjà prévue dans le menu, mais elle reste verrouillée tant que les vrais effectifs ne sont pas intégrés.
 
-La DA n’est pas encore refondue écran par écran. La base globale est posée, et l’écran Effectif sera probablement le premier gros écran à refaire en format dossier joueur.
+## Dette technique prioritaire
 
-## Fichiers principaux chargés
+Le projet a beaucoup itéré avec des fichiers versionnés dans leur nom. Cette méthode devient difficile à maintenir.
+
+La prochaine refonte technique devra basculer vers des noms de modules stables avec version en query string.
+
+À faire :
+
+```text
+match-center.js?v=020
+season-flow.js?v=020
+mailbox.js?v=020
+transfers.js?v=020
+training.js?v=020
+squad.js?v=020
+```
+
+À éviter désormais :
+
+```text
+season-v013.js
+season-v0141.js
+season-v01910.js
+```
+
+Objectif : éviter que README, CHANGELOG et notes techniques décrochent à chaque version rapide.
+
+## Fichiers principaux
 
 - `index.html` : structure de l’application, écrans d’entrée, shell principal et imports.
 - `style.css` : base générale historique.
@@ -59,28 +92,17 @@ La DA n’est pas encore refondue écran par écran. La base globale est posée,
 - `app.js` : logique d’accueil, création, sauvegardes, navigation, génération d’effectif et stabilisation.
 - `lineup.css` + `lineup-v050.js` : composition d’équipe.
 - `calendar.css` + `calendar-v060.js` : calendrier généré.
-- `prematch.css` + `prematch-v070.js` : écran pré-match.
 - `match.css` + `match-v080.js` : simulation simple.
 - `matchday-v090.js` : simulation de journée et classement dynamique.
-- `standings.css` : rendu du classement.
 - `match-details.css` + `match-details-v010.js` : statistiques et résumé enrichi de match, avec couche légère de variables DA.
-
-## Dette technique connue
-
-- Uniformiser progressivement les fichiers modules vers un nom stable + query string, par exemple `lineup.js?v=053` au lieu de `lineup-v050.js?v=053`.
-- Ajouter un `CHANGELOG.md` plus détaillé.
-- Nettoyer les données mortes restantes si elles ne sont plus utilisées.
-- Prévoir à terme un système de migration de sauvegardes avec `schemaVersion`.
-- Réfléchir à un point d’orchestration unique du rendu avant que trop de modules n’enrobent `refreshUI`.
-
-## Comment lancer
-
-Le projet peut être ouvert via GitHub Pages si le repo est configuré pour publier depuis la branche `main` et la racine du repo.
-
-Sinon, il suffit d’ouvrir `index.html` dans un navigateur.
+- `squad-v012.js/css` : écran Effectif en dossier joueur.
+- `season-v013.js` à `season-v01910.js/css` : modules récents de saison, courrier et Matchday Center.
+- `player-db-v016.js` : base joueurs générée.
+- `transfers-v017.js/css` : marché des transferts.
+- `training-v018.js/css` : entraînements.
 
 ## Prochaine étape recommandée
 
-**V0.11.5 — Effectif en dossier joueur**
+**V0.20 — Match Center unifié**
 
-Objectif : remplacer l’affichage textuel actuel par une vraie interface carnet : liste compacte à gauche, dossier joueur à droite, silhouettes/maillots, notes de coach et informations clés.
+Objectif : reconstruire proprement tout l’écran Match dans un seul module stable, puis arrêter les anciens rendus empilés.
