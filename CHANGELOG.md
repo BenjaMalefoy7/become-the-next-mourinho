@@ -1,5 +1,26 @@
 # Changelog — Become the next Mourinho
 
+## V0.27 — Extraction réelle de l’Entraînement
+
+- `training.js` n’est plus un simple pont vers `training-v018.js`.
+- `training.css` n’est plus un simple `@import` vers `training-v018.css`.
+- L’écran Entraînement vit maintenant directement dans `training.js`.
+- Correction importante : l’entraînement ne s’applique plus si le passage au jour suivant est bloqué par un match à jouer.
+- `index.html` charge maintenant `training.js?v=027` et `training.css?v=027`.
+
+## V0.26 — Extraction réelle du Courrier
+
+- `mailbox.js` n’est plus un simple pont vers `season-v015.js`.
+- `mailbox.css` n’est plus un simple `@import` vers `season-v0151.css`.
+- Le courrier manager vit maintenant directement dans `mailbox.js` :
+  - onglet Courrier ;
+  - messages lus / non lus ;
+  - briefing veille ou jour de match ;
+  - rapport après match ;
+  - notification transfert.
+- Le courrier conserve la logique réduite : pas de spam quotidien inutile.
+- `index.html` charge maintenant `mailbox.js?v=026` et `mailbox.css?v=026`.
+
 ## V0.25 — Extraction réelle de Season Flow
 
 - `season-flow.js` n’est plus un simple pont vers `season-v014.js`.
@@ -29,7 +50,6 @@
   - lancement du match ;
   - rapport post-match avec timeline et stats.
 - Cette version retire le premier gros pont historique derrière les noms stables.
-- `index.html` garde encore `match-center.js?v=023` pendant cette passe, donc un `Ctrl + F5` reste recommandé.
 
 ## V0.23 — Index plat sur points d’entrée stables
 
@@ -137,29 +157,6 @@
 - Déduction du budget transfert.
 - Ajout du joueur acheté à l’effectif.
 
-## V0.16 — Base joueurs générée
-
-- Ajout d’un vivier de joueurs générés par carrière.
-- Préparation de la future intégration d’un dataset réel.
-- Ajout des champs principaux : poste, âge, nationalité, overall, potentiel, valeur, salaire, club actuel.
-
-## V0.15 — Courrier
-
-- Ajout d’un onglet Courrier.
-- Ajout des premiers briefings et rapports de match.
-- Le courrier reste à nettoyer : moins de messages, messages plus utiles, meilleurs types.
-
-## V0.14 — Saison jour par jour
-
-- Ajout d’une date courante de saison.
-- Ajout du passage au jour suivant.
-- Ajout d’un verrou de matchday pour empêcher de sauter un match dû.
-
-## V0.13 — Dossier tactique pré-match
-
-- Transformation progressive de l’écran Match en dossier tactique.
-- Ajout du prochain match, de la compo, de la condition et de la décision coach.
-
 ## Note technique importante
 
 À partir de la refonte loader, le projet devra arrêter de versionner les modules dans le nom de fichier.
@@ -167,9 +164,9 @@
 À privilégier :
 
 ```text
-match-center.js?v=025
-season-flow.js?v=025
-mailbox.js?v=025
-transfers.js?v=025
-training.js?v=025
+match-center.js?v=027
+season-flow.js?v=027
+mailbox.js?v=027
+transfers.js?v=027
+training.js?v=027
 ```
