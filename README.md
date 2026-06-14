@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.21
+# Become the next Mourinho — V0.22
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,40 +6,34 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.21 — Début de migration loader plat + noms stables**
+**V0.22 — Index plat progressif + points d’entrée stables**
 
-Cette version engage la migration technique vers des points d’entrée stables, tout en gardant une compatibilité prudente avec les anciens fichiers versionnés.
+Cette version déplace le chargement principal vers `index.html` avec des points d’entrée stables. L’objectif est de sortir progressivement du modèle `season-v013.js`, `season-v01910.js`, etc.
+
+## Fichiers chargés depuis index.html
 
 ```text
-btm-flat-loader.js?v=021
-match-center.js?v=021
-season-flow.js?v=021
-mailbox.js?v=021
-player-db.js?v=021
-transfers.js?v=021
-training.js?v=021
+data.js?v=060
+app.js?v=044
+lineup-v050.js?v=053
+calendar-v060.js?v=071
+match-v080.js?v=080
+matchday-v090.js?v=090
+theme.js?v=022
+squad.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+player-db.js?v=022
+transfers.js?v=022
+training.js?v=022
+match-center.js?v=022
 ```
 
+Les anciens fichiers critiques de base restent encore chargés directement pour préserver l’ordre d’exécution et éviter une rupture de gameplay. Les modules récents passent maintenant par des points d’entrée stables.
+
+## DA active
+
 La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papier, onglets, dossiers, notes de coach et couleurs dynamiques du club.
-
-## Stabilisation récente V0.20
-
-- passage au jour suivant bloqué si un match non joué est dû ;
-- bouton “Avancer au prochain match” remplacé par une logique “Aller au match” le jour même ;
-- écran Match unifié pour éviter les anciens blocs concurrents ;
-- rapport post-match intégré au Match Center : score, timeline, possession, tirs, xG, occasions et lecture coach ;
-- stats de rapport enrichies puis persistées dans la sauvegarde ;
-- courrier réduit : plus de briefing automatique inutile tous les jours ;
-- anciens loaders de match récents retirés du chaînage dynamique ;
-- footer et texte dashboard réalignés sur V0.20.
-
-## Migration V0.21
-
-- ajout de `btm-flat-loader.js` ;
-- ajout des points d’entrée stables `match-center.js`, `season-flow.js`, `mailbox.js`, `player-db.js`, `transfers.js`, `training.js` ;
-- ajout des points d’entrée CSS stables correspondants ;
-- remplacement du mini-loader non-match dans `season-v015.js` par le loader plat central ;
-- conservation temporaire des anciens fichiers versionnés comme ponts de compatibilité.
 
 ## Fonctionnalités présentes
 
@@ -83,12 +77,12 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=021
-season-flow.js?v=021
-mailbox.js?v=021
-transfers.js?v=021
-training.js?v=021
-squad.js?v=021
+match-center.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+transfers.js?v=022
+training.js?v=022
+squad.js?v=022
 ```
 
 À éviter désormais :
@@ -99,25 +93,8 @@ season-v0141.js
 season-v01910.js
 ```
 
-Objectif : éviter que README, CHANGELOG et notes techniques décrochent à chaque version rapide.
-
-## Fichiers principaux
-
-- `index.html` : structure de l’application, écrans d’entrée, shell principal et imports historiques.
-- `style.css` : base générale historique.
-- `notebook-nav-v0112.css` : couche active Coach Notebook / intercalaires carnet.
-- `data.js` : données de championnat, clubs, postes et formations.
-- `app.js` : logique d’accueil, création, sauvegardes, navigation et génération d’effectif.
-- `btm-flat-loader.js` : point d’entrée stable V0.21 pour les modules récents.
-- `match-center.js/css` : point d’entrée stable vers le Match Center.
-- `season-flow.js/css` : point d’entrée stable vers le flow saison.
-- `mailbox.js/css` : point d’entrée stable vers le courrier.
-- `player-db.js` : point d’entrée stable vers la base joueurs.
-- `transfers.js/css` : point d’entrée stable vers les transferts.
-- `training.js/css` : point d’entrée stable vers l’entraînement.
-
 ## Prochaine étape recommandée
 
-**V0.22 — Index vraiment plat**
+**V0.23 — extraction complète des ponts de compatibilité**
 
-Objectif : charger directement les modules stables dans `index.html`, puis supprimer progressivement les anciens loaders dynamiques et les ponts vers fichiers versionnés.
+Objectif : copier progressivement le code utile des anciens fichiers vers les fichiers stables, puis retirer les derniers fichiers historiques du chargement principal.
