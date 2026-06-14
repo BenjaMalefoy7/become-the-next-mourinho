@@ -1,5 +1,25 @@
 # Changelog — Become the next Mourinho
 
+## V0.21 — Début loader plat + noms stables
+
+- Ajout de `btm-flat-loader.js?v=021` comme point d’entrée central pour les modules récents.
+- Ajout de points d’entrée stables :
+  - `match-center.js?v=021`
+  - `season-flow.js?v=021`
+  - `mailbox.js?v=021`
+  - `player-db.js?v=021`
+  - `transfers.js?v=021`
+  - `training.js?v=021`
+- Ajout de points d’entrée CSS stables :
+  - `match-center.css?v=021`
+  - `season-flow.css?v=021`
+  - `mailbox.css?v=021`
+  - `transfers.css?v=021`
+  - `training.css?v=021`
+- Remplacement du mini-loader non-match dans `season-v015.js` par le loader plat central.
+- Conservation volontaire de ponts de compatibilité vers certains fichiers historiques versionnés pour éviter une rupture brutale.
+- Documentation mise à jour pour refléter l’état V0.21.
+
 ## V0.20 — Stabilisation flow saison + Match Center unifié
 
 - Stabilisation du passage jour par jour.
@@ -74,11 +94,11 @@
 À privilégier :
 
 ```text
-match-center.js?v=020
-season-flow.js?v=020
-mailbox.js?v=020
-transfers.js?v=020
-training.js?v=020
+match-center.js?v=021
+season-flow.js?v=021
+mailbox.js?v=021
+transfers.js?v=021
+training.js?v=021
 ```
 
 À éviter :
