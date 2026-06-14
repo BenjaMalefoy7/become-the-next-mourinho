@@ -1,5 +1,18 @@
 # Changelog — Become the next Mourinho
 
+## V0.20 — Stabilisation flow saison + Match Center unifié
+
+- Stabilisation du passage jour par jour.
+- Blocage réel du bouton “Jour suivant” quand un match non joué est dû.
+- Le bouton d’accès au match devient une logique “Aller au match” le jour même.
+- Unification de l’écran Match dans `season-v013.js` malgré son nom historique.
+- Suppression des anciens rendus concurrents dans l’écran Match via réécriture complète du rendu.
+- Ajout d’un rapport post-match intégré au Match Center : score, timeline, stats, xG simplifié et lecture coach.
+- Enrichissement et persistance des données de rapport après simulation.
+- Réduction du spam courrier : plus de briefing automatique inutile tous les jours.
+- Suppression du chaînage dynamique des anciens modules de match récents depuis `season-v015.js`.
+- Réalignement du footer et du texte dashboard sur V0.20.
+
 ## V0.19.10 — Matchday Center et rapport forcé
 
 - Ajout d’un rapport de match forcé chargé en dernier.
