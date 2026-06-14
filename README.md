@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.28B
+# Become the next Mourinho — V0.29
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,56 +6,37 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.28B — Simulation pure, phase B**
+**V0.29 — Render registry, phase 1**
 
-Cette version poursuit le cutover du match après V0.28A. Les anciens rendus de match avaient été neutralisés. V0.28B retire maintenant les ponts de simulation les plus dangereux.
+Cette version remplace une partie importante de la cascade fragile de `refreshUI` par un registre central de rendu.
 
-```text
-match-engine.js  // contient directement la simulation du match utilisateur
-league-sim.js    // contient directement la simulation des autres matchs + classement
-season-flow.js   // appelle explicitement les deux modules
-match-center.js  // reste le seul renderer de l’écran Match
-```
-
-`season-flow.js` ne dépend plus de l’ancien empilement `oldSave → matchday-v090 → match-v080`. La chaîne de simulation est maintenant explicite.
-
-## Fichiers chargés depuis index.html
+Avant, plusieurs modules extraits faisaient encore :
 
 ```text
-data.js?v=060
-app.js?v=044
-theme.js?v=023
-lineup.js?v=023
-calendar.js?v=023
-match-engine.js?v=028A   // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
-league-sim.js?v=028A     // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
-squad.js?v=023
-season-flow.js?v=025     // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
-mailbox.js?v=026
-player-db.js?v=023
-transfers.js?v=023
-training.js?v=027
-match-center.js?v=028A
+refreshUI = function(){ oldRefresh(); monRender(); }
 ```
 
-Important : après cette version, faire un **Ctrl + F5** pour forcer le navigateur à recharger les fichiers JS modifiés.
-
-## Modules réellement extraits
+Maintenant, les modules extraits principaux s’enregistrent dans un registre :
 
 ```text
-match-center.js   // code réel du Match Center
-match-center.css  // styles réels du Match Center
-season-flow.js    // code réel du rythme jour par jour + appel explicite de la simulation pure
-season-flow.css   // styles réels du panneau saison
-mailbox.js        // code réel du courrier manager
-mailbox.css       // styles réels du courrier manager
-training.js       // code réel de l'entraînement par groupes
-training.css      // styles réels de l'entraînement
-match-engine.js   // code réel de simulation du match utilisateur
-league-sim.js     // code réel de simulation journée / classement
+btmRegisterRender("module", renderFunction)
 ```
 
-## V0.28B : chaîne de match actuelle
+Le registre est initialisé par `squad.js`, puis appelé par un seul `refreshUI` centralisé.
+
+## Modules passés sur le registre V0.29
+
+```text
+squad.js        // bootstrap du registre + rendu effectif
+season-flow.js  // panneau jour par jour + verrou matchday
+mailbox.js      // courrier manager
+training.js     // entraînement par groupes
+match-center.js // écran Match
+```
+
+Ces modules ne réécrivent plus chacun `refreshUI` en cascade.
+
+## Chaîne de match actuelle
 
 ```text
 match-center.js
@@ -72,6 +53,53 @@ season-flow.js
 ```
 
 Le Match Center reste le seul module qui dessine l’écran Match.
+
+## Modules réellement extraits
+
+```text
+match-center.js   // code réel du Match Center
+match-center.css  // styles réels du Match Center
+season-flow.js    // code réel du rythme jour par jour + appel explicite de la simulation pure
+season-flow.css   // styles réels du panneau saison
+mailbox.js        // code réel du courrier manager
+mailbox.css       // styles réels du courrier manager
+training.js       // code réel de l'entraînement par groupes
+training.css      // styles réels de l'entraînement
+match-engine.js   // code réel de simulation du match utilisateur
+league-sim.js     // code réel de simulation journée / classement
+```
+
+## Fichiers chargés depuis index.html
+
+```text
+data.js?v=060
+app.js?v=044
+theme.js?v=023
+lineup.js?v=023
+calendar.js?v=023
+match-engine.js?v=028A   // contenu V0.28B
+league-sim.js?v=028A     // contenu V0.28B
+squad.js?v=023           // contenu V0.29
+season-flow.js?v=025     // contenu V0.29
+mailbox.js?v=026         // contenu V0.29
+player-db.js?v=023
+transfers.js?v=023
+training.js?v=027        // contenu V0.29
+match-center.js?v=028A   // contenu V0.29
+```
+
+Important : les fichiers ont été mis à jour, mais `index.html` doit encore être bumpé proprement en `?v=029`. En attendant, faire un **Ctrl + F5** après déploiement.
+
+## Ponts de compatibilité restants
+
+```text
+lineup.js       -> lineup-v050.js
+calendar.js     -> calendar-v060.js
+player-db.js    -> player-db-v016.js
+transfers.js    -> transfers-v017.js
+```
+
+`match-engine.js` et `league-sim.js` ne sont plus des ponts.
 
 ## DA active
 
@@ -95,7 +123,6 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papi
 - simulation utilisateur relogée dans `match-engine.js` ;
 - simulation des autres matchs relogée dans `league-sim.js` ;
 - classement dynamique recalculé depuis les matchs joués ;
-- zones de classement : C1, C3, C4, relégation ;
 - rapport post-match enrichi ;
 - courrier manager réduit et stabilisé ;
 - base joueurs générée pour le recrutement ;
@@ -117,10 +144,10 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=028A
-season-flow.js?v=028B
-mailbox.js?v=026
-training.js?v=027
+match-center.js?v=029
+season-flow.js?v=029
+mailbox.js?v=029
+training.js?v=029
 match-engine.js?v=028B
 league-sim.js?v=028B
 ```
@@ -131,22 +158,19 @@ league-sim.js?v=028B
 season-v013.js
 season-v0141.js
 season-v01910.js
+match-v080.js
+matchday-v090.js
 ```
 
 ## Prochaine étape recommandée
 
-**V0.29 — Orchestrateur de rendu**
+**V0.29B — Bump HTML + fin du registre sur les modules de base**
 
-Objectif : réduire les derniers wrappers `refreshUI` en remplaçant progressivement le motif fragile :
-
-```text
-refreshUI = function(){ old(); monRender(); }
-```
-
-par un registre central :
+Objectifs :
 
 ```text
-registerRender("module", renderFunction)
+- bumper index.html en ?v=029
+- déplacer le bootstrap du registre dans un fichier dédié ou app.js
+- convertir lineup/calendar au registre quand ils seront extraits
+- commencer la suppression des vieux wrappers historiques restants
 ```
-
-Cela permettra d’éviter que plusieurs modules se réécrivent encore l’ordre de rendu.
