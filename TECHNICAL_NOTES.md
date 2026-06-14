@@ -1,92 +1,84 @@
 # Notes techniques
 
-État après V0.27.
+État après V0.28A.
 
 ## Direction active
 
 La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papier, dossiers, onglets, notes tactiques et couleurs dynamiques du club.
 
-## Ce qui a été stabilisé en V0.20
+## Ce qui a été stabilisé en V0.20–V0.27
 
 - Le bouton “Jour suivant” est bloqué si un match non joué est dû.
 - Le bouton “Avancer au prochain match” ne sert plus à skipper : il devient une logique “Aller au match” le jour même.
-- Les anciens blocs concurrents du type “Dernier rapport” ont été remplacés par un rendu unique du Match Center.
 - Le rapport post-match génère et conserve une timeline, des stats et une lecture coach.
-- Le courrier a commencé à être réduit pour éviter le spam quotidien.
+- `match-center.js`, `season-flow.js`, `mailbox.js` et `training.js` ne sont plus de simples ponts vers les anciens fichiers versionnés.
 
-## Ce qui a été engagé en V0.21–V0.23
+## V0.28A — Match Renderer Cutover, phase A
 
-Migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
+Objectif : prouver que `match-center.js` est le seul module qui dessine l’écran Match, sans casser la simulation historique.
 
-`index.html` passe maintenant par des points d’entrée stables :
-
-```text
-match-center.js
-season-flow.js
-mailbox.js
-player-db.js
-transfers.js
-training.js
-lineup.js
-calendar.js
-match-engine.js
-league-sim.js
-```
-
-## Extractions réelles déjà faites
+### Ce qui a été neutralisé
 
 ```text
-V0.24 : match-center.js / match-center.css
-V0.25 : season-flow.js / season-flow.css
-V0.26 : mailbox.js / mailbox.css
-V0.27 : training.js / training.css
+match-v080.js
+- ne wrap plus refreshUI
+- ne bind plus le bouton #prematch-launch
+- ne rend plus le bloc "Dernier résultat"
+- ne décore plus le calendrier après match
+- ne met plus le footer/dashboard en V0.8
+
+matchday-v090.js
+- ne renomme plus le bouton de match
+- ne met plus le footer/dashboard en V0.9.2
+- ne wrap plus refreshUI pour modifier l’écran Match
 ```
 
-Ces fichiers ne sont plus de simples ponts vers les anciens fichiers versionnés.
-
-## Ce qui change en V0.26
-
-`mailbox.js` contient maintenant directement :
+### Ce qui reste volontairement actif
 
 ```text
-onglet Courrier
-liste de messages
-lecteur de message
-messages lus / non lus
-briefing veille / jour de match
-rapport après match
-notification transfert
+match-v080.js
+- simulateCurrentMatch(career, match)
+- simGetLineupStats(career)
+- simReduceStarterCondition(career)
+- saveSimulatedMatch() en fallback
+
+matchday-v090.js
+- saveSimulatedMatchdayV090()
+- computeDynamicStandings(career)
+- simulation des autres matchs de la journée
+- rendu du classement temporaire
 ```
 
-`mailbox.css` contient maintenant directement les styles du courrier. Il ne dépend plus de `season-v0151.css`.
-
-## Ce qui change en V0.27
-
-`training.js` contient maintenant directement :
-
-```text
-plan d'entraînement par groupes
-focus gardiens / défense / milieu / attaque
-application des effets lors du passage réel d'un jour
-rendu de l'écran entraînement
-```
-
-Correction importante : l'entraînement ne s'applique plus si `Jour suivant` est bloqué par un match à jouer.
-
-`training.css` contient maintenant directement les styles de l'entraînement. Il ne dépend plus de `training-v018.css`.
+Le rendu du classement reste temporairement dans `matchday-v090.js` pour éviter une régression visible de l’écran Classement. Il devra rejoindre l’orchestrateur de rendu plus tard.
 
 ## Ponts de compatibilité restants
 
 ```text
 lineup.js       -> lineup-v050.js
 calendar.js     -> calendar-v060.js
-match-engine.js -> match-v080.js
-league-sim.js   -> matchday-v090.js
+match-engine.js -> match-v080.js, mais renderer neutralisé
+league-sim.js   -> matchday-v090.js, mais effets Match neutralisés
 player-db.js    -> player-db-v016.js
 transfers.js    -> transfers-v017.js
 ```
 
 Cette compatibilité reste volontaire : on extrait les modules un par un pour éviter de casser la carrière, le calendrier et les sauvegardes.
+
+## Risque encore connu
+
+Plusieurs modules enrichissent ou remplacent encore `refreshUI`. Cela reste fragile. V0.28A retire les wrappers de match historiques, mais il reste encore des wrappers dans :
+
+```text
+lineup
+calendar
+squad
+season-flow
+mailbox
+training
+match-center
+```
+
+La prochaine vraie stabilisation structurelle sera un orchestrateur central de rendu.
 
 ## Règle à appliquer jusqu’au bout
 
@@ -95,12 +87,12 @@ Basculer vers des noms de modules stables et mettre la version uniquement dans l
 À privilégier :
 
 ```text
-match-center.js?v=027
-season-flow.js?v=027
-mailbox.js?v=027
-transfers.js?v=027
+match-center.js?v=028A
+season-flow.js?v=025
+mailbox.js?v=026
 training.js?v=027
-squad.js?v=027
+match-engine.js?v=028A
+league-sim.js?v=028A
 ```
 
 À éviter désormais :
@@ -114,26 +106,25 @@ match-details-v010.js
 
 Objectif : éviter que README, CHANGELOG et documentation décrochent à chaque itération.
 
-## Dette refreshUI
-
-Plusieurs modules enrichissent ou remplacent encore `refreshUI`. Cela reste fragile. Il faudra créer un orchestrateur central de rendu au lieu d’empiler des wrappers.
-
 ## Prochaine étape technique recommandée
 
-### V0.28 — Extraction réelle du Recrutement
+### V0.28B — Simulation pure
 
-Objectif : copier le code utile de `transfers-v017.js` vers `transfers.js`, puis retirer le pont sans encore ajouter les fenêtres de mercato ou les négociations avancées.
+Objectif : transformer `match-engine.js` et `league-sim.js` en vrais modules sans ponts vers `match-v080.js` et `matchday-v090.js`.
 
-Priorité ensuite :
+Chaîne cible :
 
 ```text
-player-db.js
-lineup.js
-calendar.js
-match-engine.js
-league-sim.js
+season-flow.js
+→ simulateUserMatch(career)
+→ simulateOtherMatches(career)
+→ computeDynamicStandings(career)
+→ enrichAndPersistMatchReport(career)
+→ generateMatchMail(career)
 ```
 
-## Season Flow cible
+Cette étape devra être atomique : ne pas retirer `match-v080.js` ou `matchday-v090.js` avant que leur logique de simulation soit relogée ailleurs.
 
-Le rythme jour par jour est maintenant centralisé dans `season-flow.js`. La future amélioration sera d’y relier plus proprement l’entraînement avec un vrai orchestrateur de journée unique, au lieu de wrappers successifs.
+## Angle mort à vérifier ensuite
+
+`calendar-v060.js` ne semble pas avancer la date réelle : ses boutons changent surtout la journée affichée. Il faudra quand même confirmer qu’aucun autre chemin que `season-flow.js` ne permet réellement d’avancer le jour de carrière.
