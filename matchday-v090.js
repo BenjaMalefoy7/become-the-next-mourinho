@@ -1,8 +1,8 @@
-const MATCHDAY_VERSION = "0.9.2";
+const MATCHDAY_VERSION = "0.28A";
 
 function mdEscape(value) {
   if (typeof escapeHtml === "function") return escapeHtml(value);
-  return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+  return String(value ?? "").replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
 }
 
 function mdClubById(career, clubId) {
@@ -22,7 +22,7 @@ function mdNeutralStrength(career, match, clubId) {
 
 function mdNeutralScorerName(clubName) {
   const names = ["Buteur maison", "Attaquant", "Milieu offensif", "Avant-centre", "Joueur décisif"];
-  return names[Math.floor(Math.random() * names.length)] + " " + (clubName ? "(" + clubName + ")" : "");
+  return names[Math.floor(Math.random() * names.length)] + (clubName ? " (" + clubName + ")" : "");
 }
 
 function mdBuildNeutralEvents(match, homeGoals, awayGoals) {
@@ -210,9 +210,7 @@ function saveSimulatedMatchdayV090() {
     const isUserMatch = match.id === userMatch.id;
     const result = isUserMatch && typeof simulateCurrentMatch === "function" ? simulateCurrentMatch(career, match) : mdSimulateNeutralMatch(career, match);
     mdApplyResultToFixture(match, result);
-    if (isUserMatch) {
-      userHistoryItem = mdCreateUserHistoryItem(career, match, result);
-    }
+    if (isUserMatch) userHistoryItem = mdCreateUserHistoryItem(career, match, result);
   });
 
   if (typeof simReduceStarterCondition === "function") simReduceStarterCondition(career);
@@ -265,16 +263,13 @@ function renderStandingsV090(career) {
       </div>
       <div class="standings-rank-pill">${userRow ? `${userRow.rank}e / ${standings.length}` : "—"}</div>
     </div>
-
     ${mdStandingsLegendHtml()}
-
     <div class="kpi-grid standings-kpis">
       <article class="kpi-card"><p>Journées jouées</p><strong>${playedMatchdays}/38</strong></article>
       <article class="kpi-card"><p>Ton rang</p><strong>${userRow ? userRow.rank + "e" : "—"}</strong></article>
       <article class="kpi-card"><p>Points</p><strong>${userRow ? userRow.points : 0}</strong></article>
       <article class="kpi-card"><p>Différence</p><strong>${userRow && userRow.goalDifference > 0 ? "+" : ""}${userRow ? userRow.goalDifference : 0}</strong></article>
     </div>
-
     <div class="table-card standings-table-card">
       <table>
         <thead><tr><th>#</th><th>Club</th><th>Zone</th><th>J</th><th>V</th><th>N</th><th>D</th><th>BP</th><th>BC</th><th>Diff</th><th>Pts</th></tr></thead>
@@ -304,44 +299,22 @@ function renderStandingsV090(career) {
   `;
 }
 
-function decorateV090SimulationButton() {
-  const button = document.getElementById("prematch-launch");
-  if (!button || button.disabled) return;
-  button.textContent = "Simuler la journée";
-}
-
-function updateV090Texts(career) {
-  const footer = document.querySelector(".sidebar-footer");
-  if (footer) footer.textContent = "V0.9.2 — Légende classement";
-  const rank = career ? mdGetUserRank(career) : null;
-  if (typeof setText === "function") {
-    const rankText = rank ? ` · rang ${rank.rank}/${computeDynamicStandings(career).length}` : "";
-    setText("dashboard-description", "V0.9.2 : classement dynamique avec légende des zones" + rankText + ".");
-  }
-  const panels = document.querySelectorAll("#dashboard .panel h3");
-  const texts = document.querySelectorAll("#dashboard .panel p");
-  if (panels[0]) panels[0].textContent = "Statut V0.9.2";
-  if (texts[0]) texts[0].textContent = "Le classement affiche une légende claire pour les places européennes et la relégation.";
-  if (panels[1]) panels[1].textContent = "Prochaine évolution";
-  if (texts[1]) texts[1].textContent = "V1.0 : enrichir le moteur avec stats de match, tirs, possession et résumé plus vivant.";
-}
-
-(function initMatchdayV090() {
+(function initMatchdayPureV028A() {
   try { saveSimulatedMatch = saveSimulatedMatchdayV090; } catch (error) { window.saveSimulatedMatch = saveSimulatedMatchdayV090; }
+  window.computeDynamicStandings = computeDynamicStandings;
+  window.renderDynamicStandings = renderStandingsV090;
+  window.__BTM_MATCHDAY_LEGACY_MATCH_RENDERER_DISABLED__ = true;
 
-  const originalRefreshUI = typeof refreshUI === "function" ? refreshUI : null;
-  refreshUI = function refreshUIV090() {
-    if (originalRefreshUI) originalRefreshUI();
-    const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
-    renderStandingsV090(career);
-    updateV090Texts(career);
-    decorateV090SimulationButton();
-  };
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest('[data-screen="standings"]')) return;
+    setTimeout(() => {
+      const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
+      renderStandingsV090(career);
+    }, 0);
+  });
 
   document.addEventListener("DOMContentLoaded", () => {
     const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
     renderStandingsV090(career);
-    updateV090Texts(career);
-    decorateV090SimulationButton();
   });
 })();
