@@ -7,11 +7,14 @@
   <link rel="stylesheet" href="style.css?v=050" />
   <link rel="stylesheet" href="lineup.css?v=053" />
   <link rel="stylesheet" href="calendar.css?v=071" />
-  <link rel="stylesheet" href="prematch.css?v=070" />
-  <link rel="stylesheet" href="match.css?v=080" />
   <link rel="stylesheet" href="standings.css?v=090" />
-  <link rel="stylesheet" href="match-details.css?v=010" />
   <link rel="stylesheet" href="notebook-nav-v0112.css?v=0112" />
+  <link rel="stylesheet" href="squad.css?v=022" />
+  <link rel="stylesheet" href="match-center.css?v=022" />
+  <link rel="stylesheet" href="season-flow.css?v=022" />
+  <link rel="stylesheet" href="mailbox.css?v=022" />
+  <link rel="stylesheet" href="transfers.css?v=022" />
+  <link rel="stylesheet" href="training.css?v=022" />
 </head>
 <body class="notebook-tabs-left">
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -67,7 +70,7 @@
 
         <div class="section-header">
           <h3>Effectif de départ</h3>
-          <p>La V0.10 garde la saison dynamique et enrichit les résultats avec des statistiques de match.</p>
+          <p>La V0.22 stabilise le chargement des modules et prépare la future base de données réelle.</p>
         </div>
 
         <div class="mode-grid">
@@ -220,7 +223,7 @@
         <button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
 
-      <div class="sidebar-footer">V0.11.2 — Onglets carnet</div>
+      <div class="sidebar-footer">V0.22 — Index plat</div>
     </aside>
 
     <main class="main-content">
@@ -239,7 +242,7 @@
           <div>
             <p class="eyebrow">Bienvenue manager</p>
             <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.10 enrichit les résultats avec possession, tirs et xG simplifié.</p>
+            <p id="dashboard-description">La V0.22 stabilise le chargement des modules avec des points d’entrée stables.</p>
           </div>
           <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
         </div>
@@ -253,12 +256,12 @@
 
         <div class="panel-grid">
           <article class="panel">
-            <h3>Statut V0.10</h3>
-            <p>Les résultats de match affichent maintenant des statistiques, un résumé et un homme du match.</p>
+            <h3>Statut V0.22</h3>
+            <p>Le chargement passe par des points d’entrée stables pour limiter les conflits entre modules.</p>
           </article>
           <article class="panel">
             <h3>Prochaine évolution</h3>
-            <p>V0.11 : améliorer la fatigue, la forme et la morale après les matchs.</p>
+            <p>Extraire progressivement les derniers ponts de compatibilité et ajouter un vrai schemaVersion de sauvegarde.</p>
           </article>
         </div>
       </section>
@@ -292,15 +295,15 @@
       </section>
 
       <section class="screen" id="calendar">
-        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier V0.6…</p></div>
+        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier…</p></div>
       </section>
 
       <section class="screen" id="standings">
-        <div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique V0.9…</p></div>
+        <div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique…</p></div>
       </section>
 
       <section class="screen" id="match">
-        <div class="section-header"><h3>Match</h3><p>Chargement de la simulation enrichie V0.10…</p></div>
+        <div class="section-header"><h3>Match</h3><p>Chargement du Match Center…</p></div>
       </section>
 
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La prochaine grosse étape pourra ajouter les offres, refus et contre-offres.</p></div></section>
@@ -313,9 +316,15 @@
   <script src="app.js?v=044"></script>
   <script src="lineup-v050.js?v=053"></script>
   <script src="calendar-v060.js?v=071"></script>
-  <script src="prematch-v070.js?v=070"></script>
   <script src="match-v080.js?v=080"></script>
   <script src="matchday-v090.js?v=090"></script>
-  <script src="match-details-v010.js?v=010"></script>
+  <script src="theme.js?v=022"></script>
+  <script src="squad.js?v=022"></script>
+  <script src="season-flow.js?v=022"></script>
+  <script src="mailbox.js?v=022"></script>
+  <script src="player-db.js?v=022"></script>
+  <script src="transfers.js?v=022"></script>
+  <script src="training.js?v=022"></script>
+  <script src="match-center.js?v=022"></script>
 </body>
 </html>
