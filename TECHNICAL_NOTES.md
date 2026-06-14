@@ -1,21 +1,135 @@
 # Notes techniques
 
-Etat apres V0.36.
+Etat apres V0.37.
 
 La DA active reste Coach Notebook / Manager War Room.
 
-V0.36 nettoie les premiers fichiers historiques devenus orphelins apres les extractions reelles des modules Calendar, Lineup, Player DB et Transfers.
+## V0.37 — schemaVersion + migrations
 
-Fichiers supprimes : calendar-v060.js, lineup-v050.js, player-db-v016.js, transfers-v017.js.
+La V0.37 ajoute un module stable de migration :
 
-Ces fichiers ne sont plus charges par index.html et les points d'entree stables correspondants ne les appellent plus.
+```text
+save-migrations.js
+```
 
-Modules dans le registre : theme.js, squad.js, lineup.js, calendar.js, season-flow.js, mailbox.js, player-db.js, transfers.js, training.js, match-center.js.
+Il est charge juste apres `app.js` et avant les modules gameplay.
 
-Compatibilites gameplay majeures restantes : aucune cote Match, Calendar, Lineup, Player DB ou Transfers.
+Schema courant :
 
-Des anciens fichiers historiques peuvent encore rester dans le depot, notamment autour des anciennes versions season/match/report. Ils doivent etre supprimes uniquement apres verification explicite des references.
+```text
+schemaVersion: 37
+```
 
-Prochaine etape recommandee : schemaVersion + migrations de sauvegardes.
+Le module enveloppe trois points centraux :
 
-Note cache : certains cache-busters de index.html restent anterieurs aux versions internes des modules. Faire Ctrl + F5 apres deploiement GitHub Pages.
+```text
+loadCareers()
+saveCareers()
+repairCareerIfNeeded()
+```
+
+Objectif : migrer les anciennes sauvegardes automatiquement sans demander au joueur de recommencer sa carrière.
+
+## Champs normalisés
+
+```text
+id
+careerName
+managerName
+mode
+difficulty
+objective
+squadLevel
+squadSource
+season
+matchday
+league
+club
+clubs
+standings
+fixtures
+players
+finances
+mailbox
+trainingFocus
+lastMatchResult
+version
+dataVersion
+schemaVersion
+createdAt
+updatedAt
+```
+
+Les joueurs sont aussi normalisés :
+
+```text
+id
+name
+clubId
+club
+nationality
+primaryPosition
+secondaryPositions
+age
+overall
+potential
+attack
+defense
+physical
+mental
+value
+salary
+contractYears
+morale
+condition
+injuryStatus
+```
+
+## Modules dans le registre
+
+```text
+theme.js
+squad.js
+lineup.js
+calendar.js
+season-flow.js
+mailbox.js
+player-db.js
+transfers.js
+training.js
+match-center.js
+```
+
+## Modules stabilises / extraits
+
+```text
+match-center.js
+season-flow.js
+mailbox.js
+training.js
+match-engine.js
+league-sim.js
+theme.js
+calendar.js
+lineup.js
+player-db.js
+transfers.js
+save-migrations.js
+```
+
+## Roadmap de stabilisation
+
+```text
+✅ anciens renderers de match neutralises
+✅ simulation pure extraite
+✅ registre de rendu centralise
+✅ Calendar / passage de jour verifie
+✅ Calendar extrait
+✅ Lineup extrait
+✅ Player DB extrait
+✅ Transfers extrait
+✅ principaux orphelins recents supprimes
+✅ schemaVersion + migrations ajoutees
+```
+
+La roadmap de stabilisation demandee est terminee. Les prochaines etapes peuvent revenir vers le gameplay, tout en gardant les migrations a jour a chaque changement de structure de sauvegarde.
