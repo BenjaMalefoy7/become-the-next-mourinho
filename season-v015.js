@@ -20,8 +20,8 @@ function mark(mid,read,refresh){const a=activeIndex();if(!a.career)return;box(a.
 const prev=typeof refreshUI==='function'?refreshUI:null;refreshUI=function refreshUIV015(){if(prev)prev();render();const f=document.querySelector('.sidebar-footer');if(f)f.textContent='V0.15 — Courrier';};document.addEventListener('DOMContentLoaded',()=>{ensureUi();render();});
 })();
 (function loadRoadmapModulesV0131ToV019(){
-const styles=['season-v0131.css?v=0131','season-v0141.css?v=0141','season-v0151.css?v=0151','transfers-v017.css?v=017','training-v018.css?v=018','matchday-v019.css?v=0194','match-report-v0199.css?v=0199'];
-const scripts=['season-v0131.js?v=0131','season-v0141.js?v=0141','season-v0151.js?v=0151','player-db-v016.js?v=016','transfers-v017.js?v=017','training-v018.js?v=018','matchday-v019.js?v=0194','season-lock-v0198.js?v=0198','match-report-v0199.js?v=0199'];
+const styles=['season-v0131.css?v=0131','season-v0141.css?v=0141','season-v0151.css?v=0151','transfers-v017.css?v=017','training-v018.css?v=018','matchday-v019.css?v=0194','match-report-v0199.css?v=0199','match-report-force-v01910.css?v=01910'];
+const scripts=['season-v0131.js?v=0131','season-v0141.js?v=0141','season-v0151.js?v=0151','player-db-v016.js?v=016','transfers-v017.js?v=017','training-v018.js?v=018','matchday-v019.js?v=0194','season-lock-v0198.js?v=0198','match-report-v0199.js?v=0199','match-report-force-v01910.js?v=01910'];
 styles.forEach(h=>{if(document.querySelector('link[href*="'+h.split('?')[0]+'"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l);});
 function load(i){if(i>=scripts.length){if(typeof refreshUI==='function')refreshUI();return;}const src=scripts[i];if(document.querySelector('script[src*="'+src.split('?')[0]+'"]')){load(i+1);return;}const s=document.createElement('script');s.src=src;s.async=false;s.onload=()=>load(i+1);document.body.appendChild(s);}load(0);
 })();
