@@ -1,5 +1,14 @@
 # Changelog — Become the next Mourinho
 
+## V0.36 — Nettoyage ciblé des orphelins
+
+- Suppression de `calendar-v060.js`, remplacé par le module stable `calendar.js` depuis la V0.32.
+- Suppression de `lineup-v050.js`, remplacé par le module stable `lineup.js` depuis la V0.33.
+- Suppression de `player-db-v016.js`, remplacé par le module stable `player-db.js` depuis la V0.34.
+- Suppression de `transfers-v017.js`, remplacé par le module stable `transfers.js` depuis la V0.35.
+- Cette passe réduit la confusion entre anciens fichiers versionnés et points d’entrée stables.
+- Les suppressions restent ciblées : les autres anciens fichiers seront supprimés seulement après vérification explicite.
+
 ## V0.35 — Transfers / Recrutement extrait
 
 - `transfers.js` n’est plus un pont vers `transfers-v017.js`.
@@ -9,7 +18,6 @@
 - Le courrier de transfert reste déclenché via `btmGenerateTransferMail` quand disponible.
 - `transfers.js` s’enregistre via `btmRegisterRender("transfers", ...)` au lieu de réécrire `refreshUI`.
 - `index.html` charge maintenant `transfers.css?v=035` et `transfers.js?v=035`.
-- `transfers-v017.js` devient un fichier historique orphelin candidat au nettoyage.
 
 ## V0.34 — Player DB extrait
 
@@ -19,7 +27,6 @@
 - `btmEnsurePlayerDatabasePersisted(count)` reste disponible pour initialiser et sauvegarder la base joueurs active.
 - `player-db.js` s’enregistre via `btmRegisterRender("player-db", ...)` au lieu de réécrire `refreshUI`.
 - `index.html` charge maintenant `player-db.js?v=034`.
-- `player-db-v016.js` devient un fichier historique orphelin candidat au nettoyage.
 
 ## V0.33 — Lineup extrait
 
@@ -28,7 +35,6 @@
 - La composition est normalisée et réparée directement par `lineup.js`.
 - Les changements de formation, d’auto-composition, de vidage et de titulaires sont sauvegardés directement par le module stable.
 - `lineup.js` s’enregistre toujours via `btmRegisterRender("lineup", ...)`.
-- `lineup-v050.js` devient un fichier historique orphelin candidat au nettoyage.
 
 ## V0.32 — Calendar extrait
 
@@ -37,7 +43,6 @@
 - Le rendu du calendrier est maintenant directement dans le module stable.
 - `calendar.js` s’enregistre toujours via `btmRegisterRender("calendar", ...)`.
 - Les boutons du calendrier restent uniquement des boutons d’affichage : ils ne modifient pas la date réelle de carrière.
-- `calendar-v060.js` devient un fichier historique orphelin candidat au nettoyage.
 
 ## V0.31 — Calendar registry cutover
 
