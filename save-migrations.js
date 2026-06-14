@@ -1,12 +1,12 @@
-const BTM_SAVE_MIGRATIONS_VERSION = "0.37";
+const BTM_SAVE_MIGRATIONS_VERSION = "0.38";
 
 (function () {
   if (window.__BTM_SAVE_MIGRATIONS_LOADED__) return;
   window.__BTM_SAVE_MIGRATIONS_LOADED__ = true;
 
   const CAREER_SCHEMA_VERSION = 37;
-  const DATA_VERSION = "premier_league_2025_2026_v0_4_4";
-  const APP_VERSION_VALUE = "0.4.4";
+  const DATA_VERSION = typeof DATA_SCHEMA_VERSION !== "undefined" ? DATA_SCHEMA_VERSION : "unknown_data_schema";
+  const APP_VERSION_VALUE = typeof APP_VERSION !== "undefined" ? APP_VERSION : "0.0.0";
   const originalLoadCareers = window.loadCareers;
   const originalSaveCareers = window.saveCareers;
   const originalRepairCareerIfNeeded = window.repairCareerIfNeeded;
