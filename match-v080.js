@@ -1,8 +1,8 @@
-const MATCH_SIM_VERSION = "0.8";
+const MATCH_SIM_VERSION = "0.28A";
 
 function simEscape(value) {
   if (typeof escapeHtml === "function") return escapeHtml(value);
-  return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+  return String(value ?? "").replace(/[&<>\"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
 }
 
 function simClamp(value, min, max) {
@@ -20,7 +20,9 @@ function simPlayerById(career, playerId) {
 function simGetNextMatch(career) {
   if (typeof getNextCareerMatch === "function") return getNextCareerMatch(career);
   const clubId = career?.club?.id;
-  return Array.isArray(career?.fixtures) ? career.fixtures.find((match) => (match.homeClubId === clubId || match.awayClubId === clubId) && !match.played) || null : null;
+  return Array.isArray(career?.fixtures)
+    ? career.fixtures.find((match) => (match.homeClubId === clubId || match.awayClubId === clubId) && !match.played) || null
+    : null;
 }
 
 function simGetLineupStats(career) {
@@ -29,6 +31,7 @@ function simGetLineupStats(career) {
   let total = 0;
   let condition = 0;
   let count = 0;
+
   starters.forEach((starter) => {
     const player = simPlayerById(career, starter.playerId);
     if (!player) return;
@@ -36,7 +39,13 @@ function simGetLineupStats(career) {
     condition += Number(player.condition ?? 100) || 100;
     count += 1;
   });
-  return { valid: count >= 11, rating: Math.round(total / (count || 1)), condition: Math.round(condition / (count || 1)), starters };
+
+  return {
+    valid: count >= 11,
+    rating: Math.round(total / (count || 1)),
+    condition: Math.round(condition / (count || 1)),
+    starters
+  };
 }
 
 function simTeamStrength(career, match, clubId) {
@@ -85,6 +94,7 @@ function simBuildEvents(career, match, homeGoals, awayGoals) {
       events.push({ minute, type: "goal", side, text: "But de " + scorer });
     }
   };
+
   addGoalEvents(homeGoals, "home");
   addGoalEvents(awayGoals, "away");
   events.sort((a, b) => a.minute - b.minute);
@@ -189,95 +199,7 @@ function saveSimulatedMatch() {
   return { ok: Boolean(saved), career, result: historyItem, message: saved ? "Match simulé." : "Sauvegarde impossible." };
 }
 
-function resultScoreText(result) {
-  if (!result) return "—";
-  return result.homeClubName + " " + result.homeGoals + " - " + result.awayGoals + " " + result.awayClubName;
-}
-
-function renderLastResultV080(career) {
-  const screen = document.getElementById("match");
-  if (!screen || !career || !career.lastMatchResult) return;
-  const result = career.lastMatchResult;
-  const card = document.createElement("article");
-  card.className = "panel match-result-card result-" + String(result.resultForUser || "nul").toLowerCase();
-  card.innerHTML = `
-    <div class="match-result-header">
-      <div><p class="eyebrow">Dernier résultat</p><h3>${simEscape(resultScoreText(result))}</h3></div>
-      <strong>${simEscape(result.resultForUser || "Résultat")}</strong>
-    </div>
-    <div class="match-events-list">
-      ${(Array.isArray(result.events) ? result.events : []).map((event) => `<span><b>${event.minute}'</b> ${simEscape(event.text)}</span>`).join("")}
-    </div>
-  `;
-  const first = screen.querySelector(".prematch-header") || screen.firstElementChild;
-  if (first && first.nextSibling) screen.insertBefore(card, first.nextSibling);
-  else screen.appendChild(card);
-}
-
-function decorateCalendarResultsV080(career) {
-  const calendar = document.getElementById("calendar");
-  if (!calendar || !career || !Array.isArray(career.fixtures)) return;
-  calendar.querySelectorAll(".calendar-match-row").forEach((row) => {
-    const home = row.querySelector(".calendar-club.home")?.textContent?.trim();
-    const away = row.querySelector(".calendar-club.away")?.textContent?.trim();
-    const match = career.fixtures.find((fixture) => fixture.homeClubName === home && fixture.awayClubName === away && fixture.played);
-    if (!match) return;
-    const versus = row.querySelector(".calendar-versus");
-    const status = row.querySelector(".calendar-status");
-    if (versus) versus.textContent = `${match.homeGoals} - ${match.awayGoals}`;
-    if (status) status.textContent = "Joué";
-    row.classList.add("calendar-played-row");
-  });
-}
-
-function bindSimulationButtonV080(career) {
-  const button = document.getElementById("prematch-launch");
-  if (!button || button.disabled) return;
-  const clone = button.cloneNode(true);
-  clone.textContent = "Simuler le match";
-  button.replaceWith(clone);
-  clone.addEventListener("click", () => {
-    const simulation = saveSimulatedMatch();
-    if (!simulation.ok) {
-      const note = document.getElementById("prematch-launch-note");
-      if (note) {
-        note.innerHTML = `<strong>Impossible :</strong> ${simEscape(simulation.message)}`;
-        note.classList.add("visible");
-      }
-      return;
-    }
-    if (typeof refreshUI === "function") refreshUI();
-  });
-}
-
-function updateMatchVersionTextsV080(career) {
-  const footer = document.querySelector(".sidebar-footer");
-  if (footer) footer.textContent = "V0.8 — Simulation";
-  if (typeof setText === "function") setText("dashboard-description", "V0.8 : simulation simple active. Le prochain match peut maintenant être joué depuis l’écran Match.");
-  const panels = document.querySelectorAll("#dashboard .panel h3");
-  const texts = document.querySelectorAll("#dashboard .panel p");
-  if (panels[0]) panels[0].textContent = "Statut V0.8";
-  if (texts[0]) texts[0].textContent = "Tu peux maintenant simuler le prochain match de ton club et sauvegarder le résultat.";
-  if (panels[1]) panels[1].textContent = "Prochaine évolution";
-  if (texts[1]) texts[1].textContent = "V0.9 : calculer le classement complet après chaque journée.";
-}
-
-(function initMatchSimulationV080() {
-  const originalRefreshUI = typeof refreshUI === "function" ? refreshUI : null;
-  refreshUI = function refreshUIV080() {
-    if (originalRefreshUI) originalRefreshUI();
-    const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
-    updateMatchVersionTextsV080(career);
-    bindSimulationButtonV080(career);
-    renderLastResultV080(career);
-    decorateCalendarResultsV080(career);
-  };
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null;
-    updateMatchVersionTextsV080(career);
-    bindSimulationButtonV080(career);
-    renderLastResultV080(career);
-    decorateCalendarResultsV080(career);
-  });
+(function initPureMatchEngineV028A() {
+  window.__BTM_MATCH_ENGINE_PURE__ = true;
+  window.__BTM_MATCH_LEGACY_RENDERER_DISABLED__ = true;
 })();
