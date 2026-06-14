@@ -2,12 +2,17 @@ const BTM_FLAT_LOADER_VERSION = "0.21";
 
 (function loadBtmStableModulesV021() {
   const styles = [
+    "match-center.css?v=021",
+    "season-flow.css?v=021",
     "mailbox.css?v=021",
     "transfers.css?v=021",
     "training.css?v=021"
   ];
 
   const scripts = [
+    "match-center.js?v=021",
+    "season-flow.js?v=021",
+    "mailbox.js?v=021",
     "player-db.js?v=021",
     "transfers.js?v=021",
     "training.js?v=021"
