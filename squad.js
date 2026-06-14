@@ -1,39 +1,5 @@
-const BTM_SQUAD_ENTRYPOINT_VERSION = "0.29";
+const BTM_SQUAD_ENTRYPOINT_VERSION = "0.38";
 (function () {
-  function ensureRenderRegistry() {
-    if (window.btmRegisterRender && window.btmRunRegisteredRenders) return;
-
-    const baseRefreshUI = typeof window.refreshUI === "function" ? window.refreshUI : null;
-    const renderers = new Map();
-
-    window.btmRegisterRender = function btmRegisterRender(name, renderer) {
-      if (!name || typeof renderer !== "function") return;
-      renderers.set(name, renderer);
-    };
-
-    window.btmUnregisterRender = function btmUnregisterRender(name) {
-      renderers.delete(name);
-    };
-
-    window.btmRunRegisteredRenders = function btmRunRegisteredRenders(career) {
-      const resolvedCareer = career || (typeof getResolvedCareer === "function" ? getResolvedCareer() : null);
-      renderers.forEach((renderer, name) => {
-        try {
-          renderer(resolvedCareer);
-        } catch (error) {
-          console.error("[BTM render registry] Renderer failed:", name, error);
-        }
-      });
-    };
-
-    window.refreshUI = function refreshUIV029Registry() {
-      if (baseRefreshUI) baseRefreshUI();
-      window.btmRunRegisteredRenders();
-    };
-  }
-
-  ensureRenderRegistry();
-
   const state = { filter: "all", selectedId: null };
   const groups = { all: [], GK: ["GK"], DEF: ["DD", "DC", "DG"], MID: ["MDC", "MC", "MOC"], ATT: ["AD", "AG", "BU"] };
 
@@ -87,11 +53,12 @@ const BTM_SQUAD_ENTRYPOINT_VERSION = "0.29";
     const shownPlayers = visible(players);
     if (!shownPlayers.some((player) => player.id === state.selectedId)) state.selectedId = shownPlayers[0]?.id || players[0]?.id || null;
     const selected = players.find((player) => player.id === state.selectedId) || shownPlayers[0] || players[0] || null;
-    container.innerHTML = `<div class="squad-v012"><article class="squad-v012-board"><div class="squad-v012-head"><div><p class="eyebrow">Effectif V0.29</p><h3>Liste du groupe</h3></div><div class="squad-v012-note">${e(career.club?.shortName || career.club?.name || "Club")}<br>observer · trier · décider</div></div>${filters()}<div class="squad-v012-list-head"><span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span></div><div class="squad-v012-list">${shownPlayers.map(row).join("") || `<div class="squad-v012-empty">Aucun joueur dans ce filtre.</div>`}</div></article>${dossier(selected)}</div>`;
+    container.innerHTML = `<div class="squad-v012"><article class="squad-v012-board"><div class="squad-v012-head"><div><p class="eyebrow">Effectif V0.38</p><h3>Liste du groupe</h3></div><div class="squad-v012-note">${e(career.club?.shortName || career.club?.name || "Club")}<br>observer · trier · décider</div></div>${filters()}<div class="squad-v012-list-head"><span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span></div><div class="squad-v012-list">${shownPlayers.map(row).join("") || `<div class="squad-v012-empty">Aucun joueur dans ce filtre.</div>`}</div></article>${dossier(selected)}</div>`;
   }
 
   window.renderPlayersPreview = render;
-  window.btmRegisterRender("squad", render);
+  if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("squad", render);
+  else document.addEventListener("DOMContentLoaded", () => render());
 
   document.addEventListener("click", (event) => {
     const filterButton = event.target.closest("[data-squad-filter]");
@@ -107,6 +74,4 @@ const BTM_SQUAD_ENTRYPOINT_VERSION = "0.29";
       render();
     }
   });
-
-  document.addEventListener("DOMContentLoaded", () => render());
 })();
