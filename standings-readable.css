@@ -1,0 +1,47 @@
+/* V0.40D - readable standings override for the current notebook UI. */
+#standings .standings-table-card {
+  background: #fff9ed !important;
+  color: #172118 !important;
+  border: 1px solid rgba(86, 67, 39, 0.16) !important;
+  border-radius: 22px !important;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(57, 43, 23, 0.08) !important;
+}
+
+#standings .standings-table-card table {
+  background: #fff9ed !important;
+  color: #172118 !important;
+}
+
+#standings .standings-table-card thead th {
+  background: #173d2a !important;
+  color: #f8f1dd !important;
+  border-bottom: 1px solid rgba(23, 61, 42, 0.25) !important;
+}
+
+#standings .standings-table-card tbody tr {
+  background: #fffdf6 !important;
+}
+
+#standings .standings-table-card tbody td {
+  color: #172118 !important;
+  border-bottom: 1px solid rgba(86, 67, 39, 0.12) !important;
+}
+
+#standings .standings-table-card tbody td strong {
+  color: #173d2a !important;
+}
+
+#standings tr.standings-zone-ucl { background: #eef4ff !important; }
+#standings tr.standings-zone-uel { background: #fff6dc !important; }
+#standings tr.standings-zone-uecl { background: #f4edff !important; }
+#standings tr.standings-zone-relegation { background: #fff0ee !important; }
+#standings tr.standings-user-row { background: #e7f7ed !important; outline: 2px solid rgba(23, 79, 53, 0.45) !important; }
+#standings tr.standings-user-row td,
+#standings tr.standings-user-row strong { color: #0f5132 !important; }
+
+#standings .standings-zone-pill {
+  background: rgba(23, 61, 42, 0.08) !important;
+  border-color: rgba(23, 61, 42, 0.14) !important;
+  color: #173d2a !important;
+}
