@@ -1,5 +1,15 @@
 # Changelog — Become the next Mourinho
 
+## V0.34 — Player DB extrait
+
+- `player-db.js` n’est plus un pont vers `player-db-v016.js`.
+- Le générateur de joueurs est maintenant directement dans le module stable.
+- `btmEnsurePlayerDatabase(career, count)` reste disponible pour les autres modules.
+- `btmEnsurePlayerDatabasePersisted(count)` reste disponible pour initialiser et sauvegarder la base joueurs active.
+- `player-db.js` s’enregistre via `btmRegisterRender("player-db", ...)` au lieu de réécrire `refreshUI`.
+- `index.html` charge maintenant `player-db.js?v=034`.
+- `player-db-v016.js` devient un fichier historique orphelin candidat au nettoyage.
+
 ## V0.33 — Lineup extrait
 
 - `lineup.js` n’est plus un pont vers `lineup-v050.js`.
@@ -8,7 +18,6 @@
 - Les changements de formation, d’auto-composition, de vidage et de titulaires sont sauvegardés directement par le module stable.
 - `lineup.js` s’enregistre toujours via `btmRegisterRender("lineup", ...)`.
 - `lineup-v050.js` devient un fichier historique orphelin candidat au nettoyage.
-- `index.html` garde encore `lineup.js?v=023`, donc Ctrl + F5 reste conseillé pour tester la V0.33.
 
 ## V0.32 — Calendar extrait
 
@@ -18,7 +27,6 @@
 - `calendar.js` s’enregistre toujours via `btmRegisterRender("calendar", ...)`.
 - Les boutons du calendrier restent uniquement des boutons d’affichage : ils ne modifient pas la date réelle de carrière.
 - `calendar-v060.js` devient un fichier historique orphelin candidat au nettoyage.
-- `index.html` garde encore `calendar.js?v=031`, donc Ctrl + F5 reste conseillé pour tester la V0.32.
 
 ## V0.31 — Calendar registry cutover
 
@@ -34,8 +42,6 @@
 - Le vieux wrapper `refreshUI` de `lineup-v050.js` est neutralisé après chargement.
 - `renderLineupBuilder` est enregistré via `btmRegisterRender("lineup", ...)`.
 - Cette passe réduit le risque de cascade `refreshUI`, sans encore extraire tout le code historique de Composition.
-- `lineup.js` garde temporairement une compatibilité avec `lineup-v050.js?v=030A`.
-- `index.html` garde encore `lineup.js?v=023` pour le moment, donc Ctrl + F5 reste nécessaire.
 
 ## V0.29B — Render registry centralisé
 
