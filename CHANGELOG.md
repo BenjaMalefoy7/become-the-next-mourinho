@@ -1,5 +1,30 @@
 # Changelog — Become the next Mourinho
 
+## V0.23 — Index plat sur points d’entrée stables
+
+- `index.html` ne charge plus directement les vieux modules de base :
+  - `lineup-v050.js`
+  - `calendar-v060.js`
+  - `match-v080.js`
+  - `matchday-v090.js`
+- Le HTML principal charge maintenant les points d’entrée stables :
+  - `lineup.js?v=023`
+  - `calendar.js?v=023`
+  - `match-engine.js?v=023`
+  - `league-sim.js?v=023`
+  - `theme.js?v=023`
+  - `squad.js?v=023`
+  - `season-flow.js?v=023`
+  - `mailbox.js?v=023`
+  - `player-db.js?v=023`
+  - `transfers.js?v=023`
+  - `training.js?v=023`
+  - `match-center.js?v=023`
+- Ajout de `league-sim.js` comme point d’entrée stable vers la simulation de journée / classement dynamique.
+- Cache-busting aligné en `?v=023` sur les ponts principaux.
+- `theme.js` affiche maintenant V0.23 dans le footer.
+- README et notes techniques mis à jour sur l’état réel.
+
 ## V0.22 — Index plat progressif
 
 - `index.html` charge maintenant directement les modules récents via des points d’entrée stables.
@@ -111,11 +136,11 @@
 À privilégier :
 
 ```text
-match-center.js?v=022
-season-flow.js?v=022
-mailbox.js?v=022
-transfers.js?v=022
-training.js?v=022
+match-center.js?v=023
+season-flow.js?v=023
+mailbox.js?v=023
+transfers.js?v=023
+training.js?v=023
 ```
 
 À éviter :
@@ -157,64 +182,3 @@ Cette règle doit empêcher le README, le CHANGELOG et les notes techniques de d
 - Première base visuelle carnet / classeur / war room.
 - Couleurs du club utilisées pour piloter la DA.
 - Premiers essais de texture papier, sidebar classeur, post-its et onglets.
-
-## V0.10 — Match enrichi
-
-- Ajout des statistiques de match : possession, tirs, tirs cadrés, xG simplifié, occasions dangereuses.
-- Ajout de l’homme du match.
-- Ajout d’un résumé textuel post-match.
-
-## V0.9 — Simulation de journée + classement dynamique
-
-- Simulation complète d’une journée.
-- Simulation automatique des autres matchs.
-- Classement recalculé depuis les matchs joués.
-- Ajout des zones C1, C3, C4 et relégation.
-
-## V0.8 — Simulation simple du match
-
-- Résultat simulé pour le prochain match.
-- Événements simples.
-- Baisse de condition des titulaires.
-- Sauvegarde du dernier résultat.
-
-## V0.7 — Pré-match
-
-- Écran pré-match basé sur la prochaine rencontre du calendrier.
-- Validation de la composition avant le lancement du match.
-- Affichage domicile / extérieur.
-
-## V0.6 — Calendrier généré
-
-- Calendrier complet sur 38 journées.
-- 19 matchs aller et 19 matchs retour.
-- Affichage du prochain match et des prochaines rencontres.
-
-## V0.5 — Composition
-
-- Choix de formation.
-- Terrain cliquable.
-- Auto-composition.
-- Gestion des postes principaux et secondaires.
-- Sauvegarde de la composition.
-
-## V0.4 — Effectif généré
-
-- Génération d’un effectif fictif de 24 joueurs.
-- Valeurs, salaires, potentiel, condition, morale et contrat.
-
-## V0.3 — Premier League structurée
-
-- Intégration de la Premier League 2025/2026 comme base fixe.
-- Remplacement d’un club par le club personnalisé.
-
-## V0.2 — Création de carrière
-
-- Formulaire de création de club.
-- Sauvegardes multiples dans le navigateur.
-
-## V0.1 — Base jouable
-
-- Shell initial de l’application.
-- Navigation de base.
-- Premiers écrans placeholder.
