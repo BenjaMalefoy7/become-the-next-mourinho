@@ -1,5 +1,20 @@
 # Changelog — Become the next Mourinho
 
+## V0.25 — Extraction réelle de Season Flow
+
+- `season-flow.js` n’est plus un simple pont vers `season-v014.js`.
+- `season-flow.css` n’est plus un simple `@import` vers `season-v014.css`.
+- Le rythme de saison vit maintenant directement dans `season-flow.js` :
+  - date courante ;
+  - passage au jour suivant ;
+  - blocage si un match non joué est dû ;
+  - accès au Match Center le jour même ;
+  - récupération de condition ;
+  - génération limitée du courrier ;
+  - sauvegarde après passage de jour.
+- `index.html` charge maintenant `season-flow.js?v=025` et `season-flow.css?v=025`.
+- Cette version retire le deuxième gros pont historique derrière les noms stables.
+
 ## V0.24 — Extraction réelle du Match Center
 
 - `match-center.js` n’est plus un simple pont vers `season-v013.js`.
@@ -152,49 +167,9 @@
 À privilégier :
 
 ```text
-match-center.js?v=024
-season-flow.js?v=024
-mailbox.js?v=024
-transfers.js?v=024
-training.js?v=024
+match-center.js?v=025
+season-flow.js?v=025
+mailbox.js?v=025
+transfers.js?v=025
+training.js?v=025
 ```
-
-À éviter :
-
-```text
-season-v013.js
-season-v0141.js
-season-v01910.js
-```
-
-Cette règle doit empêcher le README, le CHANGELOG et les notes techniques de décrocher à chaque itération rapide.
-
-## V0.12 — Effectif en dossier joueur
-
-- Refonte de l’écran Effectif en dossier joueur.
-- Liste compacte à gauche.
-- Dossier détaillé à droite.
-- Notes coach et informations clés.
-
-## V0.11.4 — Stabilisation DA + nettoyage urgent
-
-- Clarification de la direction artistique active : Coach Notebook / Manager War Room.
-- Conservation de la navigation active dans `notebook-nav-v0112.css`.
-- Suppression des anciens fichiers orphelins :
-  - `app-v043.js`
-  - `notebook-theme.css`
-  - `notebook-theme-v011.js`
-- Mise à jour du README pour refléter l’état réel du projet à ce moment-là.
-
-## V0.11.3 — Intercalaires carnet
-
-- Suppression du gros rail vertical façon fausse reliure.
-- Navigation gauche transformée en intercalaires de carnet.
-- Onglet actif plus visible et plus proche de la page.
-- Écrans d’entrée rapprochés de la DA carnet.
-
-## V0.11 — Direction artistique Coach Notebook
-
-- Première base visuelle carnet / classeur / war room.
-- Couleurs du club utilisées pour piloter la DA.
-- Premiers essais de texture papier, sidebar classeur, post-its et onglets.
