@@ -1,5 +1,13 @@
 # Changelog — Become the next Mourinho
 
+## V0.31 — Calendar registry cutover
+
+- `calendar.js` stabilise le module Calendrier côté registre de rendu.
+- Le vieux wrapper `refreshUI` de `calendar-v060.js` est neutralisé après chargement.
+- `renderCalendarV060` est enregistré via `btmRegisterRender("calendar", ...)`.
+- Les boutons du calendrier changent seulement la journée affichée et ne modifient pas la date réelle de carrière.
+- `index.html` pointe maintenant vers `calendar.css?v=031` et `calendar.js?v=031`.
+
 ## V0.30A — Lineup registry cutover
 
 - `lineup.js` stabilise le module Composition côté registre de rendu.
