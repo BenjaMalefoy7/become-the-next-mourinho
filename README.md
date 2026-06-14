@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.23
+# Become the next Mourinho — V0.24
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,9 +6,9 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.23 — Index plat sur points d’entrée stables**
+**V0.24 — Extraction réelle du Match Center**
 
-Cette version fait passer `index.html` sur des noms de modules stables. Les anciens fichiers versionnés existent encore derrière certains ponts de compatibilité, mais le HTML principal ne les appelle plus directement.
+Cette version poursuit la transition propre engagée en V0.21–V0.23. `index.html` charge les modules via des noms stables et le premier gros pont historique a été réellement extrait : `match-center.js` et `match-center.css` ne redirigent plus vers `season-v013.js` / `season-v013.css`.
 
 ## Fichiers chargés depuis index.html
 
@@ -29,6 +29,8 @@ training.js?v=023
 match-center.js?v=023
 ```
 
+> Note : le contenu de `match-center.js` est maintenant en V0.24 même si le cache-busting HTML reste encore `?v=023` sur cette passe. Faire `Ctrl + F5` pendant la transition.
+
 ## DA active
 
 La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papier, onglets, dossiers, notes de coach et couleurs dynamiques du club.
@@ -46,7 +48,7 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papi
 - écran Composition avec terrain cliquable ;
 - compatibilité des postes principaux et secondaires ;
 - saison jour par jour avec verrou de jour de match ;
-- Matchday Center avec analyse adverse ;
+- Match Center stable extrait, avec analyse adverse ;
 - validation composition / plan de match ;
 - simulation simple du match ;
 - simulation complète d’une journée ;
@@ -73,12 +75,12 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=023
-season-flow.js?v=023
-mailbox.js?v=023
-transfers.js?v=023
-training.js?v=023
-squad.js?v=023
+match-center.js?v=024
+season-flow.js?v=024
+mailbox.js?v=024
+transfers.js?v=024
+training.js?v=024
+squad.js?v=024
 ```
 
 À éviter désormais :
@@ -91,6 +93,6 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.24 — extraction réelle des ponts restants + schemaVersion de sauvegarde**
+**V0.25 — extraction réelle de Season Flow**
 
-Objectif : copier progressivement le code utile des anciens fichiers vers les fichiers stables, puis retirer les derniers fichiers historiques derrière les ponts de compatibilité.
+Objectif : faire pour `season-flow.js` ce qui vient d’être fait pour `match-center.js`, puis continuer avec `mailbox.js`, `lineup.js`, `calendar.js` et les moteurs de simulation.
