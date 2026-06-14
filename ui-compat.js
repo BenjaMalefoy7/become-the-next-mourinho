@@ -1,4 +1,4 @@
-const BTM_UI_COMPAT_VERSION = "0.39-hotfix";
+const BTM_UI_COMPAT_VERSION = "0.40C";
 
 (function initUiCompat() {
   if (window.__BTM_UI_COMPAT_LOADED__) return;
@@ -38,6 +38,9 @@ const BTM_UI_COMPAT_VERSION = "0.39-hotfix";
     if (typeof refreshUI === "function") refreshUI();
   }
 
+  window.btmShowGameScreen = showGameScreen;
+  window.btmShowMenuScreen = showMenu;
+
   function populateReplacementSelect() {
     const select = $("replace-club-select");
     if (!select || typeof getPremierLeagueClubs !== "function") return;
@@ -74,6 +77,8 @@ const BTM_UI_COMPAT_VERSION = "0.39-hotfix";
       </article>
     `).join("");
   }
+
+  window.btmRenderSaveSlots = renderSaveSlots;
 
   function persistCareer(career) {
     const careers = typeof loadCareers === "function" ? loadCareers() : [];
@@ -182,8 +187,10 @@ const BTM_UI_COMPAT_VERSION = "0.39-hotfix";
     $("create-career-btn")?.addEventListener("click", createCareerFromCurrentForm);
     $("home-btn")?.addEventListener("click", () => showMenu("start-screen"));
 
-    document.querySelectorAll(".nav-item").forEach((button) => {
-      button.addEventListener("click", () => showGameScreen(button.dataset.screen || "dashboard"));
+    const nav = document.querySelector(".nav");
+    nav?.addEventListener("click", (event) => {
+      const button = event.target.closest(".nav-item[data-screen]");
+      if (button) showGameScreen(button.dataset.screen || "dashboard");
     });
 
     $("save-slots")?.addEventListener("click", (event) => {
