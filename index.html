@@ -12,9 +12,9 @@
   <link rel="stylesheet" href="squad.css?v=023" />
   <link rel="stylesheet" href="match-center.css?v=023" />
   <link rel="stylesheet" href="season-flow.css?v=025" />
-  <link rel="stylesheet" href="mailbox.css?v=023" />
+  <link rel="stylesheet" href="mailbox.css?v=026" />
   <link rel="stylesheet" href="transfers.css?v=023" />
-  <link rel="stylesheet" href="training.css?v=023" />
+  <link rel="stylesheet" href="training.css?v=027" />
 </head>
 <body class="notebook-tabs-left">
   <section class="welcome-screen menu-screen" id="welcome-screen">
@@ -39,7 +39,7 @@
           <label class="mode-card active"><input type="radio" name="careerMode" value="custom" checked /><strong>Créer mon club</strong><span>Crée ton identité et remplace un club de Premier League.</span></label>
           <label class="mode-card disabled-mode"><input type="radio" name="careerMode" value="real" disabled /><strong>Choisir un club réel</strong><span>Prévu plus tard.</span></label>
         </div>
-        <div class="section-header"><h3>Effectif de départ</h3><p>La V0.25 extrait progressivement les gros modules vers des noms stables.</p></div>
+        <div class="section-header"><h3>Effectif de départ</h3><p>La V0.27 extrait le Courrier et l’Entraînement dans leurs modules stables.</p></div>
         <div class="mode-grid">
           <label class="mode-card active"><input type="radio" name="squadSource" value="generated" checked /><strong>Effectif neuf généré</strong><span>Le jeu crée 24 joueurs fictifs adaptés à la difficulté choisie.</span></label>
           <label class="mode-card disabled-mode"><input type="radio" name="squadSource" value="replaced_club" disabled /><strong>Garder l’effectif du club remplacé</strong><span>Disponible quand les vrais effectifs Premier League seront intégrés.</span></label>
@@ -75,11 +75,11 @@
       <nav class="nav">
         <button class="nav-btn active" data-screen="dashboard">Dashboard</button><button class="nav-btn" data-screen="squad">Effectif</button><button class="nav-btn" data-screen="lineup">Composition</button><button class="nav-btn" data-screen="calendar">Calendrier</button><button class="nav-btn" data-screen="standings">Classement</button><button class="nav-btn" data-screen="match">Match</button><button class="nav-btn" data-screen="transfers">Recrutement</button><button class="nav-btn" data-screen="finances">Finances</button><button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
-      <div class="sidebar-footer">V0.25 — Season Flow stable</div>
+      <div class="sidebar-footer">V0.27 — Courrier & Entraînement stables</div>
     </aside>
     <main class="main-content">
       <header class="topbar"><div><p class="eyebrow">Carrière actuelle</p><h2 id="page-title">Dashboard</h2></div><div class="topbar-actions"><button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button></div></header>
-      <section class="screen active" id="dashboard"><div class="hero-card"><div><p class="eyebrow">Bienvenue manager</p><h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3><p id="dashboard-description">La V0.25 extrait Season Flow dans un module stable.</p></div><div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div></div><div class="kpi-grid"><article class="kpi-card"><p>Club</p><strong id="kpi-club">—</strong></article><article class="kpi-card"><p>Budget</p><strong id="kpi-money">—</strong></article><article class="kpi-card"><p>Difficulté</p><strong id="kpi-difficulty">—</strong></article><article class="kpi-card"><p>Prochain match</p><strong id="kpi-next-match">—</strong></article></div><div class="panel-grid"><article class="panel"><h3>Statut V0.25</h3><p>Season Flow est maintenant extrait dans un module stable. Les autres ponts historiques seront retirés progressivement.</p></article><article class="panel"><h3>Prochaine évolution</h3><p>Extraire ensuite le Courrier puis les moteurs de composition, calendrier et simulation.</p></article></div></section>
+      <section class="screen active" id="dashboard"><div class="hero-card"><div><p class="eyebrow">Bienvenue manager</p><h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3><p id="dashboard-description">La V0.27 extrait Courrier et Entraînement dans des modules stables.</p></div><div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div></div><div class="kpi-grid"><article class="kpi-card"><p>Club</p><strong id="kpi-club">—</strong></article><article class="kpi-card"><p>Budget</p><strong id="kpi-money">—</strong></article><article class="kpi-card"><p>Difficulté</p><strong id="kpi-difficulty">—</strong></article><article class="kpi-card"><p>Prochain match</p><strong id="kpi-next-match">—</strong></article></div><div class="panel-grid"><article class="panel"><h3>Statut V0.27</h3><p>Courrier et Entraînement sont maintenant extraits dans leurs modules stables. Les ponts historiques continuent d’être retirés progressivement.</p></article><article class="panel"><h3>Prochaine évolution</h3><p>Extraire ensuite Recrutement puis les moteurs de composition, calendrier et simulation.</p></article></div></section>
       <section class="screen" id="squad"><div class="section-header"><h3>Effectif</h3><p>Liste des joueurs générés pour ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div><div class="players-grid" id="players-preview"></div></section>
       <section class="screen" id="lineup"><div class="section-header section-header-row"><div><h3>Composition</h3><p>Choisis une formation, place tes titulaires et vérifie les joueurs hors poste.</p></div><div class="formation-buttons" id="formation-buttons"></div></div><div class="lineup-warning" id="lineup-warning"></div><div class="lineup-summary kpi-grid" id="lineup-summary"></div><div class="lineup-layout"><div class="lineup-slots" id="lineup-slots"></div><div class="pitch-card lineup-pitch" id="lineup-pitch"></div><article class="lineup-bench panel"><h3>Remplaçants</h3><p>Les meilleurs joueurs non titulaires sont listés ici automatiquement.</p><div id="lineup-bench"></div></article></div></section>
       <section class="screen" id="calendar"><div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier…</p></div></section>
@@ -100,10 +100,10 @@
   <script src="league-sim.js?v=023"></script>
   <script src="squad.js?v=023"></script>
   <script src="season-flow.js?v=025"></script>
-  <script src="mailbox.js?v=023"></script>
+  <script src="mailbox.js?v=026"></script>
   <script src="player-db.js?v=023"></script>
   <script src="transfers.js?v=023"></script>
-  <script src="training.js?v=023"></script>
+  <script src="training.js?v=027"></script>
   <script src="match-center.js?v=023"></script>
 </body>
 </html>
