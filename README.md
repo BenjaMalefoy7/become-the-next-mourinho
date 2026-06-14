@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.25
+# Become the next Mourinho — V0.27
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,9 +6,14 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.25 — Extraction réelle de Season Flow**
+**V0.26 + V0.27 — Extraction réelle du Courrier et de l’Entraînement**
 
-Cette version poursuit la transition propre engagée en V0.21–V0.24. `index.html` charge les modules via des noms stables et le deuxième gros pont historique a été réellement extrait : `season-flow.js` et `season-flow.css` ne redirigent plus vers `season-v014.js` / `season-v014.css`.
+Cette version poursuit la transition propre engagée en V0.21–V0.25. `index.html` charge les modules via des noms stables, et deux nouveaux ponts historiques ont été retirés :
+
+```text
+mailbox.js / mailbox.css ne dépendent plus de season-v015.js / season-v0151.css
+training.js / training.css ne dépendent plus de training-v018.js / training-v018.css
+```
 
 ## Fichiers chargés depuis index.html
 
@@ -22,10 +27,10 @@ match-engine.js?v=023
 league-sim.js?v=023
 squad.js?v=023
 season-flow.js?v=025
-mailbox.js?v=023
+mailbox.js?v=026
 player-db.js?v=023
 transfers.js?v=023
-training.js?v=023
+training.js?v=027
 match-center.js?v=023
 ```
 
@@ -36,6 +41,10 @@ match-center.js   // code réel du Match Center
 match-center.css  // styles réels du Match Center
 season-flow.js    // code réel du rythme jour par jour
 season-flow.css   // styles réels du panneau saison
+mailbox.js        // code réel du courrier manager
+mailbox.css       // styles réels du courrier manager
+training.js       // code réel de l'entraînement par groupes
+training.css      // styles réels de l'entraînement
 ```
 
 ## DA active
@@ -62,10 +71,10 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papi
 - classement dynamique recalculé depuis les matchs joués ;
 - zones de classement : C1, C3, C4, relégation ;
 - rapport post-match enrichi ;
-- courrier manager réduit ;
+- courrier manager réduit et stabilisé ;
 - base joueurs générée pour le recrutement ;
 - premier marché des transferts jouable ;
-- entraînement par groupes.
+- entraînement par groupes extrait et stabilisé.
 
 ## Important
 
@@ -82,12 +91,12 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=025
-season-flow.js?v=025
-mailbox.js?v=025
-transfers.js?v=025
-training.js?v=025
-squad.js?v=025
+match-center.js?v=027
+season-flow.js?v=027
+mailbox.js?v=027
+transfers.js?v=027
+training.js?v=027
+squad.js?v=027
 ```
 
 À éviter désormais :
@@ -100,6 +109,6 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.26 — extraction réelle du Courrier**
+**V0.28 — extraction réelle du Recrutement**
 
-Objectif : faire pour `mailbox.js` ce qui vient d’être fait pour `match-center.js` et `season-flow.js`, puis continuer avec `lineup.js`, `calendar.js` et les moteurs de simulation.
+Objectif : faire pour `transfers.js` ce qui vient d’être fait pour `mailbox.js` et `training.js`, sans encore ajouter les fenêtres de mercato ou les négociations avancées.
