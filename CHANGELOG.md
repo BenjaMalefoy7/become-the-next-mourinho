@@ -1,5 +1,15 @@
 # Changelog — Become the next Mourinho
 
+## V0.32 — Calendar extrait
+
+- `calendar.js` n’est plus un pont vers `calendar-v060.js`.
+- La génération du calendrier est maintenant directement dans le module stable.
+- Le rendu du calendrier est maintenant directement dans le module stable.
+- `calendar.js` s’enregistre toujours via `btmRegisterRender("calendar", ...)`.
+- Les boutons du calendrier restent uniquement des boutons d’affichage : ils ne modifient pas la date réelle de carrière.
+- `calendar-v060.js` devient un fichier historique orphelin candidat au nettoyage.
+- `index.html` garde encore `calendar.js?v=031`, donc Ctrl + F5 reste conseillé pour tester la V0.32.
+
 ## V0.31 — Calendar registry cutover
 
 - `calendar.js` stabilise le module Calendrier côté registre de rendu.
