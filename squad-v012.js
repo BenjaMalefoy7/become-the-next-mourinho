@@ -1,4 +1,4 @@
-const SQUAD_DOSSIER_VERSION = "0.12";
+const SQUAD_DOSSIER_VERSION = "0.12.2";
 
 (function initSquadDossierV012() {
   const state = { filter: "all", selectedId: null };
@@ -8,6 +8,38 @@ const SQUAD_DOSSIER_VERSION = "0.12";
     DEF: ["DD", "DC", "DG"],
     MID: ["MDC", "MC", "MOC"],
     ATT: ["AD", "AG", "BU"]
+  };
+
+  const countryCodes = {
+    "bresil": "BRA",
+    "brésil": "BRA",
+    "france": "FRA",
+    "angleterre": "ENG",
+    "espagne": "ESP",
+    "italie": "ITA",
+    "allemagne": "GER",
+    "portugal": "POR",
+    "argentine": "ARG",
+    "belgique": "BEL",
+    "pays-bas": "NED",
+    "pays bas": "NED",
+    "uruguay": "URU",
+    "colombie": "COL",
+    "croatie": "CRO",
+    "maroc": "MAR",
+    "senegal": "SEN",
+    "sénégal": "SEN",
+    "nigeria": "NGA",
+    "ghana": "GHA",
+    "danemark": "DEN",
+    "suede": "SWE",
+    "suède": "SWE",
+    "norvege": "NOR",
+    "norvège": "NOR",
+    "ecosse": "SCO",
+    "écosse": "SCO",
+    "irlande": "IRL",
+    "pologne": "POL"
   };
 
   function sx(value) {
@@ -24,6 +56,13 @@ const SQUAD_DOSSIER_VERSION = "0.12";
 
   function posLabel(pos) {
     return typeof getPositionLabel === "function" ? getPositionLabel(pos) : sm(pos);
+  }
+
+  function countryTag(value) {
+    const country = sm(value, "—");
+    const key = String(country).trim().toLowerCase();
+    const code = countryCodes[key] || country.slice(0, 3).toUpperCase();
+    return `<span class="squad-v012-country"><span class="squad-v012-country-code">${sx(code)}</span>${sx(country)}</span>`;
   }
 
   function sortedPlayers(career) {
@@ -63,13 +102,17 @@ const SQUAD_DOSSIER_VERSION = "0.12";
     return `<div class="squad-v012-filters">${items.map(([key, label]) => `<button class="squad-v012-filter${state.filter === key ? " active" : ""}" data-squad-filter="${key}">${label}</button>`).join("")}</div>`;
   }
 
+  function renderListHeader() {
+    return `<div class="squad-v012-list-head"><span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span></div>`;
+  }
+
   function renderRow(player, career) {
     const active = player.id === state.selectedId ? " active" : "";
     const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? player.secondaryPositions.join("/") : "—";
     return `
       <button class="squad-v012-row${active}" data-squad-player="${sx(player.id)}" type="button">
         <span class="squad-v012-shirt">${sx(player.primaryPosition || "?")}</span>
-        <span class="squad-v012-name"><strong>${sx(player.name)}</strong><span>${sx(posLabel(player.primaryPosition))} · Sec. ${sx(secondary)} · ${sx(player.nationality)}</span></span>
+        <span class="squad-v012-name"><strong>${sx(player.name)}</strong><span>${sx(posLabel(player.primaryPosition))} · Sec. ${sx(secondary)} · ${countryTag(player.nationality)}</span></span>
         <span class="squad-v012-cell"><small>OVR</small>${sm(player.overall)}</span>
         <span class="squad-v012-cell"><small>POT</small>${sm(player.potential)}</span>
         <span class="squad-v012-cond">${sm(player.condition, 100)}%</span>
@@ -98,7 +141,7 @@ const SQUAD_DOSSIER_VERSION = "0.12";
           <div>
             <p class="eyebrow">Dossier joueur</p>
             <h3>${sx(player.name)}</h3>
-            <p class="squad-v012-role">${sx(posLabel(player.primaryPosition))} · ${sx(player.age)} ans · ${sx(player.nationality)}</p>
+            <p class="squad-v012-role">${sx(posLabel(player.primaryPosition))} · ${sx(player.age)} ans · ${countryTag(player.nationality)}</p>
             <div class="squad-v012-badges">
               <span class="squad-v012-badge">POT ${sm(player.potential)}</span>
               <span class="squad-v012-badge">${sx(conditionClass(player.condition))}</span>
@@ -143,10 +186,11 @@ const SQUAD_DOSSIER_VERSION = "0.12";
       <div class="squad-v012">
         <article class="squad-v012-board">
           <div class="squad-v012-head">
-            <div><p class="eyebrow">Effectif V0.12</p><h3>Liste du groupe</h3></div>
+            <div><p class="eyebrow">Effectif V0.12.2</p><h3>Liste du groupe</h3></div>
             <div class="squad-v012-note">${sx(career.club?.shortName || career.club?.name || "Club")}<br>observer · trier · décider</div>
           </div>
           ${renderFilters()}
+          ${renderListHeader()}
           <div class="squad-v012-list">${visible.map((player) => renderRow(player, career)).join("") || `<div class="squad-v012-empty">Aucun joueur dans ce filtre.</div>`}</div>
         </article>
         ${renderDossier(selected, career)}
@@ -173,57 +217,4 @@ const SQUAD_DOSSIER_VERSION = "0.12";
   });
 
   document.addEventListener("DOMContentLoaded", () => render());
-})();
-
-(function initSquadPolishV0121() {
-  const flagMap = { "Brésil": "🇧🇷", "France": "🇫🇷", "Angleterre": "🏴", "Espagne": "🇪🇸", "Italie": "🇮🇹", "Allemagne": "🇩🇪", "Portugal": "🇵🇹", "Argentine": "🇦🇷", "Belgique": "🇧🇪", "Pays-Bas": "🇳🇱", "Uruguay": "🇺🇾", "Colombie": "🇨🇴", "Croatie": "🇭🇷", "Maroc": "🇲🇦", "Sénégal": "🇸🇳", "Nigeria": "🇳🇬", "Ghana": "🇬🇭", "Danemark": "🇩🇰", "Suède": "🇸🇪", "Norvège": "🇳🇴", "Écosse": "🏴", "Irlande": "🇮🇪", "Pologne": "🇵🇱" };
-
-  function addSquadPolishStyles() {
-    if (document.getElementById("squad-polish-v0121")) return;
-    const style = document.createElement("style");
-    style.id = "squad-polish-v0121";
-    style.textContent = ".squad-v012-list-head{position:relative;display:grid;grid-template-columns:46px 1fr 44px 44px 60px;gap:10px;margin:0 4px 8px 0;padding:0 10px;color:#806542;font-size:.66rem;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.squad-v012-list-head span:nth-child(n+3){text-align:center}.squad-v012-country{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}";
-    document.head.appendChild(style);
-  }
-
-  function addHeaders() {
-    const board = document.querySelector(".squad-v012-board");
-    const list = document.querySelector(".squad-v012-list");
-    if (!board || !list || board.querySelector(".squad-v012-list-head")) return;
-    const header = document.createElement("div");
-    header.className = "squad-v012-list-head";
-    header.innerHTML = "<span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span>";
-    list.before(header);
-  }
-
-  function addFlags() {
-    document.querySelectorAll(".squad-v012-name span, .squad-v012-role").forEach((node) => {
-      if (node.dataset.flagged === "1") return;
-      let html = node.innerHTML;
-      Object.entries(flagMap).forEach(([country, flag]) => {
-        if (html.includes(country) && !html.includes(flag)) html = html.replace(country, `<span class="squad-v012-country">${flag} ${country}</span>`);
-      });
-      node.innerHTML = html;
-      node.dataset.flagged = "1";
-    });
-  }
-
-  function polish() {
-    addSquadPolishStyles();
-    addHeaders();
-    addFlags();
-  }
-
-  const previousRenderPlayersPreview = window.renderPlayersPreview;
-  if (typeof previousRenderPlayersPreview === "function") {
-    window.renderPlayersPreview = function renderPlayersPreviewV0121() {
-      previousRenderPlayersPreview.apply(this, arguments);
-      polish();
-    };
-  }
-
-  document.addEventListener("DOMContentLoaded", () => setTimeout(polish, 80));
-  document.addEventListener("click", (event) => {
-    if (event.target.closest("[data-squad-filter], [data-squad-player], .nav-btn")) setTimeout(polish, 40);
-  });
 })();
