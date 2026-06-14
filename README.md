@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.33
+# Become the next Mourinho — V0.34
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,29 +6,28 @@ Le projet avance en HTML/CSS/JavaScript vanilla, sans backend pour le moment. Le
 
 ## Version actuelle
 
-**V0.33 — extraction réelle de Lineup / Composition**
+**V0.34 — extraction réelle de Player DB**
 
-Cette passe retire le pont historique de la composition.
+Cette passe retire le pont historique de la base joueurs.
 
 Avant :
 
 ```text
-lineup.js
-→ chargeait lineup-v050.js
-→ neutralisait le wrapper legacy
-→ enregistrait renderLineupBuilder dans le registre
+player-db.js
+→ chargeait player-db-v016.js
+→ player-db-v016.js réécrivait refreshUI pour créer la base joueurs
 ```
 
 Maintenant :
 
 ```text
-lineup.js
-→ contient directement la gestion de la composition
-→ contient directement les formations disponibles
-→ normalise et répare la compo des carrières
-→ sauvegarde les changements de formation / titulaires
-→ passe par btmRegisterRender("lineup", ...)
-→ ne charge plus lineup-v050.js
+player-db.js
+→ contient directement le générateur de joueurs
+→ expose btmEnsurePlayerDatabase(career, count)
+→ expose btmEnsurePlayerDatabasePersisted(count)
+→ passe par btmRegisterRender("player-db", ...)
+→ ne charge plus player-db-v016.js
+→ ne réécrit plus refreshUI
 ```
 
 ## Modules passés sur le registre
@@ -40,6 +39,7 @@ lineup.js
 calendar.js
 season-flow.js
 mailbox.js
+player-db.js
 training.js
 match-center.js
 ```
@@ -60,19 +60,19 @@ league-sim.js
 theme.js
 calendar.js
 lineup.js
+player-db.js
 ```
 
 ## Ponts ou compatibilités restants
 
 ```text
-player-db.js    -> player-db-v016.js
-transfers.js    -> transfers-v017.js
+transfers.js -> transfers-v017.js
 ```
 
 ## Note cache
 
-`index.html` pointe encore vers `lineup.js?v=023`, mais le contenu réel de `lineup.js` est bien en V0.33. Un **Ctrl + F5** est nécessaire pour tester proprement.
+`index.html` charge maintenant `player-db.js?v=034`. Un **Ctrl + F5** reste recommandé après déploiement GitHub Pages.
 
 ## Prochaine étape recommandée
 
-**V0.34 — extraction réelle de Player DB ou Recrutement, puis nettoyage ciblé des orphelins historiques.**
+**V0.35 — extraction réelle de Transfers / Recrutement**, puis nettoyage ciblé des fichiers historiques orphelins.
