@@ -1,5 +1,28 @@
 # Changelog — Become the next Mourinho
 
+## V0.28A — Match Renderer Cutover, phase A
+
+- `match-v080.js` conserve la simulation du match utilisateur, mais ne dessine plus l’écran Match.
+- Suppression des anciens effets visuels V0.8 :
+  - `renderLastResultV080` ;
+  - `bindSimulationButtonV080` ;
+  - `decorateCalendarResultsV080` ;
+  - textes dashboard / footer V0.8 ;
+  - wrapper `refreshUI` V0.8.
+- `matchday-v090.js` conserve la simulation complète de journée et `computeDynamicStandings`.
+- Suppression des effets conflictuels V0.9 sur l’écran Match :
+  - renommage du bouton en “Simuler la journée” ;
+  - textes dashboard / footer V0.9.2 ;
+  - wrapper `refreshUI` qui repassait après le Match Center.
+- `match-center.js` devient le seul renderer de l’écran Match.
+- `match-engine.js` et `league-sim.js` chargent leurs anciens fichiers avec `?v=028A` et un `onerror` explicite.
+- `index.html` charge maintenant :
+  - `match-engine.js?v=028A` ;
+  - `league-sim.js?v=028A` ;
+  - `match-center.js?v=028A` ;
+  - `match-center.css?v=028A`.
+- La prochaine étape est V0.28B : extraire la simulation pure dans `match-engine.js` et `league-sim.js`.
+
 ## V0.27 — Extraction réelle de l’Entraînement
 
 - `training.js` n’est plus un simple pont vers `training-v018.js`.
@@ -138,35 +161,3 @@
 - Refonte de l’écran Match autour d’un centre de préparation.
 - Ajout d’une analyse adverse.
 - Ajout d’une compo probable adverse abstraite.
-- Ajout d’une validation de composition.
-- Ajout d’une validation de plan de match.
-- Préparation de l’écran résultat post-match.
-
-## V0.18 — Entraînement
-
-- Ajout d’un système d’entraînement par groupes : gardiens, défense, milieu, attaque.
-- Ajout de focus : équilibré, physique, technique, tactique, repos.
-- Les effets s’appliquent progressivement lors du passage des jours.
-
-## V0.17 — Recrutement
-
-- Ajout d’un premier marché des transferts jouable.
-- Ajout de la recherche joueur / club.
-- Ajout du filtre par poste.
-- Ajout de l’achat au prix demandé.
-- Déduction du budget transfert.
-- Ajout du joueur acheté à l’effectif.
-
-## Note technique importante
-
-À partir de la refonte loader, le projet devra arrêter de versionner les modules dans le nom de fichier.
-
-À privilégier :
-
-```text
-match-center.js?v=027
-season-flow.js?v=027
-mailbox.js?v=027
-transfers.js?v=027
-training.js?v=027
-```
