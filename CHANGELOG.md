@@ -1,5 +1,18 @@
 # Changelog — Become the next Mourinho
 
+## V0.29B — Render registry centralisé
+
+- Le bootstrap du registre de rendu est déplacé dans `theme.js`, chargé juste après `app.js`.
+- Le registre n’est plus dépendant de `squad.js` pour exister.
+- `theme.js` ne wrap plus directement `refreshUI` pour appliquer les couleurs du club : il s’enregistre maintenant via `btmRegisterRender("theme", apply)`.
+- `index.html` est bumpé pour charger :
+  - `theme.js?v=029B` ;
+  - `match-engine.js?v=028B` ;
+  - `league-sim.js?v=028B` ;
+  - `squad.js?v=029B`.
+- Les textes visibles sont alignés sur V0.29B.
+- Les modules extraits continuent de passer par le registre : `squad`, `season-flow`, `mailbox`, `training`, `match-center`.
+
 ## V0.29 — Render registry, phase 1
 
 - Ajout d’un registre central de rendu initialisé par `squad.js`.
@@ -16,7 +29,6 @@
 - `refreshUI` appelle maintenant le rendu de base puis le registre des modules extraits.
 - Les anciens wrappers restent seulement dans les modules historiques non extraits, notamment `lineup` et `calendar`.
 - Le Match Center reste le seul renderer de l’écran Match.
-- Note : `index.html` doit encore être bumpé proprement en `?v=029`. Faire un `Ctrl + F5` pour tester cette version.
 
 ## V0.28B — Simulation pure, phase B
 
