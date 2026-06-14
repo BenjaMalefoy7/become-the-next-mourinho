@@ -1,23 +1,81 @@
 # Notes techniques
 
-État après V0.28B.
+État après V0.29.
 
 ## Direction active
 
 La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papier, dossiers, onglets, notes tactiques et couleurs dynamiques du club.
 
-## Ce qui a été stabilisé en V0.20–V0.27
+## Ce qui a été stabilisé en V0.20–V0.28B
 
 - Le bouton “Jour suivant” est bloqué si un match non joué est dû.
 - Le bouton “Avancer au prochain match” ne sert plus à skipper : il devient une logique “Aller au match” le jour même.
 - Le rapport post-match génère et conserve une timeline, des stats et une lecture coach.
 - `match-center.js`, `season-flow.js`, `mailbox.js` et `training.js` ne sont plus de simples ponts vers les anciens fichiers versionnés.
+- `match-engine.js` et `league-sim.js` ne sont plus des ponts vers les anciens simulateurs.
+
+## V0.29 — Orchestrateur de rendu, phase 1
+
+Objectif : réduire la cascade de wrappers `refreshUI` dans les modules déjà extraits.
+
+### Nouveau mécanisme
+
+Un registre central est initialisé au chargement de `squad.js` :
+
+```text
+btmRegisterRender(name, renderer)
+btmUnregisterRender(name)
+btmRunRegisteredRenders(career)
+```
+
+Le nouveau cycle devient :
+
+```text
+refreshUI()
+→ rendu de base app.js / anciens ponts encore actifs
+→ btmRunRegisteredRenders()
+→ modules extraits enregistrés
+```
+
+### Modules enregistrés dans le registre
+
+```text
+squad.js
+season-flow.js
+mailbox.js
+training.js
+match-center.js
+```
+
+Ces modules ne font plus directement :
+
+```text
+refreshUI = function(){ oldRefresh(); renderModule(); }
+```
+
+Ils passent désormais par :
+
+```text
+btmRegisterRender("module", renderModule)
+```
+
+### Limite volontaire
+
+Le registre est actuellement initialisé dans `squad.js`, car c’est le premier module extrait chargé après les ponts de base. À terme, il devrait être déplacé dans :
+
+```text
+app.js
+```
+
+ou dans un fichier dédié chargé juste après `app.js`, par exemple :
+
+```text
+render-registry.js
+```
 
 ## V0.28A — Match Renderer Cutover, phase A
 
 Objectif : prouver que `match-center.js` est le seul module qui dessine l’écran Match, sans casser la simulation historique.
-
-### Ce qui a été neutralisé
 
 ```text
 match-v080.js
@@ -36,16 +94,6 @@ matchday-v090.js
 ## V0.28B — Simulation pure, phase B
 
 Objectif : retirer la dépendance à l’empilement historique de `saveSimulatedMatch`.
-
-### Avant V0.28B
-
-```text
-match-center.js
-→ saveSimulatedMatch()
-→ season-flow.js wrapper
-→ matchday-v090.js wrapper
-→ match-v080.js simulation
-```
 
 ### Après V0.28B
 
@@ -94,23 +142,18 @@ player-db.js    -> player-db-v016.js
 transfers.js    -> transfers-v017.js
 ```
 
-`match-engine.js` et `league-sim.js` ne sont plus des ponts. Le vieux `match-v080.js` et le vieux `matchday-v090.js` restent dans le repo pour l’instant, mais ils ne devraient plus être chargés par les points d’entrée stables.
+`match-engine.js` et `league-sim.js` ne sont plus des ponts. Le vieux `match-v080.js` et le vieux `matchday-v090.js` restent dans le repo pour l’instant, mais ils ne sont plus chargés par les points d’entrée stables.
 
 ## Risque encore connu
 
-Plusieurs modules enrichissent ou remplacent encore `refreshUI`. V0.28A a retiré les wrappers de match historiques, et V0.28B retire la dépendance logique aux vieux simulateurs. Il reste encore des wrappers dans :
+Des wrappers `refreshUI` restent encore dans les modules historiques non extraits :
 
 ```text
-lineup
-calendar
-squad
-season-flow
-mailbox
-training
-match-center
+lineup-v050.js
+calendar-v060.js
 ```
 
-La prochaine vraie stabilisation structurelle sera un orchestrateur central de rendu.
+Ils devront disparaître lorsque `lineup.js` et `calendar.js` seront réellement extraits.
 
 ## Règle à appliquer jusqu’au bout
 
@@ -119,10 +162,10 @@ Basculer vers des noms de modules stables et mettre la version uniquement dans l
 À privilégier :
 
 ```text
-match-center.js?v=028A
-season-flow.js?v=028B
-mailbox.js?v=026
-training.js?v=027
+match-center.js?v=029
+season-flow.js?v=029
+mailbox.js?v=029
+training.js?v=029
 match-engine.js?v=028B
 league-sim.js?v=028B
 ```
@@ -142,21 +185,16 @@ Objectif : éviter que README, CHANGELOG et documentation décrochent à chaque 
 
 ## Prochaine étape technique recommandée
 
-### V0.29 — Orchestrateur de rendu
+### V0.29B — Bump HTML + extraction de Lineup ou Calendar
 
-Objectif : remplacer progressivement le motif fragile :
-
-```text
-refreshUI = function(){ oldRefresh(); renderModule(); }
-```
-
-par un registre central :
+Objectifs :
 
 ```text
-registerRender("moduleName", renderFunction)
+- bumper index.html vers les query strings V0.29 ;
+- déplacer le registre depuis squad.js vers app.js ou render-registry.js ;
+- extraire réellement lineup.js ou calendar.js ;
+- supprimer ensuite leurs wrappers refreshUI historiques.
 ```
-
-Cela permettra de passer de plusieurs wrappers fragiles à un seul cycle de rendu maîtrisé.
 
 ## Angle mort à vérifier ensuite
 
@@ -164,4 +202,4 @@ Cela permettra de passer de plusieurs wrappers fragiles à un seul cycle de rend
 
 ## Note cache
 
-`index.html` pointe encore certains assets en `?v=028A` ou `?v=025`. Le contenu réel est passé en V0.28B, donc un Ctrl + F5 est nécessaire. Le bump HTML doit être fait dans une petite passe ciblée dès que possible, idéalement avant V0.29.
+`index.html` pointe encore certains assets en query strings anciennes. Le contenu réel est passé en V0.29 pour les modules extraits, donc un Ctrl + F5 est nécessaire jusqu’au bump HTML ciblé.
