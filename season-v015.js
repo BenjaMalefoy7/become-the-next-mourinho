@@ -20,9 +20,11 @@ function render(c=typeof getResolvedCareer==='function'?getResolvedCareer():null
 function mark(mid,read,refresh){const a=activeIndex();if(!a.career)return;box(a.career);const m=a.career.mailbox.find(x=>x.id===mid);if(m)m.read=read;save(a.careers,a.index,a.career);if(refresh&&typeof refreshUI==='function')refreshUI();}
 const prev=typeof refreshUI==='function'?refreshUI:null;refreshUI=function refreshUIV020Mail(){if(prev)prev();render();};document.addEventListener('DOMContentLoaded',()=>{ensureUi();render();});
 })();
-(function loadNonMatchModulesV020(){
-const styles=['season-v0151.css?v=020','transfers-v017.css?v=017','training-v018.css?v=018'];
-const scripts=['player-db-v016.js?v=016','transfers-v017.js?v=017','training-v018.js?v=018'];
-styles.forEach(h=>{if(document.querySelector('link[href*="'+h.split('?')[0]+'"]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l);});
-function load(i){if(i>=scripts.length){if(typeof refreshUI==='function')refreshUI();return;}const src=scripts[i];if(document.querySelector('script[src*="'+src.split('?')[0]+'"]')){load(i+1);return;}const s=document.createElement('script');s.src=src;s.async=false;s.onload=()=>load(i+1);document.body.appendChild(s);}load(0);
+(function loadFlatLoaderV021(){
+if(document.querySelector('script[src*="btm-flat-loader.js"]'))return;
+const s=document.createElement('script');
+s.src='btm-flat-loader.js?v=021';
+s.async=false;
+s.onload=()=>{if(typeof refreshUI==='function')refreshUI();};
+document.body.appendChild(s);
 })();
