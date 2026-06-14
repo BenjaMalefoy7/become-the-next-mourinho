@@ -1,4 +1,4 @@
-const BTM_MAILBOX_VERSION = "0.29";
+const BTM_MAILBOX_VERSION = "0.40C";
 (function () {
   const state = { selectedId: null };
 
@@ -47,10 +47,11 @@ const BTM_MAILBOX_VERSION = "0.29";
     const nav = document.querySelector(".nav");
     if (nav && !nav.querySelector('[data-screen="mail"]')) {
       const button = document.createElement("button");
-      button.className = "nav-btn";
+      button.className = "nav-item";
       button.dataset.screen = "mail";
+      button.type = "button";
       button.textContent = "Courrier";
-      button.onclick = () => typeof showScreen === "function" ? showScreen("mail") : null;
+      button.onclick = () => typeof window.btmShowGameScreen === "function" ? window.btmShowGameScreen("mail") : null;
       nav.insertBefore(button, nav.querySelector('[data-screen="transfers"]') || null);
     }
     const main = document.querySelector(".main-content");
@@ -85,7 +86,7 @@ const BTM_MAILBOX_VERSION = "0.29";
     const mails = career.mailbox.slice().sort((a, b) => String(b.createdAt || b.date).localeCompare(String(a.createdAt || a.date)));
     if (!state.selectedId || !mails.some((mail) => mail.id === state.selectedId)) state.selectedId = mails[0]?.id || null;
     const selected = mails.find((mail) => mail.id === state.selectedId) || mails[0];
-    screen.innerHTML = '<div class="section-header section-header-row"><div><p class="eyebrow">Inbox V0.29</p><h3>Courrier du manager</h3><p>Messages réduits : seulement match, staff proche échéance et événements importants.</p></div><button class="secondary-btn" id="mail-mark-read">Archiver comme lu</button></div><div class="mail-v015"><div class="mail-v015-list">' + (mails.length ? mails.map((mail) => '<button class="mail-v015-item ' + (mail.read ? '' : 'unread') + '" data-mail-id="' + e(mail.id) + '"><span class="mail-v015-type">' + e(label(mail.type)) + '</span><strong>' + e(mail.title) + '</strong><span>' + e(fr(mail.date)) + '</span></button>').join('') : '<div class="mail-v015-empty">Aucun message utile pour le moment.</div>') + '</div><article class="mail-v015-reader">' + (selected ? '<span class="mail-v015-type">' + e(label(selected.type)) + '</span><h3>' + e(selected.title) + '</h3><p class="save-meta">' + e(fr(selected.date)) + '</p><div class="mail-v015-body">' + e(selected.body) + '</div>' : '<div class="mail-v015-empty">Sélectionne un message.</div>') + '</article></div>';
+    screen.innerHTML = '<div class="section-header section-header-row"><div><p class="eyebrow">Inbox V0.40C</p><h3>Courrier du manager</h3><p>Messages réduits : seulement match, staff proche échéance et événements importants.</p></div><button class="secondary-btn" id="mail-mark-read">Archiver comme lu</button></div><div class="mail-v015"><div class="mail-v015-list">' + (mails.length ? mails.map((mail) => '<button class="mail-v015-item ' + (mail.read ? '' : 'unread') + '" data-mail-id="' + e(mail.id) + '"><span class="mail-v015-type">' + e(label(mail.type)) + '</span><strong>' + e(mail.title) + '</strong><span>' + e(fr(mail.date)) + '</span></button>').join('') : '<div class="mail-v015-empty">Aucun message utile pour le moment.</div>') + '</div><article class="mail-v015-reader">' + (selected ? '<span class="mail-v015-type">' + e(label(selected.type)) + '</span><h3>' + e(selected.title) + '</h3><p class="save-meta">' + e(fr(selected.date)) + '</p><div class="mail-v015-body">' + e(selected.body) + '</div>' : '<div class="mail-v015-empty">Sélectionne un message.</div>') + '</article></div>';
     screen.querySelectorAll("[data-mail-id]").forEach((button) => button.onclick = () => { state.selectedId = button.dataset.mailId; mark(state.selectedId, true, false); render(); });
     document.getElementById("mail-mark-read")?.addEventListener("click", () => { if (state.selectedId) mark(state.selectedId, true, true); });
   }
@@ -110,7 +111,7 @@ const BTM_MAILBOX_VERSION = "0.29";
   if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("mailbox", render);
   else {
     const previous = typeof refreshUI === "function" ? refreshUI : null;
-    refreshUI = function refreshUIMailboxFallbackV029() { if (previous) previous(); render(); };
+    refreshUI = function refreshUIMailboxFallbackV040C() { if (previous) previous(); render(); };
   }
 
   document.addEventListener("DOMContentLoaded", () => { ensureUi(); render(); });
