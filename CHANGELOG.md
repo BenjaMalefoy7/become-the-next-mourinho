@@ -1,5 +1,22 @@
 # Changelog — Become the next Mourinho
 
+## V0.22 — Index plat progressif
+
+- `index.html` charge maintenant directement les modules récents via des points d’entrée stables.
+- Ajout des points d’entrée stables pour l’Effectif :
+  - `squad.js?v=022`
+  - `squad.css?v=022`
+- Ajout de ponts stables pour les modules de base encore historiques :
+  - `lineup.js?v=022`
+  - `calendar.js?v=022`
+  - `match-engine.js?v=022`
+  - `league-simulation.js?v=022`
+  - `theme.js?v=022`
+- Retrait du loader dynamique caché dans `season-v015.js`.
+- Retrait de `match-details-v010.js` du chargement principal de `index.html` afin d’éviter qu’il relance des modules concurrents.
+- Cache-busting aligné sur `?v=022` pour les ponts stables.
+- README mis à jour sur V0.22.
+
 ## V0.21 — Début loader plat + noms stables
 
 - Ajout de `btm-flat-loader.js?v=021` comme point d’entrée central pour les modules récents.
@@ -94,11 +111,11 @@
 À privilégier :
 
 ```text
-match-center.js?v=021
-season-flow.js?v=021
-mailbox.js?v=021
-transfers.js?v=021
-training.js?v=021
+match-center.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+transfers.js?v=022
+training.js?v=022
 ```
 
 À éviter :
