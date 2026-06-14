@@ -218,3 +218,35 @@ const SQUAD_DOSSIER_VERSION = "0.12.2";
 
   document.addEventListener("DOMContentLoaded", () => render());
 })();
+
+(function loadSeasonModulesV013ToV015() {
+  const styles = ["season-v013.css?v=013", "season-v014.css?v=014", "season-v015.css?v=015"];
+  const scripts = ["season-v013.js?v=013", "season-v014.js?v=014", "season-v015.js?v=015"];
+
+  styles.forEach((href) => {
+    if (document.querySelector(`link[href*="${href.split("?")[0]}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
+  });
+
+  function loadScript(index) {
+    if (index >= scripts.length) {
+      if (typeof refreshUI === "function") refreshUI();
+      return;
+    }
+    const src = scripts[index];
+    if (document.querySelector(`script[src*="${src.split("?")[0]}"]`)) {
+      loadScript(index + 1);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = false;
+    script.onload = () => loadScript(index + 1);
+    document.body.appendChild(script);
+  }
+
+  loadScript(0);
+})();
