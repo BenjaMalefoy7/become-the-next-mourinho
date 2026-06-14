@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.22
+# Become the next Mourinho — V0.23
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,30 +6,28 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.22 — Index plat progressif + points d’entrée stables**
+**V0.23 — Index plat sur points d’entrée stables**
 
-Cette version déplace le chargement principal vers `index.html` avec des points d’entrée stables. L’objectif est de sortir progressivement du modèle `season-v013.js`, `season-v01910.js`, etc.
+Cette version fait passer `index.html` sur des noms de modules stables. Les anciens fichiers versionnés existent encore derrière certains ponts de compatibilité, mais le HTML principal ne les appelle plus directement.
 
 ## Fichiers chargés depuis index.html
 
 ```text
 data.js?v=060
 app.js?v=044
-lineup-v050.js?v=053
-calendar-v060.js?v=071
-match-v080.js?v=080
-matchday-v090.js?v=090
-theme.js?v=022
-squad.js?v=022
-season-flow.js?v=022
-mailbox.js?v=022
-player-db.js?v=022
-transfers.js?v=022
-training.js?v=022
-match-center.js?v=022
+theme.js?v=023
+lineup.js?v=023
+calendar.js?v=023
+match-engine.js?v=023
+league-sim.js?v=023
+squad.js?v=023
+season-flow.js?v=023
+mailbox.js?v=023
+player-db.js?v=023
+transfers.js?v=023
+training.js?v=023
+match-center.js?v=023
 ```
-
-Les anciens fichiers critiques de base restent encore chargés directement pour préserver l’ordre d’exécution et éviter une rupture de gameplay. Les modules récents passent maintenant par des points d’entrée stables.
 
 ## DA active
 
@@ -68,21 +66,19 @@ Les vrais effectifs joueurs ne sont pas encore intégrés. Ils arriveront plus t
 
 L’option “Garder l’effectif du club remplacé” est déjà prévue dans le menu, mais elle reste verrouillée tant que les vrais effectifs ne sont pas intégrés.
 
-## Dette technique prioritaire
-
-Le projet a beaucoup itéré avec des fichiers versionnés dans leur nom. Cette méthode devient difficile à maintenir.
+## Règle de modules
 
 La règle désormais : **nom de fichier stable + version en query string**.
 
 À privilégier :
 
 ```text
-match-center.js?v=022
-season-flow.js?v=022
-mailbox.js?v=022
-transfers.js?v=022
-training.js?v=022
-squad.js?v=022
+match-center.js?v=023
+season-flow.js?v=023
+mailbox.js?v=023
+transfers.js?v=023
+training.js?v=023
+squad.js?v=023
 ```
 
 À éviter désormais :
@@ -95,6 +91,6 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.23 — extraction complète des ponts de compatibilité**
+**V0.24 — extraction réelle des ponts restants + schemaVersion de sauvegarde**
 
-Objectif : copier progressivement le code utile des anciens fichiers vers les fichiers stables, puis retirer les derniers fichiers historiques du chargement principal.
+Objectif : copier progressivement le code utile des anciens fichiers vers les fichiers stables, puis retirer les derniers fichiers historiques derrière les ponts de compatibilité.
