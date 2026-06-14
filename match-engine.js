@@ -1,4 +1,4 @@
-const BTM_MATCH_ENGINE_VERSION = "0.28B";
+const BTM_MATCH_ENGINE_VERSION = "0.40E";
 
 function simClamp(value, min, max) {
   return Math.max(min, Math.min(max, Number(value) || 0));
@@ -78,6 +78,21 @@ function simScorerName(career) {
   return selected ? selected.name : "Buteur inconnu";
 }
 
+function simHash(value) {
+  return String(value || "club").split("").reduce((total, char) => total + char.charCodeAt(0), 0);
+}
+
+function simOpponentScorerName(career, match, side, goalIndex = 0) {
+  const clubId = side === "home" ? match.homeClubId : match.awayClubId;
+  const club = simClubById(career, clubId) || {};
+  const firstNames = ["Ethan", "Noah", "Liam", "Mason", "Oliver", "Lucas", "Theo", "Sam", "Daniel", "Isaac", "Leo", "Nathan"];
+  const lastNames = ["Walker", "Bennett", "Cole", "Turner", "Morgan", "Wilson", "Reed", "Brooks", "Foster", "Hughes", "Bailey", "Cooper"];
+  const seed = simHash(club.id || club.name || club.shortName) + goalIndex * 7;
+  const first = firstNames[seed % firstNames.length];
+  const last = lastNames[(seed + Math.floor(seed / 3)) % lastNames.length];
+  return `${first} ${last}`;
+}
+
 function simBuildEvents(career, match, homeGoals, awayGoals) {
   const userClubId = career?.club?.id;
   const events = [];
@@ -85,8 +100,8 @@ function simBuildEvents(career, match, homeGoals, awayGoals) {
     for (let i = 0; i < count; i += 1) {
       const minute = 5 + Math.floor(Math.random() * 86);
       const isUserGoal = side === "home" ? match.homeClubId === userClubId : match.awayClubId === userClubId;
-      const scorer = isUserGoal ? simScorerName(career) : "Joueur adverse";
-      events.push({ minute, type: "goal", side, text: "But de " + scorer });
+      const scorer = isUserGoal ? simScorerName(career) : simOpponentScorerName(career, match, side, i);
+      events.push({ minute, type: "goal", side, scorer, text: "But de " + scorer });
     }
   };
 
@@ -178,7 +193,7 @@ function btmSimulateUserMatch(career, match) {
   return { ok: true, career, match: target, result: historyItem, rawResult: result, message: "Match simulé." };
 }
 
-(function initPureMatchEngineV028B() {
+(function initPureMatchEngineV040E() {
   window.btmSimulateUserMatch = btmSimulateUserMatch;
   window.btmApplyUserMatchResult = btmApplyUserMatchResult;
   window.__BTM_MATCH_ENGINE_PURE__ = true;
