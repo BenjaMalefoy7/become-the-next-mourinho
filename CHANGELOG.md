@@ -1,5 +1,16 @@
 # Changelog — Become the next Mourinho
 
+## V0.35 — Transfers / Recrutement extrait
+
+- `transfers.js` n’est plus un pont vers `transfers-v017.js`.
+- Le rendu Recrutement est maintenant directement dans le module stable.
+- La recherche, le filtre par poste et l’achat au prix demandé sont conservés.
+- L’achat ajoute le joueur à l’effectif, met à jour le budget transfert et le solde.
+- Le courrier de transfert reste déclenché via `btmGenerateTransferMail` quand disponible.
+- `transfers.js` s’enregistre via `btmRegisterRender("transfers", ...)` au lieu de réécrire `refreshUI`.
+- `index.html` charge maintenant `transfers.css?v=035` et `transfers.js?v=035`.
+- `transfers-v017.js` devient un fichier historique orphelin candidat au nettoyage.
+
 ## V0.34 — Player DB extrait
 
 - `player-db.js` n’est plus un pont vers `player-db-v016.js`.
