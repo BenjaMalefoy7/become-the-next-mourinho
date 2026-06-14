@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.36
+# Become the next Mourinho — V0.37
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,22 +6,42 @@ Le projet avance en HTML/CSS/JavaScript vanilla, sans backend pour le moment. Le
 
 ## Version actuelle
 
-**V0.36 — nettoyage ciblé des fichiers historiques orphelins**
+**V0.37 — schemaVersion + migrations de sauvegardes**
 
-Cette passe supprime les anciens fichiers devenus inutiles après les extractions réelles de Calendar, Lineup, Player DB et Transfers.
-
-Fichiers supprimés :
+Cette passe ajoute un module stable de migration des sauvegardes :
 
 ```text
-calendar-v060.js
-lineup-v050.js
-player-db-v016.js
-transfers-v017.js
+save-migrations.js
 ```
 
-Ces fichiers ne sont plus chargés par `index.html` et ne sont plus appelés par les points d’entrée stables.
+Il se charge juste après `app.js` et avant les modules gameplay. Son rôle est de migrer les anciennes carrières vers un schéma unique :
 
-## Modules passés sur le registre
+```text
+schemaVersion: 37
+```
+
+## Ce que la migration corrige
+
+```text
+- schemaVersion absent ou ancien
+- version / dataVersion incohérents
+- finances partiellement manquantes
+- joueurs avec champs incomplets
+- club incomplet
+- league / standings / fixtures manquants
+- mailbox / trainingFocus absents
+- dates createdAt / updatedAt absentes
+```
+
+Les migrations sont appliquées :
+
+```text
+- à la lecture des carrières
+- avant sauvegarde
+- avant repairCareerIfNeeded
+```
+
+## Modules stabilisés
 
 ```text
 theme.js
@@ -54,20 +74,28 @@ calendar.js
 lineup.js
 player-db.js
 transfers.js
+save-migrations.js
 ```
 
-## Ponts ou compatibilités restants
+## État de la roadmap de stabilisation
 
 ```text
-Aucun pont gameplay majeur encore actif côté Match / Calendar / Lineup / Player DB / Transfers.
+✅ Débrancher les anciens renderers de match
+✅ Extraire la simulation pure
+✅ Unifier refreshUI avec un registre
+✅ Vérifier Calendar / passage de jour
+✅ Extraire Calendar
+✅ Extraire Lineup
+✅ Extraire Player DB
+✅ Extraire Transfers
+✅ Nettoyer les principaux orphelins récents
+✅ Ajouter schemaVersion + migrations de sauvegardes
 ```
-
-Il peut rester d’autres anciens fichiers historiques dans le dépôt. Ils seront supprimés uniquement après vérification explicite pour éviter de casser une dépendance cachée.
 
 ## Note cache
 
-`index.html` charge toujours `transfers.js?v=035`, `player-db.js?v=034`, `calendar.js?v=031` et `lineup.js?v=023`. Les fichiers eux-mêmes sont bien extraits. Un **Ctrl + F5** reste recommandé après déploiement GitHub Pages.
+`index.html` charge `save-migrations.js?v=037`. Un **Ctrl + F5** reste recommandé après déploiement GitHub Pages.
 
 ## Prochaine étape recommandée
 
-**V0.37 — schemaVersion + migrations de sauvegardes**.
+La roadmap de stabilisation demandée est maintenant terminée. La prochaine étape peut revenir vers du gameplay : amélioration du mercato, moteur de match, live match, blessures/morale, infrastructures ou save manager plus avancé.
