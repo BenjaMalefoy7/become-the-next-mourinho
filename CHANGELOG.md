@@ -1,5 +1,16 @@
 # Changelog — Become the next Mourinho
 
+## V0.37 — schemaVersion + migrations de sauvegardes
+
+- Ajout du module stable `save-migrations.js`.
+- Ajout d’un schéma unique de carrière : `schemaVersion: 37`.
+- Les sauvegardes sont migrées automatiquement à la lecture via `loadCareers`.
+- Les sauvegardes sont aussi normalisées avant écriture via `saveCareers`.
+- `repairCareerIfNeeded` passe désormais par la migration centrale avant et après ses réparations historiques.
+- La migration complète les champs manquants importants : club, finances, joueurs, league, standings, fixtures, mailbox, trainingFocus, version, dataVersion et timestamps.
+- `index.html` charge maintenant `save-migrations.js?v=037` juste après `app.js`.
+- Le footer et le dashboard affichent la V0.37.
+
 ## V0.36 — Nettoyage ciblé des orphelins
 
 - Suppression de `calendar-v060.js`, remplacé par le module stable `calendar.js` depuis la V0.32.
