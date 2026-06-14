@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.28A
+# Become the next Mourinho — V0.28B
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,17 +6,18 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.28A — Match Renderer Cutover, phase A**
+**V0.28B — Simulation pure, phase B**
 
-Cette version suit le retour de check-up externe : avant d’ajouter de nouvelles features, il fallait prouver que le Match Center était le seul module à dessiner l’écran Match.
-
-La simulation historique reste en place pour ne pas casser les matchs, mais les anciens effets visuels de `match-v080.js` et `matchday-v090.js` ont été neutralisés.
+Cette version poursuit le cutover du match après V0.28A. Les anciens rendus de match avaient été neutralisés. V0.28B retire maintenant les ponts de simulation les plus dangereux.
 
 ```text
-match-v080.js      // conserve la simulation du match utilisateur, ne dessine plus l’écran Match
-matchday-v090.js   // conserve la simulation de journée / classement, ne renomme plus le bouton Match
-match-center.js    // reste le seul renderer de l’écran Match
+match-engine.js  // contient directement la simulation du match utilisateur
+league-sim.js    // contient directement la simulation des autres matchs + classement
+season-flow.js   // appelle explicitement les deux modules
+match-center.js  // reste le seul renderer de l’écran Match
 ```
+
+`season-flow.js` ne dépend plus de l’ancien empilement `oldSave → matchday-v090 → match-v080`. La chaîne de simulation est maintenant explicite.
 
 ## Fichiers chargés depuis index.html
 
@@ -26,10 +27,10 @@ app.js?v=044
 theme.js?v=023
 lineup.js?v=023
 calendar.js?v=023
-match-engine.js?v=028A
-league-sim.js?v=028A
+match-engine.js?v=028A   // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
+league-sim.js?v=028A     // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
 squad.js?v=023
-season-flow.js?v=025
+season-flow.js?v=025     // contenu V0.28B, à bumper dans index.html lors de la prochaine passe HTML ciblée
 mailbox.js?v=026
 player-db.js?v=023
 transfers.js?v=023
@@ -37,37 +38,40 @@ training.js?v=027
 match-center.js?v=028A
 ```
 
+Important : après cette version, faire un **Ctrl + F5** pour forcer le navigateur à recharger les fichiers JS modifiés.
+
 ## Modules réellement extraits
 
 ```text
 match-center.js   // code réel du Match Center
 match-center.css  // styles réels du Match Center
-season-flow.js    // code réel du rythme jour par jour
+season-flow.js    // code réel du rythme jour par jour + appel explicite de la simulation pure
 season-flow.css   // styles réels du panneau saison
 mailbox.js        // code réel du courrier manager
 mailbox.css       // styles réels du courrier manager
 training.js       // code réel de l'entraînement par groupes
 training.css      // styles réels de l'entraînement
+match-engine.js   // code réel de simulation du match utilisateur
+league-sim.js     // code réel de simulation journée / classement
 ```
 
-## V0.28A : ce qui est coupé
+## V0.28B : chaîne de match actuelle
 
 ```text
-match-v080.js
-- plus de renderLastResultV080
-- plus de bindSimulationButtonV080
-- plus de updateMatchVersionTextsV080
-- plus de décorations DOM depuis le moteur de match
-- plus de wrapper refreshUI
+match-center.js
+→ appelle saveSimulatedMatch()
 
-matchday-v090.js
-- plus de renommage du bouton de match
-- plus de textes dashboard V0.9.2
-- plus de wrapper refreshUI pour l’écran Match
-- conserve computeDynamicStandings et saveSimulatedMatchdayV090
+season-flow.js
+→ vérifie que le match est jouable
+→ appelle btmSimulateUserMatch(career, userMatch)
+→ appelle btmSimulateOtherMatches(career, matchday, userFixtureId)
+→ appelle computeDynamicStandings(career)
+→ enrichit le rapport
+→ génère le courrier de match
+→ sauvegarde la carrière
 ```
 
-Le classement conserve encore un rendu dédié temporaire, en attendant l’orchestrateur central de rendu.
+Le Match Center reste le seul module qui dessine l’écran Match.
 
 ## DA active
 
@@ -88,8 +92,8 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet tactique, papi
 - saison jour par jour avec verrou de jour de match ;
 - Match Center stable extrait, avec analyse adverse ;
 - validation composition / plan de match ;
-- simulation simple du match ;
-- simulation complète d’une journée ;
+- simulation utilisateur relogée dans `match-engine.js` ;
+- simulation des autres matchs relogée dans `league-sim.js` ;
 - classement dynamique recalculé depuis les matchs joués ;
 - zones de classement : C1, C3, C4, relégation ;
 - rapport post-match enrichi ;
@@ -114,11 +118,11 @@ La règle désormais : **nom de fichier stable + version en query string**.
 
 ```text
 match-center.js?v=028A
-season-flow.js?v=025
+season-flow.js?v=028B
 mailbox.js?v=026
 training.js?v=027
-transfers.js?v=023
-squad.js?v=023
+match-engine.js?v=028B
+league-sim.js?v=028B
 ```
 
 À éviter désormais :
@@ -131,19 +135,18 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.28B — simulation pure**
+**V0.29 — Orchestrateur de rendu**
 
-Objectif : transformer `match-engine.js` et `league-sim.js` en vrais modules sans pont vers `match-v080.js` et `matchday-v090.js`.
-
-La chaîne cible sera :
+Objectif : réduire les derniers wrappers `refreshUI` en remplaçant progressivement le motif fragile :
 
 ```text
-season-flow.js
-→ simulateUserMatch(career)
-→ simulateOtherMatches(career)
-→ computeDynamicStandings(career)
-→ enrichAndPersistMatchReport(career)
-→ generateMatchMail(career)
+refreshUI = function(){ old(); monRender(); }
 ```
 
-Tant que cette extraction n’est pas terminée, ne pas ajouter de nouvelles features liées au match, au live match, au dirty game ou au rapport enrichi.
+par un registre central :
+
+```text
+registerRender("module", renderFunction)
+```
+
+Cela permettra d’éviter que plusieurs modules se réécrivent encore l’ordre de rendu.
