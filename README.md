@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.35
+# Become the next Mourinho — V0.36
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,33 +6,20 @@ Le projet avance en HTML/CSS/JavaScript vanilla, sans backend pour le moment. Le
 
 ## Version actuelle
 
-**V0.35 — extraction réelle de Transfers / Recrutement**
+**V0.36 — nettoyage ciblé des fichiers historiques orphelins**
 
-Cette passe retire le dernier pont historique directement lié au marché des transferts.
+Cette passe supprime les anciens fichiers devenus inutiles après les extractions réelles de Calendar, Lineup, Player DB et Transfers.
 
-Avant :
-
-```text
-transfers.js
-→ chargeait transfers-v017.js
-→ transfers-v017.js réécrivait refreshUI
-→ le rendu recrutement dépendait d'un fichier versionné historique
-```
-
-Maintenant :
+Fichiers supprimés :
 
 ```text
-transfers.js
-→ contient directement le rendu Recrutement
-→ utilise la base joueurs stable de player-db.js
-→ gère recherche, filtre par poste et achat au prix demandé
-→ ajoute le joueur acheté à l'effectif
-→ met à jour budget transfert et solde
-→ génère le courrier de transfert si disponible
-→ passe par btmRegisterRender("transfers", ...)
-→ ne charge plus transfers-v017.js
-→ ne réécrit plus refreshUI
+calendar-v060.js
+lineup-v050.js
+player-db-v016.js
+transfers-v017.js
 ```
+
+Ces fichiers ne sont plus chargés par `index.html` et ne sont plus appelés par les points d’entrée stables.
 
 ## Modules passés sur le registre
 
@@ -75,12 +62,12 @@ transfers.js
 Aucun pont gameplay majeur encore actif côté Match / Calendar / Lineup / Player DB / Transfers.
 ```
 
-Les anciens fichiers versionnés restent présents dans le repository pour l'instant. Ils sont candidats au nettoyage ciblé dès que les tests V0.35 sont validés.
+Il peut rester d’autres anciens fichiers historiques dans le dépôt. Ils seront supprimés uniquement après vérification explicite pour éviter de casser une dépendance cachée.
 
 ## Note cache
 
-`index.html` charge maintenant `transfers.js?v=035` et `transfers.css?v=035`. Un **Ctrl + F5** reste recommandé après déploiement GitHub Pages.
+`index.html` charge toujours `transfers.js?v=035`, `player-db.js?v=034`, `calendar.js?v=031` et `lineup.js?v=023`. Les fichiers eux-mêmes sont bien extraits. Un **Ctrl + F5** reste recommandé après déploiement GitHub Pages.
 
 ## Prochaine étape recommandée
 
-**V0.36 — nettoyage ciblé des fichiers historiques orphelins**, puis **V0.37 — schemaVersion + migrations de sauvegardes**.
+**V0.37 — schemaVersion + migrations de sauvegardes**.
