@@ -1,4 +1,4 @@
-const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
+const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.40E";
 (function () {
   if (window.__BTM_MC_EXTRACTED__) return;
   window.__BTM_MC_EXTRACTED__ = true;
@@ -18,8 +18,12 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
     if (typeof ensureCareerCalendar === "function") ensureCareerCalendar(career);
     return typeof getNextCareerMatch === "function" ? getNextCareerMatch(career) : null;
   }
-  function clubById(career, id) { return Array.isArray(career?.clubs) ? career.clubs.find((club) => club.id === id) || null : null; }
-  function matchLabel(match) { return match ? `${match.homeClubName} vs ${match.awayClubName}` : "Saison terminée"; }
+  function clubById(career, id) {
+    return Array.isArray(career?.clubs) ? career.clubs.find((club) => club.id === id) || null : null;
+  }
+  function matchLabel(match) {
+    return match ? `${match.homeClubName} vs ${match.awayClubName}` : "Saison terminée";
+  }
   function userVenue(career, match) {
     if (!career?.club || !match) return "—";
     if (match.homeClubId === career.club.id) return "Domicile";
@@ -42,7 +46,9 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
     if (typeof prematchLineupStats === "function") return prematchLineupStats(career);
     return { valid: false, formation: "—", rating: "—", condition: "—", starters: [], startersCount: 0, expectedCount: 11, warnings: ["Composition non disponible."] };
   }
-  function player(career, id) { return Array.isArray(career?.players) ? career.players.find((item) => item.id === id) || null : null; }
+  function player(career, id) {
+    return Array.isArray(career?.players) ? career.players.find((item) => item.id === id) || null : null;
+  }
   function xiHtml(career, stats) {
     const starters = Array.isArray(stats.starters) ? stats.starters : [];
     if (!starters.length) return "<p class='save-meta'>Aucune composition enregistrée.</p>";
@@ -89,7 +95,9 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
     const result = career?.lastMatchResult;
     if (!result) return null;
     if (!result.matchStats) result.matchStats = statPack(career, result);
-    if (!Array.isArray(result.events) || !result.events.length) result.events = [{ minute: 90, type: "info", side: "neutral", text: "Match fermé, peu d’espaces." }];
+    if (!Array.isArray(result.events) || !result.events.length) {
+      result.events = [{ minute: 90, type: "info", side: "neutral", text: "Match fermé, peu d’espaces." }];
+    }
     const hasTempo = result.events.some((event) => event.type !== "goal");
     if (!hasTempo) {
       result.events.push({ minute: 24, type: "chance", side: "neutral", text: "Première période tactique, les deux blocs se testent." });
@@ -110,10 +118,42 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
     const home = clubById(career, result.homeClubId) || { name: result.homeClubName, shortName: "HOM" };
     const away = clubById(career, result.awayClubId) || { name: result.awayClubName, shortName: "AWY" };
     const stats = statPack(career, result);
-    const row = (label, homeValue, awayValue, suffix = "") => `<div class="mc-v020-stat"><b>${e(homeValue)}${suffix}</b><div><span>${e(label)}</span><div class="mc-v020-track"><div class="mc-v020-fill" style="width:${Math.max(5, Math.min(95, Number(homeValue) || 0))}%"></div></div></div><b>${e(awayValue)}${suffix}</b></div>`;
-    return `<article class="mc-v020-card mc-v020-report"><span class="mc-v020-tag">Rapport final</span><div class="mc-v020-score"><div>${badge(home)}<h3>${e(result.homeClubName)}</h3></div><div><strong>${s(result.homeGoals)} - ${s(result.awayGoals)}</strong><p>${e(result.resultForUser || "Résultat")}</p></div><div>${badge(away)}<h3>${e(result.awayClubName)}</h3></div></div><div class="mc-v020-grid"><div><h3>Timeline</h3><div class="mc-v020-timeline">${(result.events || []).map((event) => `<div class="mc-v020-event"><b>${s(event.minute)}'</b><span>${e(event.text)}</span></div>`).join("")}</div></div><div><h3>Stats du match</h3><div class="mc-v020-stats">${row("Possession", stats.possession.home, stats.possession.away, "%")}${row("Tirs", stats.shots.home, stats.shots.away)}${row("Tirs cadrés", stats.shotsOnTarget.home, stats.shotsOnTarget.away)}${row("xG", stats.xg.home, stats.xg.away)}${row("Occasions", stats.dangerousChances.home, stats.dangerousChances.away)}</div><p class="mc-v020-note">Lecture coach : ${e(result.summary)}</p></div></div></article>`;
+    const row = (label, homeValue, awayValue, suffix = "") => `
+      <div class="mc-v020-stat">
+        <b>${e(homeValue)}${suffix}</b>
+        <div><span>${e(label)}</span><div class="mc-v020-track"><div class="mc-v020-fill" style="width:${Math.max(5, Math.min(95, Number(homeValue) || 0))}%"></div></div></div>
+        <b>${e(awayValue)}${suffix}</b>
+      </div>`;
+    return `<article class="mc-v020-card mc-v020-report">
+      <span class="mc-v020-tag">Rapport final</span>
+      <div class="mc-v020-score">
+        <div>${badge(home)}<h3>${e(result.homeClubName)}</h3></div>
+        <div><strong>${s(result.homeGoals)} - ${s(result.awayGoals)}</strong><p>${e(result.resultForUser || "Résultat")}</p></div>
+        <div>${badge(away)}<h3>${e(result.awayClubName)}</h3></div>
+      </div>
+      <div class="mc-v020-grid">
+        <div><h3>Timeline</h3><div class="mc-v020-timeline">${(result.events || []).map((event) => `<div class="mc-v020-event"><b>${s(event.minute)}'</b><span>${e(event.text)}</span></div>`).join("")}</div></div>
+        <div><h3>Stats du match</h3><div class="mc-v020-stats">${row("Possession", stats.possession.home, stats.possession.away, "%")}${row("Tirs", stats.shots.home, stats.shots.away)}${row("Tirs cadrés", stats.shotsOnTarget.home, stats.shotsOnTarget.away)}${row("xG", stats.xg.home, stats.xg.away)}${row("Occasions", stats.dangerousChances.home, stats.dangerousChances.away)}</div><p class="mc-v020-note">Lecture coach : ${e(result.summary)}</p></div>
+      </div>
+    </article>`;
   }
-  function prepKey(match) { return match ? match.id || `${match.matchday}_${match.homeClubId}_${match.awayClubId}` : "none"; }
+  function postMatchHtml(career, match, gate) {
+    return `<div class="match-center-v020">
+      <div class="mc-v020-head">
+        <div><span class="mc-v020-tag">Dernier match joué</span><h3>Rapport post-match</h3><p>La préparation est terminée. Le prochain match sera disponible le jour même.</p></div>
+        <div class="mc-v020-actions"><button class="secondary-btn" id="mc-to-calendar">Voir le calendrier</button><button class="primary-btn" id="mc-to-next">Continuer jour par jour</button></div>
+      </div>
+      ${reportHtml(career)}
+      <article class="mc-v020-card">
+        <span class="mc-v020-tag">Prochain rendez-vous</span>
+        <h3>${e(matchLabel(match))}</h3>
+        <p>${e(gate?.message || "Continue la saison jour par jour.")}</p>
+      </article>
+    </div>`;
+  }
+  function prepKey(match) {
+    return match ? match.id || `${match.matchday}_${match.homeClubId}_${match.awayClubId}` : "none";
+  }
 
   function renderMatchCenter(career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null) {
     const screen = document.getElementById("match");
@@ -125,17 +165,30 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
     const match = nextMatch(career);
     const stats = lineupStats(career);
     const gate = typeof window.btmCanPlayMatch === "function" ? window.btmCanPlayMatch(career) : { ok: true, message: "" };
-    const canPrepare = gate.ok && stats.valid;
-    const key = prepKey(match);
-    prep[key] = prep[key] || { lineup: false, plan: false };
     if (!match) {
       screen.innerHTML = `<div class="match-center-v020"><div class="mc-v020-head"><div><span class="mc-v020-tag">Saison terminée</span><h3>Aucun match à jouer</h3></div></div>${reportHtml(career)}</div>`;
       return;
     }
+    if (career.lastMatchResult && !gate.ok) {
+      screen.innerHTML = postMatchHtml(career, match, gate);
+      document.getElementById("mc-to-calendar")?.addEventListener("click", () => document.querySelector('[data-screen="calendar"]')?.click());
+      document.getElementById("mc-to-next")?.addEventListener("click", () => document.getElementById("season-next-day")?.click());
+      return;
+    }
     const opp = opponent(career, match) || {};
     const oppModel = opponentModel(opp);
+    const canPrepare = gate.ok && stats.valid;
+    const key = prepKey(match);
+    prep[key] = prep[key] || { lineup: false, plan: false };
     const ready = canPrepare && prep[key].lineup && prep[key].plan;
-    screen.innerHTML = `<div class="match-center-v020"><div class="mc-v020-head"><div><span class="mc-v020-tag">Matchday Center V0.29</span><h3>${e(matchLabel(match))}</h3><p>Journée ${s(match.matchday)} · ${e(userVenue(career, match))} · Préparer, valider, jouer.</p></div><div class="mc-v020-actions"><button class="secondary-btn" id="mc-edit">Modifier la compo</button><button class="primary-btn" id="prematch-launch" ${ready ? "" : "disabled"}>${ready ? "Lancer le match" : "Préparation incomplète"}</button></div></div>${reportHtml(career)}<div class="mc-v020-board"><article class="mc-v020-club"><span class="mc-v020-tag">Nous</span><h2>${e(career.club?.name || "Ton club")}</h2><p>${e(level(career.club))} · ${e(userVenue(career, match))}</p></article><article class="mc-v020-vs"><strong>VS</strong><span>J${s(match.matchday)}</span></article><article class="mc-v020-club"><span class="mc-v020-tag">Adversaire</span><h2>${e(opp.name || "Adversaire")}</h2><p>${e(oppModel.style)} · réputation ${s(opp.reputation)}</p></article></div><div class="mc-v020-grid"><article class="mc-v020-card"><h3>Notre XI</h3><div class="mc-v020-kpis"><div><span>Formation</span><strong>${e(stats.formation)}</strong></div><div><span>Note XI</span><strong>${s(stats.rating)}</strong></div><div><span>Condition</span><strong>${s(stats.condition)}%</strong></div><div><span>Titulaires</span><strong>${s(stats.startersCount)}/${s(stats.expectedCount)}</strong></div></div>${xiHtml(career, stats)}<div class="mc-v020-toggle"><button class="secondary-btn ${prep[key].lineup ? "active" : ""}" id="mc-ok-lineup">Valider la composition</button></div></article><article class="mc-v020-card"><h3>Analyse adverse</h3><div class="mc-v020-kpis"><div><span>Défense</span><strong>${oppModel.def}</strong></div><div><span>Milieu</span><strong>${oppModel.mid}</strong></div><div><span>Attaque</span><strong>${oppModel.att}</strong></div><div><span>Forme</span><strong>${e(oppModel.form)}</strong></div></div><p><strong>Force :</strong> ${e(oppModel.strong)} · <strong>Faiblesse :</strong> ${e(oppModel.weak)}</p><p><strong>Plan observé :</strong> ${e(oppModel.formation)} · ${e(oppModel.style)}</p><p class="mc-v020-note">Recommandation : exploiter leur ${e(oppModel.weak.toLowerCase())}, rester prudent sur leur ${e(oppModel.strong.toLowerCase())}.</p><div class="mc-v020-toggle"><button class="secondary-btn ${prep[key].plan ? "active" : ""}" id="mc-ok-plan">Valider le plan de match</button></div>${gate.ok ? "" : `<div class="mc-v020-alert">${e(gate.message)}</div>`}${stats.warnings?.length ? `<div class="mc-v020-alert">${stats.warnings.slice(0, 3).map(e).join("<br>")}</div>` : ""}<div id="prematch-launch-note" class="prematch-launch-note"></div></article></div></div>`;
+    screen.innerHTML = `<div class="match-center-v020">
+      <div class="mc-v020-head"><div><span class="mc-v020-tag">Matchday Center V0.40E</span><h3>${e(matchLabel(match))}</h3><p>Journée ${s(match.matchday)} · ${e(userVenue(career, match))} · Préparer, valider, jouer.</p></div><div class="mc-v020-actions"><button class="secondary-btn" id="mc-edit">Modifier la compo</button><button class="primary-btn" id="prematch-launch" ${ready ? "" : "disabled"}>${ready ? "Lancer le match" : "Préparation incomplète"}</button></div></div>
+      <div class="mc-v020-board"><article class="mc-v020-club"><span class="mc-v020-tag">Nous</span><h2>${e(career.club?.name || "Ton club")}</h2><p>${e(level(career.club))} · ${e(userVenue(career, match))}</p></article><article class="mc-v020-vs"><strong>VS</strong><span>J${s(match.matchday)}</span></article><article class="mc-v020-club"><span class="mc-v020-tag">Adversaire</span><h2>${e(opp.name || "Adversaire")}</h2><p>${e(oppModel.style)} · réputation ${s(opp.reputation)}</p></article></div>
+      <div class="mc-v020-grid">
+        <article class="mc-v020-card"><h3>Notre XI</h3><div class="mc-v020-kpis"><div><span>Formation</span><strong>${e(stats.formation)}</strong></div><div><span>Note XI</span><strong>${s(stats.rating)}</strong></div><div><span>Condition</span><strong>${s(stats.condition)}%</strong></div><div><span>Titulaires</span><strong>${s(stats.startersCount)}/${s(stats.expectedCount)}</strong></div></div>${xiHtml(career, stats)}<div class="mc-v020-toggle"><button class="secondary-btn ${prep[key].lineup ? "active" : ""}" id="mc-ok-lineup">Valider la composition</button></div></article>
+        <article class="mc-v020-card"><h3>Analyse adverse</h3><div class="mc-v020-kpis"><div><span>Défense</span><strong>${oppModel.def}</strong></div><div><span>Milieu</span><strong>${oppModel.mid}</strong></div><div><span>Attaque</span><strong>${oppModel.att}</strong></div><div><span>Forme</span><strong>${e(oppModel.form)}</strong></div></div><p><strong>Force :</strong> ${e(oppModel.strong)} · <strong>Faiblesse :</strong> ${e(oppModel.weak)}</p><p><strong>Plan observé :</strong> ${e(oppModel.formation)} · ${e(oppModel.style)}</p><p class="mc-v020-note">Recommandation : exploiter leur ${e(oppModel.weak.toLowerCase())}, rester prudent sur leur ${e(oppModel.strong.toLowerCase())}.</p><div class="mc-v020-toggle"><button class="secondary-btn ${prep[key].plan ? "active" : ""}" id="mc-ok-plan">Valider le plan de match</button></div>${gate.ok ? "" : `<div class="mc-v020-alert">${e(gate.message)}</div>`}${stats.warnings?.length ? `<div class="mc-v020-alert">${stats.warnings.slice(0, 3).map(e).join("<br>")}</div>` : ""}<div id="prematch-launch-note" class="prematch-launch-note"></div></article>
+      </div>
+    </div>`;
     bindMatchCenter(key);
   }
   function bindMatchCenter(key) {
@@ -164,7 +217,7 @@ const BTM_MATCH_CENTER_ENTRYPOINT_VERSION = "0.29";
   if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("match-center", renderMatchCenter);
   else {
     const previous = typeof refreshUI === "function" ? refreshUI : null;
-    refreshUI = function refreshUIMatchCenterFallbackV029() { if (previous) previous(); renderMatchCenter(); };
+    refreshUI = function refreshUIMatchCenterFallbackV040E() { if (previous) previous(); renderMatchCenter(); };
   }
 
   document.addEventListener("DOMContentLoaded", () => renderMatchCenter());
