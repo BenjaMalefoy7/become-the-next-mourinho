@@ -1,24 +1,117 @@
-const BTM_MAILBOX_VERSION='0.26';
-(function(){
-const state={selectedId:null};
-function e(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fr(s){try{return new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(String(s)+'T12:00:00'));}catch(_){return s;}}
-function activeIndex(){const id=typeof getActiveCareerId==='function'?getActiveCareerId():null;const careers=typeof loadCareers==='function'?loadCareers():[];const index=careers.findIndex(c=>c.id===id);return{careers,index,career:index>=0?careers[index]:null};}
-function save(careers,index,career){if(index<0||!career)return;career.updatedAt=new Date().toISOString();careers[index]=career;if(typeof saveCareers==='function')saveCareers(careers,{silent:true});}
-function box(c){if(c)c.mailbox=Array.isArray(c.mailbox)?c.mailbox:[];}
-function id(p){return p+'_'+Date.now()+'_'+Math.random().toString(16).slice(2);}
-function has(c,d,t){box(c);return c.mailbox.some(m=>m.date===d&&m.type===t);}
-function push(c,msg){box(c);c.mailbox.unshift({id:id('mail'),read:false,createdAt:new Date().toISOString(),...msg});}
-function nextInfo(c){return typeof window.btmNextMatchInfo==='function'?window.btmNextMatchInfo(c):{match:null,days:null,label:'Saison terminée'};}
-function generateDaily(c,d){if(!c)return;box(c);const n=nextInfo(c);const near=n.match&&n.days!==null&&n.days<=1;if(!near)return;if(!has(c,d,'briefing'))push(c,{date:d,type:'briefing',title:n.days===0?'Briefing jour de match':'Briefing veille de match',body:'Prochain rendez-vous : '+n.label+'. Le staff recommande de vérifier la composition, la condition et le plan de match.'});if(!has(c,d,'staff')&&Math.random()<.35)push(c,{date:d,type:'staff',title:'Note du staff',body:'Le groupe est surveillé avant le prochain match. Pense à éviter les joueurs trop fatigués.'});}
-function generateMatch(c,r){if(!c||!r)return;box(c);const d=c.currentDate||new Date().toISOString().slice(0,10);if(has(c,d,'match-report'))return;push(c,{date:d,type:'match-report',title:'Rapport de match',body:'Résultat : '+r.homeClubName+' '+r.homeGoals+' - '+r.awayGoals+' '+r.awayClubName+'\n\nBilan : '+(r.resultForUser||'Résultat enregistré')+'. Consulte le Match Center pour la timeline et les statistiques.'});}
-function ensureUi(){const nav=document.querySelector('.nav');if(nav&&!nav.querySelector('[data-screen="mail"]')){const b=document.createElement('button');b.className='nav-btn';b.dataset.screen='mail';b.textContent='Courrier';b.onclick=()=>typeof showScreen==='function'?showScreen('mail'):null;nav.insertBefore(b,nav.querySelector('[data-screen="transfers"]')||null);}const main=document.querySelector('.main-content');if(main&&!document.getElementById('mail')){const s=document.createElement('section');s.className='screen';s.id='mail';main.appendChild(s);}try{screenTitles.mail='Courrier';}catch(_){}}
-function label(t){return{briefing:'Staff',staff:'Staff',news:'News','match-report':'Match',transfer:'Mercato'}[t]||t;}
-function mark(mid,read,refresh){const a=activeIndex();if(!a.career)return;box(a.career);const m=a.career.mailbox.find(x=>x.id===mid);if(m)m.read=read;save(a.careers,a.index,a.career);if(refresh&&typeof refreshUI==='function')refreshUI();}
-function render(c=typeof getResolvedCareer==='function'?getResolvedCareer():null){ensureUi();const screen=document.getElementById('mail');if(!screen)return;if(!c){screen.innerHTML='<div class="section-header"><h3>Courrier</h3><p>Aucune carrière active.</p></div>';return;}box(c);const mails=c.mailbox.slice().sort((a,b)=>String(b.createdAt||b.date).localeCompare(String(a.createdAt||a.date)));if(!state.selectedId||!mails.some(m=>m.id===state.selectedId))state.selectedId=mails[0]?.id||null;const sel=mails.find(m=>m.id===state.selectedId)||mails[0];screen.innerHTML='<div class="section-header section-header-row"><div><p class="eyebrow">Inbox V0.26</p><h3>Courrier du manager</h3><p>Messages réduits : seulement match, staff proche échéance et événements importants.</p></div><button class="secondary-btn" id="mail-mark-read">Archiver comme lu</button></div><div class="mail-v015"><div class="mail-v015-list">'+(mails.length?mails.map(m=>'<button class="mail-v015-item '+(m.read?'':'unread')+'" data-mail-id="'+e(m.id)+'"><span class="mail-v015-type">'+e(label(m.type))+'</span><strong>'+e(m.title)+'</strong><span>'+e(fr(m.date))+'</span></button>').join(''):'<div class="mail-v015-empty">Aucun message utile pour le moment.</div>')+'</div><article class="mail-v015-reader">'+(sel?'<span class="mail-v015-type">'+e(label(sel.type))+'</span><h3>'+e(sel.title)+'</h3><p class="save-meta">'+e(fr(sel.date))+'</p><div class="mail-v015-body">'+e(sel.body)+'</div>':'<div class="mail-v015-empty">Sélectionne un message.</div>')+'</article></div>';screen.querySelectorAll('[data-mail-id]').forEach(b=>b.onclick=()=>{state.selectedId=b.dataset.mailId;mark(state.selectedId,true,false);render();});document.getElementById('mail-mark-read')?.addEventListener('click',()=>{if(state.selectedId)mark(state.selectedId,true,true);});}
-window.btmGenerateDailyMail=generateDaily;
-window.btmGenerateMatchMail=function(c,r){const a=activeIndex();const career=a.career||c;if(!career)return;generateMatch(career,r);if(a.index>=0)save(a.careers,a.index,career);};
-window.btmGenerateTransferMail=function(c,p,price){const a=activeIndex();const career=a.career||c;if(!career||!p)return;const d=career.currentDate||new Date().toISOString().slice(0,10);push(career,{date:d,type:'transfer',title:'Transfert finalisé',body:p.name+' rejoint '+(career.club?.name||'le club')+'. Montant : '+(typeof formatMoney==='function'?formatMoney(price):price)+'.'});if(a.index>=0)save(a.careers,a.index,career);};
-const prev=typeof refreshUI==='function'?refreshUI:null;refreshUI=function refreshUIMailboxV026(){if(prev)prev();render();};
-document.addEventListener('DOMContentLoaded',()=>{ensureUi();render();});
+const BTM_MAILBOX_VERSION = "0.29";
+(function () {
+  const state = { selectedId: null };
+
+  function e(value) {
+    if (typeof escapeHtml === "function") return escapeHtml(value);
+    return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function fr(value) {
+    try { return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(String(value) + "T12:00:00")); }
+    catch (_) { return value; }
+  }
+  function activeIndex() {
+    const id = typeof getActiveCareerId === "function" ? getActiveCareerId() : null;
+    const careers = typeof loadCareers === "function" ? loadCareers() : [];
+    const index = careers.findIndex((career) => career.id === id);
+    return { careers, index, career: index >= 0 ? careers[index] : null };
+  }
+  function save(careers, index, career) {
+    if (index < 0 || !career) return;
+    career.updatedAt = new Date().toISOString();
+    careers[index] = career;
+    if (typeof saveCareers === "function") saveCareers(careers, { silent: true });
+  }
+  function box(career) { if (career) career.mailbox = Array.isArray(career.mailbox) ? career.mailbox : []; }
+  function id(prefix) { return prefix + "_" + Date.now() + "_" + Math.random().toString(16).slice(2); }
+  function has(career, date, type) { box(career); return career.mailbox.some((message) => message.date === date && message.type === type); }
+  function push(career, message) { box(career); career.mailbox.unshift({ id: id("mail"), read: false, createdAt: new Date().toISOString(), ...message }); }
+  function nextInfo(career) { return typeof window.btmNextMatchInfo === "function" ? window.btmNextMatchInfo(career) : { match: null, days: null, label: "Saison terminée" }; }
+  function generateDaily(career, currentDate) {
+    if (!career) return;
+    box(career);
+    const next = nextInfo(career);
+    const near = next.match && next.days !== null && next.days <= 1;
+    if (!near) return;
+    if (!has(career, currentDate, "briefing")) push(career, { date: currentDate, type: "briefing", title: next.days === 0 ? "Briefing jour de match" : "Briefing veille de match", body: "Prochain rendez-vous : " + next.label + ". Le staff recommande de vérifier la composition, la condition et le plan de match." });
+    if (!has(career, currentDate, "staff") && Math.random() < 0.35) push(career, { date: currentDate, type: "staff", title: "Note du staff", body: "Le groupe est surveillé avant le prochain match. Pense à éviter les joueurs trop fatigués." });
+  }
+  function generateMatch(career, result) {
+    if (!career || !result) return;
+    box(career);
+    const currentDate = career.currentDate || new Date().toISOString().slice(0, 10);
+    if (has(career, currentDate, "match-report")) return;
+    push(career, { date: currentDate, type: "match-report", title: "Rapport de match", body: "Résultat : " + result.homeClubName + " " + result.homeGoals + " - " + result.awayGoals + " " + result.awayClubName + "\n\nBilan : " + (result.resultForUser || "Résultat enregistré") + ". Consulte le Match Center pour la timeline et les statistiques." });
+  }
+  function ensureUi() {
+    const nav = document.querySelector(".nav");
+    if (nav && !nav.querySelector('[data-screen="mail"]')) {
+      const button = document.createElement("button");
+      button.className = "nav-btn";
+      button.dataset.screen = "mail";
+      button.textContent = "Courrier";
+      button.onclick = () => typeof showScreen === "function" ? showScreen("mail") : null;
+      nav.insertBefore(button, nav.querySelector('[data-screen="transfers"]') || null);
+    }
+    const main = document.querySelector(".main-content");
+    if (main && !document.getElementById("mail")) {
+      const screen = document.createElement("section");
+      screen.className = "screen";
+      screen.id = "mail";
+      main.appendChild(screen);
+    }
+    try { screenTitles.mail = "Courrier"; } catch (_) {}
+  }
+  function label(type) { return { briefing: "Staff", staff: "Staff", news: "News", "match-report": "Match", transfer: "Mercato" }[type] || type; }
+  function mark(messageId, read, refresh) {
+    const active = activeIndex();
+    if (!active.career) return;
+    box(active.career);
+    const message = active.career.mailbox.find((item) => item.id === messageId);
+    if (message) message.read = read;
+    save(active.careers, active.index, active.career);
+    if (refresh && typeof refreshUI === "function") refreshUI();
+  }
+
+  function render(career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null) {
+    ensureUi();
+    const screen = document.getElementById("mail");
+    if (!screen) return;
+    if (!career) {
+      screen.innerHTML = '<div class="section-header"><h3>Courrier</h3><p>Aucune carrière active.</p></div>';
+      return;
+    }
+    box(career);
+    const mails = career.mailbox.slice().sort((a, b) => String(b.createdAt || b.date).localeCompare(String(a.createdAt || a.date)));
+    if (!state.selectedId || !mails.some((mail) => mail.id === state.selectedId)) state.selectedId = mails[0]?.id || null;
+    const selected = mails.find((mail) => mail.id === state.selectedId) || mails[0];
+    screen.innerHTML = '<div class="section-header section-header-row"><div><p class="eyebrow">Inbox V0.29</p><h3>Courrier du manager</h3><p>Messages réduits : seulement match, staff proche échéance et événements importants.</p></div><button class="secondary-btn" id="mail-mark-read">Archiver comme lu</button></div><div class="mail-v015"><div class="mail-v015-list">' + (mails.length ? mails.map((mail) => '<button class="mail-v015-item ' + (mail.read ? '' : 'unread') + '" data-mail-id="' + e(mail.id) + '"><span class="mail-v015-type">' + e(label(mail.type)) + '</span><strong>' + e(mail.title) + '</strong><span>' + e(fr(mail.date)) + '</span></button>').join('') : '<div class="mail-v015-empty">Aucun message utile pour le moment.</div>') + '</div><article class="mail-v015-reader">' + (selected ? '<span class="mail-v015-type">' + e(label(selected.type)) + '</span><h3>' + e(selected.title) + '</h3><p class="save-meta">' + e(fr(selected.date)) + '</p><div class="mail-v015-body">' + e(selected.body) + '</div>' : '<div class="mail-v015-empty">Sélectionne un message.</div>') + '</article></div>';
+    screen.querySelectorAll("[data-mail-id]").forEach((button) => button.onclick = () => { state.selectedId = button.dataset.mailId; mark(state.selectedId, true, false); render(); });
+    document.getElementById("mail-mark-read")?.addEventListener("click", () => { if (state.selectedId) mark(state.selectedId, true, true); });
+  }
+
+  window.btmGenerateDailyMail = generateDaily;
+  window.btmGenerateMatchMail = function btmGenerateMatchMail(career, result) {
+    const active = activeIndex();
+    const targetCareer = active.career || career;
+    if (!targetCareer) return;
+    generateMatch(targetCareer, result);
+    if (active.index >= 0) save(active.careers, active.index, targetCareer);
+  };
+  window.btmGenerateTransferMail = function btmGenerateTransferMail(career, player, price) {
+    const active = activeIndex();
+    const targetCareer = active.career || career;
+    if (!targetCareer || !player) return;
+    const currentDate = targetCareer.currentDate || new Date().toISOString().slice(0, 10);
+    push(targetCareer, { date: currentDate, type: "transfer", title: "Transfert finalisé", body: player.name + " rejoint " + (targetCareer.club?.name || "le club") + ". Montant : " + (typeof formatMoney === "function" ? formatMoney(price) : price) + "." });
+    if (active.index >= 0) save(active.careers, active.index, targetCareer);
+  };
+
+  if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("mailbox", render);
+  else {
+    const previous = typeof refreshUI === "function" ? refreshUI : null;
+    refreshUI = function refreshUIMailboxFallbackV029() { if (previous) previous(); render(); };
+  }
+
+  document.addEventListener("DOMContentLoaded", () => { ensureUi(); render(); });
 })();
