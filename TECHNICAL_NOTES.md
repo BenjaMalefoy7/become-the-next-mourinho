@@ -1,6 +1,6 @@
 # Notes techniques
 
-État après V0.20.
+État après V0.21.
 
 ## Direction active
 
@@ -17,13 +17,36 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papi
 - `season-v015.js` réduit le spam courrier et ne charge plus les anciens modules récents de match.
 - Les modules récents de match qui se rechargeaient en chaîne ne sont plus appelés depuis le loader dynamique du courrier.
 
+## Ce qui a été engagé en V0.21
+
+La V0.21 commence la migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
+
+Nouveaux points d’entrée stables créés :
+
+```text
+btm-flat-loader.js?v=021
+match-center.js?v=021
+season-flow.js?v=021
+mailbox.js?v=021
+player-db.js?v=021
+transfers.js?v=021
+training.js?v=021
+match-center.css?v=021
+season-flow.css?v=021
+mailbox.css?v=021
+transfers.css?v=021
+training.css?v=021
+```
+
+Pour éviter une rupture de gameplay, certains de ces fichiers sont encore des **ponts de compatibilité** vers les anciens fichiers versionnés. C’est volontaire : on stabilise d’abord les points d’entrée, puis on supprimera les vieux fichiers progressivement.
+
 ## Priorité technique majeure restante
 
 Le projet a été itéré très vite avec beaucoup de fichiers versionnés dans leur nom (`season-v013.js`, `season-v01910.js`, etc.). Cette approche a permis de prototyper rapidement, mais elle rend maintenant le code et la documentation difficiles à suivre.
 
-### Règle à appliquer lors du loader plat
+### Règle à appliquer jusqu’au bout
 
-Lors de la prochaine refonte technique importante, basculer vers des noms de modules stables et mettre la version uniquement dans la query string.
+Basculer vers des noms de modules stables et mettre la version uniquement dans la query string.
 
 Exemples attendus :
 
@@ -49,9 +72,9 @@ Objectif : éviter que README, CHANGELOG et documentation décrochent à chaque 
 
 ## Fichiers chargés actuellement
 
-Les fichiers historiques restent encore présents. La V0.20 stabilise le comportement, mais le nommage reste une dette technique.
+Les fichiers historiques restent encore présents. La V0.21 ajoute des points d’entrée stables, mais le ménage complet n’est pas encore terminé.
 
-Modules importants actuellement :
+Modules historiques encore importants :
 
 ```text
 app.js
@@ -65,10 +88,22 @@ match-details-v010.js
 squad-v012.js
 season-v013.js  -> Match Center V0.20
 season-v014.js  -> Season Flow V0.20
-season-v015.js  -> Mailbox V0.20 + chargement non-match
+season-v015.js  -> Mailbox V0.20 + loader plat V0.21
 player-db-v016.js
 transfers-v017.js
 training-v018.js
+```
+
+Nouveaux points d’entrée V0.21 :
+
+```text
+btm-flat-loader.js
+match-center.js
+season-flow.js
+mailbox.js
+player-db.js
+transfers.js
+training.js
 ```
 
 ## Dette refreshUI
@@ -77,18 +112,20 @@ Plusieurs modules enrichissent ou remplacent encore `refreshUI`. Cela reste frag
 
 ## Prochaine étape technique recommandée
 
-Créer des modules stables :
+### V0.22 — Index vraiment plat
+
+Charger directement les modules stables dans `index.html` :
 
 ```text
-match-center.js
-season-flow.js
-mailbox.js
-squad.js
-transfers.js
-training.js
+match-center.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+squad.js?v=022
+transfers.js?v=022
+training.js?v=022
 ```
 
-Puis charger ces fichiers directement dans `index.html` avec `?v=021`.
+Puis retirer les anciens loaders dynamiques de `match-details-v010.js`, `squad-v012.js` et `season-v015.js`.
 
 ## Match Center
 
