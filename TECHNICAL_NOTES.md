@@ -1,70 +1,19 @@
 # Notes techniques
 
-État après V0.31.
+Etat apres V0.32.
 
-## Direction active
+La DA active reste Coach Notebook / Manager War Room.
 
-La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papier, dossiers, onglets, notes tactiques et couleurs dynamiques du club.
+V0.32 extrait le calendrier : calendar.js ne charge plus calendar-v060.js. Le module stable contient maintenant la generation du calendrier, la recherche du prochain match, le rendu Calendrier, la mise a jour dashboard liee au prochain match et l'enregistrement dans le registre de rendu.
 
-## Stabilisations majeures récentes
+Le calendrier reste uniquement un ecran d'affichage. Il ne modifie pas la date reelle de carriere. Le passage de jour reste gere par season-flow.js.
 
-- `index.html` charge désormais des points d’entrée stables.
-- `match-center.js`, `season-flow.js`, `mailbox.js` et `training.js` sont de vrais modules extraits.
-- `match-engine.js` et `league-sim.js` sont de vrais modules de simulation.
-- La chaîne de match est explicite et ne dépend plus de `oldSave`.
-- Le registre de rendu est installé par `theme.js`.
-- `lineup.js` et `calendar.js` sont maintenant intégrés au registre avec neutralisation de leurs anciens wrappers `refreshUI`.
+Modules dans le registre : theme.js, squad.js, lineup.js, calendar.js, season-flow.js, mailbox.js, training.js, match-center.js.
 
-## V0.31 — Calendar registry cutover
+Compatibilites restantes : lineup.js vers lineup-v050.js, player-db.js vers player-db-v016.js, transfers.js vers transfers-v017.js.
 
-`calendar.js` garde encore une compatibilité avec `calendar-v060.js`, mais son wrapper `refreshUI` historique est neutralisé après chargement.
+calendar-v060.js devient un fichier historique orphelin candidat au nettoyage.
 
-Le flux voulu devient :
+Prochaine etape recommandee : extraction reelle de Lineup ou nettoyage cible des orphelins historiques.
 
-```text
-calendar.js
-→ charge temporairement calendar-v060.js
-→ restaure le refreshUI central
-→ enregistre renderCalendarV060 dans btmRegisterRender("calendar", ...)
-```
-
-Le calendrier ne doit pas décider du passage réel des jours. Il sert à afficher une journée, parcourir les journées du calendrier et afficher les prochains matchs. Le passage de date reste la responsabilité de `season-flow.js`.
-
-## Modules actuellement enregistrés
-
-```text
-theme.js
-squad.js
-lineup.js
-calendar.js
-season-flow.js
-mailbox.js
-training.js
-match-center.js
-```
-
-## Limites restantes
-
-```text
-lineup.js       -> compatibilité temporaire avec lineup-v050.js
-calendar.js     -> compatibilité temporaire avec calendar-v060.js
-player-db.js    -> player-db-v016.js
-transfers.js    -> transfers-v017.js
-```
-
-## Prochaine étape recommandée
-
-### V0.32 — extraction complète de Calendar ou nettoyage des orphelins
-
-Objectifs :
-
-```text
-- copier le vrai code utile de calendar-v060.js dans calendar.js ;
-- retirer ensuite la compatibilité calendar-v060.js ;
-- garder season-flow.js comme unique responsable du passage réel des jours ;
-- préparer la suppression des fichiers historiques devenus inutiles.
-```
-
-## Note cache
-
-`index.html` pointe maintenant vers `calendar.css?v=031` et `calendar.js?v=031`. Faire Ctrl + F5 après déploiement GitHub Pages.
+Note cache : index.html pointe encore vers calendar.js?v=031, mais le contenu reel de calendar.js est en V0.32. Faire Ctrl + F5 apres deploiement GitHub Pages.
