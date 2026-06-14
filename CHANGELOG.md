@@ -1,5 +1,15 @@
 # Changelog — Become the next Mourinho
 
+## V0.33 — Lineup extrait
+
+- `lineup.js` n’est plus un pont vers `lineup-v050.js`.
+- La gestion des formations est maintenant directement dans le module stable.
+- La composition est normalisée et réparée directement par `lineup.js`.
+- Les changements de formation, d’auto-composition, de vidage et de titulaires sont sauvegardés directement par le module stable.
+- `lineup.js` s’enregistre toujours via `btmRegisterRender("lineup", ...)`.
+- `lineup-v050.js` devient un fichier historique orphelin candidat au nettoyage.
+- `index.html` garde encore `lineup.js?v=023`, donc Ctrl + F5 reste conseillé pour tester la V0.33.
+
 ## V0.32 — Calendar extrait
 
 - `calendar.js` n’est plus un pont vers `calendar-v060.js`.
