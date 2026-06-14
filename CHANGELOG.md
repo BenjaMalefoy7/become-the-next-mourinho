@@ -1,5 +1,30 @@
 # Changelog — Become the next Mourinho
 
+## V0.28B — Simulation pure, phase B
+
+- `match-engine.js` n’est plus un pont vers `match-v080.js`.
+- `match-engine.js` contient maintenant directement :
+  - `btmSimulateUserMatch(career, match)` ;
+  - `simulateCurrentMatch(career, match)` ;
+  - `simGetLineupStats(career)` ;
+  - `simReduceStarterCondition(career)` ;
+  - les helpers de score, buteurs et événements.
+- `league-sim.js` n’est plus un pont vers `matchday-v090.js`.
+- `league-sim.js` contient maintenant directement :
+  - `btmSimulateOtherMatches(career, matchday, userFixtureId)` ;
+  - `computeDynamicStandings(career)` ;
+  - `renderDynamicStandings(career)` temporairement, pour garder l’écran Classement fonctionnel.
+- `season-flow.js` ne capture plus `oldSave`.
+- `season-flow.js` appelle explicitement :
+  - `btmSimulateUserMatch` ;
+  - `btmSimulateOtherMatches` ;
+  - `computeDynamicStandings` ;
+  - `btmEnhanceLastMatchReport` ;
+  - `btmGenerateMatchMail`.
+- La chaîne de match ne dépend plus de l’empilement `season-flow → matchday-v090 → match-v080`.
+- `match-center.js` reste le seul renderer de l’écran Match.
+- Note : `index.html` pointe encore vers les query strings V0.28A/V0.25 pour certains fichiers modifiés. Un `Ctrl + F5` est nécessaire, et le bump HTML fera partie de la prochaine passe ciblée.
+
 ## V0.28A — Match Renderer Cutover, phase A
 
 - `match-v080.js` conserve la simulation du match utilisateur, mais ne dessine plus l’écran Match.
