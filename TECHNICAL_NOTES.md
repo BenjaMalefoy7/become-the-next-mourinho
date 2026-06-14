@@ -1,6 +1,6 @@
 # Notes techniques
 
-État après V0.21.
+État après V0.22.
 
 ## Direction active
 
@@ -8,20 +8,19 @@ La DA active reste **Coach Notebook / Manager War Room** : carnet de coach, papi
 
 ## Ce qui a été stabilisé en V0.20
 
-- `season-v014.js` centralise maintenant mieux le passage jour par jour.
+- `season-v014.js` centralise mieux le passage jour par jour.
 - Le bouton “Jour suivant” est bloqué si un match non joué est dû.
 - Le bouton “Avancer au prochain match” ne sert plus à skipper : il devient une logique “Aller au match” le jour même.
 - `season-v013.js` sert maintenant de Match Center unifié malgré son nom historique.
 - Les anciens blocs concurrents du type “Dernier rapport” sont remplacés par un rendu unique du Match Center.
 - Le rapport post-match génère et conserve une timeline, des stats et une lecture coach.
-- `season-v015.js` réduit le spam courrier et ne charge plus les anciens modules récents de match.
-- Les modules récents de match qui se rechargeaient en chaîne ne sont plus appelés depuis le loader dynamique du courrier.
+- `season-v015.js` réduit le spam courrier.
 
 ## Ce qui a été engagé en V0.21
 
-La V0.21 commence la migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
+La V0.21 a commencé la migration vers le **loader plat + noms stables** sans casser brutalement les modules historiques.
 
-Nouveaux points d’entrée stables créés :
+Points d’entrée stables créés :
 
 ```text
 btm-flat-loader.js?v=021
@@ -31,32 +30,76 @@ mailbox.js?v=021
 player-db.js?v=021
 transfers.js?v=021
 training.js?v=021
-match-center.css?v=021
-season-flow.css?v=021
-mailbox.css?v=021
-transfers.css?v=021
-training.css?v=021
 ```
 
-Pour éviter une rupture de gameplay, certains de ces fichiers sont encore des **ponts de compatibilité** vers les anciens fichiers versionnés. C’est volontaire : on stabilise d’abord les points d’entrée, puis on supprimera les vieux fichiers progressivement.
+## Ce qui change en V0.22
 
-## Priorité technique majeure restante
+La V0.22 rend `index.html` beaucoup plus explicite : les modules récents sont désormais chargés directement depuis le HTML via des points d’entrée stables.
 
-Le projet a été itéré très vite avec beaucoup de fichiers versionnés dans leur nom (`season-v013.js`, `season-v01910.js`, etc.). Cette approche a permis de prototyper rapidement, mais elle rend maintenant le code et la documentation difficiles à suivre.
+Fichiers chargés depuis `index.html` :
 
-### Règle à appliquer jusqu’au bout
+```text
+data.js?v=060
+app.js?v=044
+lineup-v050.js?v=053
+calendar-v060.js?v=071
+match-v080.js?v=080
+matchday-v090.js?v=090
+theme.js?v=022
+squad.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+player-db.js?v=022
+transfers.js?v=022
+training.js?v=022
+match-center.js?v=022
+```
+
+CSS stables ajoutés directement dans le head :
+
+```text
+squad.css?v=022
+match-center.css?v=022
+season-flow.css?v=022
+mailbox.css?v=022
+transfers.css?v=022
+training.css?v=022
+```
+
+`season-v015.js` ne charge plus `btm-flat-loader.js`. Le loader plat central reste présent dans le repo pour historique de migration, mais il n’est plus le point de passage obligatoire.
+
+## Ponts de compatibilité encore présents
+
+Pour éviter de casser le jeu, certains points d’entrée stables restent encore des ponts vers les anciens fichiers :
+
+```text
+lineup.js           -> lineup-v050.js
+calendar.js         -> calendar-v060.js
+match-engine.js     -> match-v080.js
+league-simulation.js -> matchday-v090.js
+match-center.js     -> season-v013.js
+season-flow.js      -> season-v014.js
+mailbox.js          -> season-v015.js
+player-db.js        -> player-db-v016.js
+transfers.js        -> transfers-v017.js
+training.js         -> training-v018.js
+```
+
+Cette compatibilité est volontaire. La prochaine étape devra extraire le code utile dans les fichiers stables pour pouvoir supprimer progressivement les anciens noms versionnés.
+
+## Règle à appliquer jusqu’au bout
 
 Basculer vers des noms de modules stables et mettre la version uniquement dans la query string.
 
-Exemples attendus :
+À privilégier :
 
 ```text
-match-center.js?v=021
-season-flow.js?v=021
-mailbox.js?v=021
-transfers.js?v=021
-training.js?v=021
-squad.js?v=021
+match-center.js?v=022
+season-flow.js?v=022
+mailbox.js?v=022
+transfers.js?v=022
+training.js?v=022
+squad.js?v=022
 ```
 
 À éviter désormais :
@@ -70,62 +113,27 @@ match-details-v010.js
 
 Objectif : éviter que README, CHANGELOG et documentation décrochent à chaque itération.
 
-## Fichiers chargés actuellement
-
-Les fichiers historiques restent encore présents. La V0.21 ajoute des points d’entrée stables, mais le ménage complet n’est pas encore terminé.
-
-Modules historiques encore importants :
-
-```text
-app.js
-data.js
-lineup-v050.js
-calendar-v060.js
-prematch-v070.js
-match-v080.js
-matchday-v090.js
-match-details-v010.js
-squad-v012.js
-season-v013.js  -> Match Center V0.20
-season-v014.js  -> Season Flow V0.20
-season-v015.js  -> Mailbox V0.20 + loader plat V0.21
-player-db-v016.js
-transfers-v017.js
-training-v018.js
-```
-
-Nouveaux points d’entrée V0.21 :
-
-```text
-btm-flat-loader.js
-match-center.js
-season-flow.js
-mailbox.js
-player-db.js
-transfers.js
-training.js
-```
-
 ## Dette refreshUI
 
 Plusieurs modules enrichissent ou remplacent encore `refreshUI`. Cela reste fragile. Il faudra créer un orchestrateur central de rendu au lieu d’empiler des wrappers.
 
 ## Prochaine étape technique recommandée
 
-### V0.22 — Index vraiment plat
+### V0.23 — Extraction des ponts de compatibilité
 
-Charger directement les modules stables dans `index.html` :
+Objectif : copier progressivement le code utile des anciens fichiers vers les fichiers stables.
+
+Priorité :
 
 ```text
-match-center.js?v=022
-season-flow.js?v=022
-mailbox.js?v=022
-squad.js?v=022
-transfers.js?v=022
-training.js?v=022
+match-center.js
+season-flow.js
+mailbox.js
+training.js
+transfers.js
 ```
 
-Puis retirer les anciens loaders dynamiques de `match-details-v010.js`, `squad-v012.js` et `season-v015.js`.
+Puis retirer les anciens fichiers du chargement principal.
 
 ## Match Center
 
