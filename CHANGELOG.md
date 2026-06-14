@@ -1,5 +1,23 @@
 # Changelog — Become the next Mourinho
 
+## V0.29 — Render registry, phase 1
+
+- Ajout d’un registre central de rendu initialisé par `squad.js`.
+- Ajout des fonctions globales :
+  - `btmRegisterRender(name, renderer)` ;
+  - `btmUnregisterRender(name)` ;
+  - `btmRunRegisteredRenders(career)`.
+- Les modules extraits suivants ne réécrivent plus directement `refreshUI` :
+  - `squad.js` ;
+  - `season-flow.js` ;
+  - `mailbox.js` ;
+  - `training.js` ;
+  - `match-center.js`.
+- `refreshUI` appelle maintenant le rendu de base puis le registre des modules extraits.
+- Les anciens wrappers restent seulement dans les modules historiques non extraits, notamment `lineup` et `calendar`.
+- Le Match Center reste le seul renderer de l’écran Match.
+- Note : `index.html` doit encore être bumpé proprement en `?v=029`. Faire un `Ctrl + F5` pour tester cette version.
+
 ## V0.28B — Simulation pure, phase B
 
 - `match-engine.js` n’est plus un pont vers `match-v080.js`.
@@ -23,7 +41,6 @@
   - `btmGenerateMatchMail`.
 - La chaîne de match ne dépend plus de l’empilement `season-flow → matchday-v090 → match-v080`.
 - `match-center.js` reste le seul renderer de l’écran Match.
-- Note : `index.html` pointe encore vers les query strings V0.28A/V0.25 pour certains fichiers modifiés. Un `Ctrl + F5` est nécessaire, et le bump HTML fera partie de la prochaine passe ciblée.
 
 ## V0.28A — Match Renderer Cutover, phase A
 
@@ -40,13 +57,6 @@
   - textes dashboard / footer V0.9.2 ;
   - wrapper `refreshUI` qui repassait après le Match Center.
 - `match-center.js` devient le seul renderer de l’écran Match.
-- `match-engine.js` et `league-sim.js` chargent leurs anciens fichiers avec `?v=028A` et un `onerror` explicite.
-- `index.html` charge maintenant :
-  - `match-engine.js?v=028A` ;
-  - `league-sim.js?v=028A` ;
-  - `match-center.js?v=028A` ;
-  - `match-center.css?v=028A`.
-- La prochaine étape est V0.28B : extraire la simulation pure dans `match-engine.js` et `league-sim.js`.
 
 ## V0.27 — Extraction réelle de l’Entraînement
 
@@ -54,7 +64,6 @@
 - `training.css` n’est plus un simple `@import` vers `training-v018.css`.
 - L’écran Entraînement vit maintenant directement dans `training.js`.
 - Correction importante : l’entraînement ne s’applique plus si le passage au jour suivant est bloqué par un match à jouer.
-- `index.html` charge maintenant `training.js?v=027` et `training.css?v=027`.
 
 ## V0.26 — Extraction réelle du Courrier
 
@@ -67,7 +76,6 @@
   - rapport après match ;
   - notification transfert.
 - Le courrier conserve la logique réduite : pas de spam quotidien inutile.
-- `index.html` charge maintenant `mailbox.js?v=026` et `mailbox.css?v=026`.
 
 ## V0.25 — Extraction réelle de Season Flow
 
@@ -81,8 +89,6 @@
   - récupération de condition ;
   - génération limitée du courrier ;
   - sauvegarde après passage de jour.
-- `index.html` charge maintenant `season-flow.js?v=025` et `season-flow.css?v=025`.
-- Cette version retire le deuxième gros pont historique derrière les noms stables.
 
 ## V0.24 — Extraction réelle du Match Center
 
@@ -97,7 +103,6 @@
   - validation du plan de match ;
   - lancement du match ;
   - rapport post-match avec timeline et stats.
-- Cette version retire le premier gros pont historique derrière les noms stables.
 
 ## V0.23 — Index plat sur points d’entrée stables
 
@@ -120,9 +125,6 @@
   - `training.js?v=023`
   - `match-center.js?v=023`
 - Ajout de `league-sim.js` comme point d’entrée stable vers la simulation de journée / classement dynamique.
-- Cache-busting aligné en `?v=023` sur les ponts principaux.
-- `theme.js` affiche maintenant V0.23 dans le footer.
-- README et notes techniques mis à jour sur l’état réel.
 
 ## V0.22 — Index plat progressif
 
@@ -130,59 +132,11 @@
 - Ajout des points d’entrée stables pour l’Effectif :
   - `squad.js?v=022`
   - `squad.css?v=022`
-- Ajout de ponts stables pour les modules de base encore historiques :
-  - `lineup.js?v=022`
-  - `calendar.js?v=022`
-  - `match-engine.js?v=022`
-  - `league-simulation.js?v=022`
-  - `theme.js?v=022`
-- Retrait du loader dynamique caché dans `season-v015.js`.
+- Ajout de ponts stables pour les modules de base encore historiques.
 - Retrait de `match-details-v010.js` du chargement principal de `index.html` afin d’éviter qu’il relance des modules concurrents.
-- Cache-busting aligné sur `?v=022` pour les ponts stables.
-- README mis à jour sur V0.22.
 
 ## V0.21 — Début loader plat + noms stables
 
 - Ajout de `btm-flat-loader.js?v=021` comme point d’entrée central pour les modules récents.
-- Ajout de points d’entrée stables :
-  - `match-center.js?v=021`
-  - `season-flow.js?v=021`
-  - `mailbox.js?v=021`
-  - `player-db.js?v=021`
-  - `transfers.js?v=021`
-  - `training.js?v=021`
-- Ajout de points d’entrée CSS stables :
-  - `match-center.css?v=021`
-  - `season-flow.css?v=021`
-  - `mailbox.css?v=021`
-  - `transfers.css?v=021`
-  - `training.css?v=021`
+- Ajout de points d’entrée stables pour les modules récents.
 - Remplacement du mini-loader non-match dans `season-v015.js` par le loader plat central.
-- Conservation volontaire de ponts de compatibilité vers certains fichiers historiques versionnés pour éviter une rupture brutale.
-- Documentation mise à jour pour refléter l’état V0.21.
-
-## V0.20 — Stabilisation flow saison + Match Center unifié
-
-- Stabilisation du passage jour par jour.
-- Blocage réel du bouton “Jour suivant” quand un match non joué est dû.
-- Le bouton d’accès au match devient une logique “Aller au match” le jour même.
-- Unification de l’écran Match dans `season-v013.js` malgré son nom historique.
-- Suppression des anciens rendus concurrents dans l’écran Match via réécriture complète du rendu.
-- Ajout d’un rapport post-match intégré au Match Center : score, timeline, stats, xG simplifié et lecture coach.
-- Enrichissement et persistance des données de rapport après simulation.
-- Réduction du spam courrier : plus de briefing automatique inutile tous les jours.
-- Suppression du chaînage dynamique des anciens modules de match récents depuis `season-v015.js`.
-- Réalignement du footer et du texte dashboard sur V0.20.
-
-## V0.19.10 — Matchday Center et rapport forcé
-
-- Ajout d’un rapport de match forcé chargé en dernier.
-- Objectif : remplacer les anciens blocs “Dernier rapport” par un rapport post-match plus complet.
-- Ajout / consolidation prévue de la timeline, des stats de match et du score central.
-- Le flow de saison doit maintenant bloquer le passage au jour suivant si un match non joué est dû.
-
-## V0.19 — Matchday Center
-
-- Refonte de l’écran Match autour d’un centre de préparation.
-- Ajout d’une analyse adverse.
-- Ajout d’une compo probable adverse abstraite.
