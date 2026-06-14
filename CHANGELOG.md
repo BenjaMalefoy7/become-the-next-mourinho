@@ -1,5 +1,90 @@
 # Changelog — Become the next Mourinho
 
+## V0.19.10 — Matchday Center et rapport forcé
+
+- Ajout d’un rapport de match forcé chargé en dernier.
+- Objectif : remplacer les anciens blocs “Dernier rapport” par un rapport post-match plus complet.
+- Ajout / consolidation prévue de la timeline, des stats de match et du score central.
+- Le flow de saison doit maintenant bloquer le passage au jour suivant si un match non joué est dû.
+
+## V0.19 — Matchday Center
+
+- Refonte de l’écran Match autour d’un centre de préparation.
+- Ajout d’une analyse adverse.
+- Ajout d’une compo probable adverse abstraite.
+- Ajout d’une validation de composition.
+- Ajout d’une validation de plan de match.
+- Préparation de l’écran résultat post-match.
+
+## V0.18 — Entraînement
+
+- Ajout d’un système d’entraînement par groupes : gardiens, défense, milieu, attaque.
+- Ajout de focus : équilibré, physique, technique, tactique, repos.
+- Les effets s’appliquent progressivement lors du passage des jours.
+
+## V0.17 — Recrutement
+
+- Ajout d’un premier marché des transferts jouable.
+- Ajout de la recherche joueur / club.
+- Ajout du filtre par poste.
+- Ajout de l’achat au prix demandé.
+- Déduction du budget transfert.
+- Ajout du joueur acheté à l’effectif.
+
+## V0.16 — Base joueurs générée
+
+- Ajout d’un vivier de joueurs générés par carrière.
+- Préparation de la future intégration d’un dataset réel.
+- Ajout des champs principaux : poste, âge, nationalité, overall, potentiel, valeur, salaire, club actuel.
+
+## V0.15 — Courrier
+
+- Ajout d’un onglet Courrier.
+- Ajout des premiers briefings et rapports de match.
+- Le courrier reste à nettoyer : moins de messages, messages plus utiles, meilleurs types.
+
+## V0.14 — Saison jour par jour
+
+- Ajout d’une date courante de saison.
+- Ajout du passage au jour suivant.
+- Ajout d’un verrou de matchday pour empêcher de sauter un match dû.
+
+## V0.13 — Dossier tactique pré-match
+
+- Transformation progressive de l’écran Match en dossier tactique.
+- Ajout du prochain match, de la compo, de la condition et de la décision coach.
+
+## Note technique importante
+
+À partir de la refonte loader, le projet devra arrêter de versionner les modules dans le nom de fichier.
+
+À privilégier :
+
+```text
+match-center.js?v=020
+season-flow.js?v=020
+mailbox.js?v=020
+transfers.js?v=020
+training.js?v=020
+```
+
+À éviter :
+
+```text
+season-v013.js
+season-v0141.js
+season-v01910.js
+```
+
+Cette règle doit empêcher le README, le CHANGELOG et les notes techniques de décrocher à chaque itération rapide.
+
+## V0.12 — Effectif en dossier joueur
+
+- Refonte de l’écran Effectif en dossier joueur.
+- Liste compacte à gauche.
+- Dossier détaillé à droite.
+- Notes coach et informations clés.
+
 ## V0.11.4 — Stabilisation DA + nettoyage urgent
 
 - Clarification de la direction artistique active : Coach Notebook / Manager War Room.
@@ -8,7 +93,7 @@
   - `app-v043.js`
   - `notebook-theme.css`
   - `notebook-theme-v011.js`
-- Mise à jour du README pour refléter l’état réel du projet.
+- Mise à jour du README pour refléter l’état réel du projet à ce moment-là.
 
 ## V0.11.3 — Intercalaires carnet
 
