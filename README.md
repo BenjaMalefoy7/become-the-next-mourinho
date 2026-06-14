@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.29
+# Become the next Mourinho — V0.29B
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,11 +6,11 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.29 — Render registry, phase 1**
+**V0.29B — Render registry centralisé**
 
-Cette version remplace une partie importante de la cascade fragile de `refreshUI` par un registre central de rendu.
+Cette version termine la phase courte V0.29B : le registre de rendu n’est plus initialisé indirectement par `squad.js`. Il est maintenant installé par `theme.js`, chargé juste après `app.js` et avant les modules extraits.
 
-Avant, plusieurs modules extraits faisaient encore :
+Avant, une partie importante de la cascade fragile venait de ce motif :
 
 ```text
 refreshUI = function(){ oldRefresh(); monRender(); }
@@ -22,12 +22,20 @@ Maintenant, les modules extraits principaux s’enregistrent dans un registre :
 btmRegisterRender("module", renderFunction)
 ```
 
-Le registre est initialisé par `squad.js`, puis appelé par un seul `refreshUI` centralisé.
-
-## Modules passés sur le registre V0.29
+Le cycle devient :
 
 ```text
-squad.js        // bootstrap du registre + rendu effectif
+refreshUI()
+→ rendu de base app.js
+→ btmRunRegisteredRenders()
+→ modules extraits enregistrés
+```
+
+## Modules passés sur le registre
+
+```text
+theme.js        // bootstrap du registre + couleurs dynamiques
+squad.js        // rendu effectif
 season-flow.js  // panneau jour par jour + verrou matchday
 mailbox.js      // courrier manager
 training.js     // entraînement par groupes
@@ -67,6 +75,7 @@ training.js       // code réel de l'entraînement par groupes
 training.css      // styles réels de l'entraînement
 match-engine.js   // code réel de simulation du match utilisateur
 league-sim.js     // code réel de simulation journée / classement
+theme.js          // registre de rendu + thème dynamique
 ```
 
 ## Fichiers chargés depuis index.html
@@ -74,21 +83,21 @@ league-sim.js     // code réel de simulation journée / classement
 ```text
 data.js?v=060
 app.js?v=044
-theme.js?v=023
+theme.js?v=029B
 lineup.js?v=023
 calendar.js?v=023
-match-engine.js?v=028A   // contenu V0.28B
-league-sim.js?v=028A     // contenu V0.28B
-squad.js?v=023           // contenu V0.29
-season-flow.js?v=025     // contenu V0.29
-mailbox.js?v=026         // contenu V0.29
+match-engine.js?v=028B
+league-sim.js?v=028B
+squad.js?v=029B
+season-flow.js?v=025
+mailbox.js?v=026
 player-db.js?v=023
 transfers.js?v=023
-training.js?v=027        // contenu V0.29
-match-center.js?v=028A   // contenu V0.29
+training.js?v=027
+match-center.js?v=028A
 ```
 
-Important : les fichiers ont été mis à jour, mais `index.html` doit encore être bumpé proprement en `?v=029`. En attendant, faire un **Ctrl + F5** après déploiement.
+`index.html` est maintenant bumpé pour la passe V0.29B. Un **Ctrl + F5** reste conseillé après déploiement GitHub Pages.
 
 ## Ponts de compatibilité restants
 
@@ -164,13 +173,13 @@ matchday-v090.js
 
 ## Prochaine étape recommandée
 
-**V0.29B — Bump HTML + fin du registre sur les modules de base**
+**V0.30 — Extraction réelle de Lineup ou Calendar**
 
 Objectifs :
 
 ```text
-- bumper index.html en ?v=029
-- déplacer le bootstrap du registre dans un fichier dédié ou app.js
-- convertir lineup/calendar au registre quand ils seront extraits
-- commencer la suppression des vieux wrappers historiques restants
+- extraire réellement lineup.js ou calendar.js ;
+- supprimer leurs wrappers refreshUI historiques ;
+- continuer à réduire les ponts restants ;
+- préparer ensuite le nettoyage des vieux fichiers orphelins.
 ```
