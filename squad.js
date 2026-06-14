@@ -1,16 +1,112 @@
-const BTM_SQUAD_ENTRYPOINT_VERSION="0.22";
-(function(){
-const state={filter:"all",selectedId:null};
-const groups={all:[],GK:["GK"],DEF:["DD","DC","DG"],MID:["MDC","MC","MOC"],ATT:["AD","AG","BU"]};
-function e(v){return typeof escapeHtml==="function"?escapeHtml(v):String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function s(v,f="—"){return typeof safeText==="function"?safeText(v,f):(v===undefined||v===null||v===""?f:String(v));}
-function money(v){return typeof formatMoney==="function"?formatMoney(v):s(v);}function pos(p){return typeof getPositionLabel==="function"?getPositionLabel(p):s(p);}
-function sorted(c){const p=Array.isArray(c?.players)?c.players:[];return typeof sortPlayers==="function"?sortPlayers(p):p.slice();}
-function visible(players){const allowed=groups[state.filter]||[];return allowed.length?players.filter(p=>allowed.includes(p.primaryPosition)):players;}
-function tag(n){const c=s(n);const code=c.slice(0,3).toUpperCase();return `<span class="squad-v012-country"><span class="squad-v012-country-code">${e(code)}</span>${e(c)}</span>`;}
-function filters(){return `<div class="squad-v012-filters">${[["all","Tous"],["GK","Gardiens"],["DEF","Défense"],["MID","Milieu"],["ATT","Attaque"]].map(([k,l])=>`<button class="squad-v012-filter${state.filter===k?" active":""}" data-squad-filter="${k}">${l}</button>`).join("")}</div>`;}
-function row(p){const sec=Array.isArray(p.secondaryPositions)&&p.secondaryPositions.length?p.secondaryPositions.join("/"):"—";return `<button class="squad-v012-row${p.id===state.selectedId?" active":""}" data-squad-player="${e(p.id)}" type="button"><span class="squad-v012-shirt">${e(p.primaryPosition||"?")}</span><span class="squad-v012-name"><strong>${e(p.name)}</strong><span>${e(pos(p.primaryPosition))} · Sec. ${e(sec)} · ${tag(p.nationality)}</span></span><span class="squad-v012-cell"><small>OVR</small>${s(p.overall)}</span><span class="squad-v012-cell"><small>POT</small>${s(p.potential)}</span><span class="squad-v012-cond">${s(p.condition,100)}%</span></button>`;}
-function dossier(p){if(!p)return `<article class="squad-v012-dossier squad-v012-empty"><h3>Dossier joueur</h3><p>Aucun joueur dans ce filtre.</p></article>`;const sec=Array.isArray(p.secondaryPositions)&&p.secondaryPositions.length?p.secondaryPositions.join(" / "):"Aucun";const bars=[["Attaque",p.attack],["Défense",p.defense],["Physique",p.physical],["Mental",p.mental]];return `<article class="squad-v012-dossier"><div class="squad-v012-big-rating">${s(p.overall)}</div><div class="squad-v012-player-top"><div class="squad-v012-silhouette" aria-hidden="true"></div><div><p class="eyebrow">Dossier joueur</p><h3>${e(p.name)}</h3><p class="squad-v012-role">${e(pos(p.primaryPosition))} · ${e(p.age)} ans · ${tag(p.nationality)}</p><div class="squad-v012-badges"><span class="squad-v012-badge">POT ${s(p.potential)}</span><span class="squad-v012-badge">${s(p.condition,100)}% condition</span><span class="squad-v012-badge">${e(p.injuryStatus||"Disponible")}</span></div></div></div><div class="squad-v012-info-grid"><div class="squad-v012-info"><span>Poste principal</span><strong>${e(p.primaryPosition)}</strong></div><div class="squad-v012-info"><span>Postes secondaires</span><strong>${e(sec)}</strong></div><div class="squad-v012-info"><span>Valeur</span><strong>${money(p.value)}</strong></div><div class="squad-v012-info"><span>Salaire</span><strong>${money(p.salary)}</strong></div><div class="squad-v012-info"><span>Contrat</span><strong>${s(p.contractYears)} an(s)</strong></div><div class="squad-v012-info"><span>Morale</span><strong>${e(p.morale||"Normal")}</strong></div></div><div class="squad-v012-bars">${bars.map(([l,v])=>`<div class="squad-v012-bar"><span>${l}</span><div class="squad-v012-bar-track"><div class="squad-v012-bar-fill" style="width:${Math.max(0,Math.min(100,Number(v)||0))}%"></div></div><strong>${s(v)}</strong></div>`).join("")}</div><div class="squad-v012-coach-note"><strong>Note coach</strong><br>Profil à surveiller selon la forme, la fatigue et les besoins tactiques du prochain match.</div></article>`;}
-function render(c=typeof getResolvedCareer==="function"?getResolvedCareer():null){const container=document.getElementById("players-preview");if(!container)return;if(!c){container.innerHTML=`<div class="empty-state compact-empty"><span>👥</span><h4>Aucune carrière active</h4><p>Crée ou charge une carrière.</p></div>`;return;}const players=sorted(c);const vis=visible(players);if(!vis.some(p=>p.id===state.selectedId))state.selectedId=vis[0]?.id||players[0]?.id||null;const sel=players.find(p=>p.id===state.selectedId)||vis[0]||players[0]||null;container.innerHTML=`<div class="squad-v012"><article class="squad-v012-board"><div class="squad-v012-head"><div><p class="eyebrow">Effectif V0.22</p><h3>Liste du groupe</h3></div><div class="squad-v012-note">${e(c.club?.shortName||c.club?.name||"Club")}<br>observer · trier · décider</div></div>${filters()}<div class="squad-v012-list-head"><span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span></div><div class="squad-v012-list">${vis.map(row).join("")||`<div class="squad-v012-empty">Aucun joueur dans ce filtre.</div>`}</div></article>${dossier(sel)}</div>`;}
-window.renderPlayersPreview=render;document.addEventListener("click",ev=>{const f=ev.target.closest("[data-squad-filter]");if(f){state.filter=f.dataset.squadFilter||"all";state.selectedId=null;render();return;}const p=ev.target.closest("[data-squad-player]");if(p){state.selectedId=p.dataset.squadPlayer;render();}});const prev=typeof refreshUI==="function"?refreshUI:null;refreshUI=function refreshUISquadV022(){if(prev)prev();render();};document.addEventListener("DOMContentLoaded",()=>render());
+const BTM_SQUAD_ENTRYPOINT_VERSION = "0.29";
+(function () {
+  function ensureRenderRegistry() {
+    if (window.btmRegisterRender && window.btmRunRegisteredRenders) return;
+
+    const baseRefreshUI = typeof window.refreshUI === "function" ? window.refreshUI : null;
+    const renderers = new Map();
+
+    window.btmRegisterRender = function btmRegisterRender(name, renderer) {
+      if (!name || typeof renderer !== "function") return;
+      renderers.set(name, renderer);
+    };
+
+    window.btmUnregisterRender = function btmUnregisterRender(name) {
+      renderers.delete(name);
+    };
+
+    window.btmRunRegisteredRenders = function btmRunRegisteredRenders(career) {
+      const resolvedCareer = career || (typeof getResolvedCareer === "function" ? getResolvedCareer() : null);
+      renderers.forEach((renderer, name) => {
+        try {
+          renderer(resolvedCareer);
+        } catch (error) {
+          console.error("[BTM render registry] Renderer failed:", name, error);
+        }
+      });
+    };
+
+    window.refreshUI = function refreshUIV029Registry() {
+      if (baseRefreshUI) baseRefreshUI();
+      window.btmRunRegisteredRenders();
+    };
+  }
+
+  ensureRenderRegistry();
+
+  const state = { filter: "all", selectedId: null };
+  const groups = { all: [], GK: ["GK"], DEF: ["DD", "DC", "DG"], MID: ["MDC", "MC", "MOC"], ATT: ["AD", "AG", "BU"] };
+
+  function e(value) {
+    if (typeof escapeHtml === "function") return escapeHtml(value);
+    return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+  }
+
+  function s(value, fallback = "—") {
+    if (typeof safeText === "function") return safeText(value, fallback);
+    return value === undefined || value === null || value === "" ? fallback : String(value);
+  }
+
+  function money(value) { return typeof formatMoney === "function" ? formatMoney(value) : s(value); }
+  function pos(position) { return typeof getPositionLabel === "function" ? getPositionLabel(position) : s(position); }
+  function sorted(career) {
+    const players = Array.isArray(career?.players) ? career.players : [];
+    return typeof sortPlayers === "function" ? sortPlayers(players) : players.slice();
+  }
+  function visible(players) {
+    const allowed = groups[state.filter] || [];
+    return allowed.length ? players.filter((player) => allowed.includes(player.primaryPosition)) : players;
+  }
+  function tag(nationality) {
+    const country = s(nationality);
+    const code = country.slice(0, 3).toUpperCase();
+    return `<span class="squad-v012-country"><span class="squad-v012-country-code">${e(code)}</span>${e(country)}</span>`;
+  }
+  function filters() {
+    return `<div class="squad-v012-filters">${[["all", "Tous"], ["GK", "Gardiens"], ["DEF", "Défense"], ["MID", "Milieu"], ["ATT", "Attaque"]].map(([key, label]) => `<button class="squad-v012-filter${state.filter === key ? " active" : ""}" data-squad-filter="${key}">${label}</button>`).join("")}</div>`;
+  }
+  function row(player) {
+    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? player.secondaryPositions.join("/") : "—";
+    return `<button class="squad-v012-row${player.id === state.selectedId ? " active" : ""}" data-squad-player="${e(player.id)}" type="button"><span class="squad-v012-shirt">${e(player.primaryPosition || "?")}</span><span class="squad-v012-name"><strong>${e(player.name)}</strong><span>${e(pos(player.primaryPosition))} · Sec. ${e(secondary)} · ${tag(player.nationality)}</span></span><span class="squad-v012-cell"><small>OVR</small>${s(player.overall)}</span><span class="squad-v012-cell"><small>POT</small>${s(player.potential)}</span><span class="squad-v012-cond">${s(player.condition, 100)}%</span></button>`;
+  }
+  function dossier(player) {
+    if (!player) return `<article class="squad-v012-dossier squad-v012-empty"><h3>Dossier joueur</h3><p>Aucun joueur dans ce filtre.</p></article>`;
+    const secondary = Array.isArray(player.secondaryPositions) && player.secondaryPositions.length ? player.secondaryPositions.join(" / ") : "Aucun";
+    const bars = [["Attaque", player.attack], ["Défense", player.defense], ["Physique", player.physical], ["Mental", player.mental]];
+    return `<article class="squad-v012-dossier"><div class="squad-v012-big-rating">${s(player.overall)}</div><div class="squad-v012-player-top"><div class="squad-v012-silhouette" aria-hidden="true"></div><div><p class="eyebrow">Dossier joueur</p><h3>${e(player.name)}</h3><p class="squad-v012-role">${e(pos(player.primaryPosition))} · ${e(player.age)} ans · ${tag(player.nationality)}</p><div class="squad-v012-badges"><span class="squad-v012-badge">POT ${s(player.potential)}</span><span class="squad-v012-badge">${s(player.condition, 100)}% condition</span><span class="squad-v012-badge">${e(player.injuryStatus || "Disponible")}</span></div></div></div><div class="squad-v012-info-grid"><div class="squad-v012-info"><span>Poste principal</span><strong>${e(player.primaryPosition)}</strong></div><div class="squad-v012-info"><span>Postes secondaires</span><strong>${e(secondary)}</strong></div><div class="squad-v012-info"><span>Valeur</span><strong>${money(player.value)}</strong></div><div class="squad-v012-info"><span>Salaire</span><strong>${money(player.salary)}</strong></div><div class="squad-v012-info"><span>Contrat</span><strong>${s(player.contractYears)} an(s)</strong></div><div class="squad-v012-info"><span>Morale</span><strong>${e(player.morale || "Normal")}</strong></div></div><div class="squad-v012-bars">${bars.map(([label, value]) => `<div class="squad-v012-bar"><span>${label}</span><div class="squad-v012-bar-track"><div class="squad-v012-bar-fill" style="width:${Math.max(0, Math.min(100, Number(value) || 0))}%"></div></div><strong>${s(value)}</strong></div>`).join("")}</div><div class="squad-v012-coach-note"><strong>Note coach</strong><br>Profil à surveiller selon la forme, la fatigue et les besoins tactiques du prochain match.</div></article>`;
+  }
+
+  function render(career = typeof getResolvedCareer === "function" ? getResolvedCareer() : null) {
+    const container = document.getElementById("players-preview");
+    if (!container) return;
+    if (!career) {
+      container.innerHTML = `<div class="empty-state compact-empty"><span>👥</span><h4>Aucune carrière active</h4><p>Crée ou charge une carrière.</p></div>`;
+      return;
+    }
+    const players = sorted(career);
+    const shownPlayers = visible(players);
+    if (!shownPlayers.some((player) => player.id === state.selectedId)) state.selectedId = shownPlayers[0]?.id || players[0]?.id || null;
+    const selected = players.find((player) => player.id === state.selectedId) || shownPlayers[0] || players[0] || null;
+    container.innerHTML = `<div class="squad-v012"><article class="squad-v012-board"><div class="squad-v012-head"><div><p class="eyebrow">Effectif V0.29</p><h3>Liste du groupe</h3></div><div class="squad-v012-note">${e(career.club?.shortName || career.club?.name || "Club")}<br>observer · trier · décider</div></div>${filters()}<div class="squad-v012-list-head"><span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span></div><div class="squad-v012-list">${shownPlayers.map(row).join("") || `<div class="squad-v012-empty">Aucun joueur dans ce filtre.</div>`}</div></article>${dossier(selected)}</div>`;
+  }
+
+  window.renderPlayersPreview = render;
+  window.btmRegisterRender("squad", render);
+
+  document.addEventListener("click", (event) => {
+    const filterButton = event.target.closest("[data-squad-filter]");
+    if (filterButton) {
+      state.filter = filterButton.dataset.squadFilter || "all";
+      state.selectedId = null;
+      render();
+      return;
+    }
+    const playerButton = event.target.closest("[data-squad-player]");
+    if (playerButton) {
+      state.selectedId = playerButton.dataset.squadPlayer;
+      render();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", () => render());
 })();
