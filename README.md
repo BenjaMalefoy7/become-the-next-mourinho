@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.27
+# Become the next Mourinho — V0.28A
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,13 +6,16 @@ Le projet avance progressivement en HTML/CSS/JavaScript vanilla, sans backend po
 
 ## Version actuelle
 
-**V0.26 + V0.27 — Extraction réelle du Courrier et de l’Entraînement**
+**V0.28A — Match Renderer Cutover, phase A**
 
-Cette version poursuit la transition propre engagée en V0.21–V0.25. `index.html` charge les modules via des noms stables, et deux nouveaux ponts historiques ont été retirés :
+Cette version suit le retour de check-up externe : avant d’ajouter de nouvelles features, il fallait prouver que le Match Center était le seul module à dessiner l’écran Match.
+
+La simulation historique reste en place pour ne pas casser les matchs, mais les anciens effets visuels de `match-v080.js` et `matchday-v090.js` ont été neutralisés.
 
 ```text
-mailbox.js / mailbox.css ne dépendent plus de season-v015.js / season-v0151.css
-training.js / training.css ne dépendent plus de training-v018.js / training-v018.css
+match-v080.js      // conserve la simulation du match utilisateur, ne dessine plus l’écran Match
+matchday-v090.js   // conserve la simulation de journée / classement, ne renomme plus le bouton Match
+match-center.js    // reste le seul renderer de l’écran Match
 ```
 
 ## Fichiers chargés depuis index.html
@@ -23,15 +26,15 @@ app.js?v=044
 theme.js?v=023
 lineup.js?v=023
 calendar.js?v=023
-match-engine.js?v=023
-league-sim.js?v=023
+match-engine.js?v=028A
+league-sim.js?v=028A
 squad.js?v=023
 season-flow.js?v=025
 mailbox.js?v=026
 player-db.js?v=023
 transfers.js?v=023
 training.js?v=027
-match-center.js?v=023
+match-center.js?v=028A
 ```
 
 ## Modules réellement extraits
@@ -46,6 +49,25 @@ mailbox.css       // styles réels du courrier manager
 training.js       // code réel de l'entraînement par groupes
 training.css      // styles réels de l'entraînement
 ```
+
+## V0.28A : ce qui est coupé
+
+```text
+match-v080.js
+- plus de renderLastResultV080
+- plus de bindSimulationButtonV080
+- plus de updateMatchVersionTextsV080
+- plus de décorations DOM depuis le moteur de match
+- plus de wrapper refreshUI
+
+matchday-v090.js
+- plus de renommage du bouton de match
+- plus de textes dashboard V0.9.2
+- plus de wrapper refreshUI pour l’écran Match
+- conserve computeDynamicStandings et saveSimulatedMatchdayV090
+```
+
+Le classement conserve encore un rendu dédié temporaire, en attendant l’orchestrateur central de rendu.
 
 ## DA active
 
@@ -91,12 +113,12 @@ La règle désormais : **nom de fichier stable + version en query string**.
 À privilégier :
 
 ```text
-match-center.js?v=027
-season-flow.js?v=027
-mailbox.js?v=027
-transfers.js?v=027
+match-center.js?v=028A
+season-flow.js?v=025
+mailbox.js?v=026
 training.js?v=027
-squad.js?v=027
+transfers.js?v=023
+squad.js?v=023
 ```
 
 À éviter désormais :
@@ -109,6 +131,19 @@ season-v01910.js
 
 ## Prochaine étape recommandée
 
-**V0.28 — extraction réelle du Recrutement**
+**V0.28B — simulation pure**
 
-Objectif : faire pour `transfers.js` ce qui vient d’être fait pour `mailbox.js` et `training.js`, sans encore ajouter les fenêtres de mercato ou les négociations avancées.
+Objectif : transformer `match-engine.js` et `league-sim.js` en vrais modules sans pont vers `match-v080.js` et `matchday-v090.js`.
+
+La chaîne cible sera :
+
+```text
+season-flow.js
+→ simulateUserMatch(career)
+→ simulateOtherMatches(career)
+→ computeDynamicStandings(career)
+→ enrichAndPersistMatchReport(career)
+→ generateMatchMail(career)
+```
+
+Tant que cette extraction n’est pas terminée, ne pas ajouter de nouvelles features liées au match, au live match, au dirty game ou au rapport enrichi.
