@@ -1,4 +1,4 @@
-const BTM_THEME_ENTRYPOINT_VERSION = "0.29B";
+const BTM_THEME_ENTRYPOINT_VERSION = "0.38";
 
 (function () {
   function ensureRenderRegistry() {
@@ -27,7 +27,7 @@ const BTM_THEME_ENTRYPOINT_VERSION = "0.29B";
       });
     };
 
-    window.refreshUI = function refreshUIV029BRegistry() {
+    window.refreshUI = function refreshUIV038Registry() {
       if (baseRefreshUI) baseRefreshUI();
       window.btmRunRegisteredRenders();
     };
@@ -72,7 +72,7 @@ const BTM_THEME_ENTRYPOINT_VERSION = "0.29B";
     if (badge && club.shortName) badge.textContent = String(club.shortName).slice(0, 3).toUpperCase();
 
     const footer = document.querySelector(".sidebar-footer");
-    if (footer) footer.textContent = "V0.29B — Render registry centralisé";
+    if (footer) footer.textContent = "V0.38 — Cleanup final stabilisation";
   }
 
   ensureRenderRegistry();
