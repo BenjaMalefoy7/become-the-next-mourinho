@@ -5,307 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Become the next Mourinho</title>
   <link rel="stylesheet" href="style.css?v=050" />
-  <link rel="stylesheet" href="lineup.css?v=053" />
-  <link rel="stylesheet" href="calendar.css?v=071" />
-  <link rel="stylesheet" href="standings.css?v=090" />
+  <link rel="stylesheet" href="lineup.css?v=023" />
+  <link rel="stylesheet" href="calendar.css?v=023" />
+  <link rel="stylesheet" href="standings.css?v=023" />
   <link rel="stylesheet" href="notebook-nav-v0112.css?v=0112" />
-  <link rel="stylesheet" href="squad.css?v=022" />
-  <link rel="stylesheet" href="match-center.css?v=022" />
-  <link rel="stylesheet" href="season-flow.css?v=022" />
-  <link rel="stylesheet" href="mailbox.css?v=022" />
-  <link rel="stylesheet" href="transfers.css?v=022" />
-  <link rel="stylesheet" href="training.css?v=022" />
+  <link rel="stylesheet" href="squad.css?v=023" />
+  <link rel="stylesheet" href="match-center.css?v=023" />
+  <link rel="stylesheet" href="season-flow.css?v=023" />
+  <link rel="stylesheet" href="mailbox.css?v=023" />
+  <link rel="stylesheet" href="transfers.css?v=023" />
+  <link rel="stylesheet" href="training.css?v=023" />
 </head>
 <body class="notebook-tabs-left">
   <section class="welcome-screen menu-screen" id="welcome-screen">
     <div class="welcome-card">
-      <div class="welcome-brand">
-        <div class="brand-badge welcome-badge">BTM</div>
-        <p class="eyebrow">Private football manager game</p>
-      </div>
-
-      <div class="welcome-copy">
-        <h1>Become the next Mourinho</h1>
-        <p>Crée ton club, prends les décisions du manager et construis ta légende en Premier League.</p>
-      </div>
-
+      <div class="welcome-brand"><div class="brand-badge welcome-badge">BTM</div><p class="eyebrow">Private football manager game</p></div>
+      <div class="welcome-copy"><h1>Become the next Mourinho</h1><p>Crée ton club, prends les décisions du manager et construis ta légende en Premier League.</p></div>
       <div class="welcome-actions">
         <button class="primary-btn welcome-main-btn" id="welcome-new-career-btn">Nouvelle partie</button>
         <button class="secondary-btn welcome-main-btn" id="welcome-continue-btn">Continuer</button>
         <button class="secondary-btn welcome-main-btn" id="welcome-saves-btn">Mes sauvegardes</button>
       </div>
-
       <div class="welcome-status" id="welcome-status">Aucune carrière chargée pour le moment.</div>
     </div>
   </section>
 
   <section class="welcome-screen menu-screen app-hidden" id="career-setup-screen">
     <div class="welcome-card setup-card">
-      <div class="welcome-brand">
-        <div>
-          <p class="eyebrow">Nouvelle partie</p>
-          <h2>Créer une carrière</h2>
-        </div>
-        <button class="secondary-btn" id="back-from-create-btn" type="button">Retour accueil</button>
-      </div>
-
+      <div class="welcome-brand"><div><p class="eyebrow">Nouvelle partie</p><h2>Créer une carrière</h2></div><button class="secondary-btn" id="back-from-create-btn" type="button">Retour accueil</button></div>
       <form class="career-form" id="career-form">
-        <div class="section-header">
-          <h3>Mode de départ</h3>
-          <p>Pour l’instant, seul le mode “Créer mon club” est actif. Le choix d’un club réel sera branché plus tard.</p>
-        </div>
-
+        <div class="section-header"><h3>Mode de départ</h3><p>Pour l’instant, seul le mode “Créer mon club” est actif. Le choix d’un club réel sera branché plus tard.</p></div>
         <div class="mode-grid">
-          <label class="mode-card active">
-            <input type="radio" name="careerMode" value="custom" checked />
-            <strong>Créer mon club</strong>
-            <span>Crée ton identité et remplace un club de Premier League.</span>
-          </label>
-          <label class="mode-card disabled-mode">
-            <input type="radio" name="careerMode" value="real" disabled />
-            <strong>Choisir un club réel</strong>
-            <span>Prévu plus tard.</span>
-          </label>
+          <label class="mode-card active"><input type="radio" name="careerMode" value="custom" checked /><strong>Créer mon club</strong><span>Crée ton identité et remplace un club de Premier League.</span></label>
+          <label class="mode-card disabled-mode"><input type="radio" name="careerMode" value="real" disabled /><strong>Choisir un club réel</strong><span>Prévu plus tard.</span></label>
         </div>
-
-        <div class="section-header">
-          <h3>Effectif de départ</h3>
-          <p>La V0.22 stabilise le chargement des modules et prépare la future base de données réelle.</p>
-        </div>
-
+        <div class="section-header"><h3>Effectif de départ</h3><p>La V0.23 bascule progressivement l’app vers des modules stables.</p></div>
         <div class="mode-grid">
-          <label class="mode-card active">
-            <input type="radio" name="squadSource" value="generated" checked />
-            <strong>Effectif neuf généré</strong>
-            <span>Le jeu crée 24 joueurs fictifs adaptés à la difficulté choisie.</span>
-          </label>
-          <label class="mode-card disabled-mode">
-            <input type="radio" name="squadSource" value="replaced_club" disabled />
-            <strong>Garder l’effectif du club remplacé</strong>
-            <span>Disponible quand les vrais effectifs Premier League seront intégrés.</span>
-          </label>
+          <label class="mode-card active"><input type="radio" name="squadSource" value="generated" checked /><strong>Effectif neuf généré</strong><span>Le jeu crée 24 joueurs fictifs adaptés à la difficulté choisie.</span></label>
+          <label class="mode-card disabled-mode"><input type="radio" name="squadSource" value="replaced_club" disabled /><strong>Garder l’effectif du club remplacé</strong><span>Disponible quand les vrais effectifs Premier League seront intégrés.</span></label>
         </div>
-
         <div class="form-preview form-grid">
-          <label class="form-field">
-            <span class="field-label">Nom de la carrière</span>
-            <input id="career-name" type="text" placeholder="Ex : Carrière Dragon FC" required />
-          </label>
-
-          <label class="form-field">
-            <span class="field-label">Nom du manager</span>
-            <input id="manager-name" type="text" placeholder="Ex : Benjamin" required />
-          </label>
-
-          <label class="form-field">
-            <span class="field-label">Nom du club</span>
-            <input id="club-name" type="text" placeholder="Ex : Dragon FC" required />
-          </label>
-
-          <label class="form-field">
-            <span class="field-label">Nom court</span>
-            <input id="club-short-name" type="text" placeholder="Ex : DFC" maxlength="5" required />
-          </label>
-
-          <div class="form-field">
-            <span class="field-label">Badge temporaire</span>
-            <input id="club-badge" type="hidden" value="🐉" />
-            <div class="custom-select" id="club-badge-select" data-input="club-badge">
-              <button class="custom-select-trigger" type="button">
-                <span class="custom-select-value" data-selected-label>🐉 Dragon</span>
-                <span class="custom-select-arrow">▾</span>
-              </button>
-              <div class="custom-select-menu" role="listbox">
-                <button type="button" class="custom-select-option" data-value="⚽" data-label="⚽ Ballon">⚽ Ballon</button>
-                <button type="button" class="custom-select-option active" data-value="🐉" data-label="🐉 Dragon">🐉 Dragon</button>
-                <button type="button" class="custom-select-option" data-value="🦁" data-label="🦁 Lion">🦁 Lion</button>
-                <button type="button" class="custom-select-option" data-value="🦅" data-label="🦅 Aigle">🦅 Aigle</button>
-                <button type="button" class="custom-select-option" data-value="🐺" data-label="🐺 Loup">🐺 Loup</button>
-                <button type="button" class="custom-select-option" data-value="🔥" data-label="🔥 Feu">🔥 Feu</button>
-                <button type="button" class="custom-select-option" data-value="⚡" data-label="⚡ Éclair">⚡ Éclair</button>
-                <button type="button" class="custom-select-option" data-value="👑" data-label="👑 Couronne">👑 Couronne</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-field">
-            <span class="field-label">Club remplacé</span>
-            <input id="replaced-club" type="hidden" value="" />
-            <div class="custom-select" id="replaced-club-select" data-input="replaced-club">
-              <button class="custom-select-trigger" type="button">
-                <span class="custom-select-value" data-selected-label>Choisir un club</span>
-                <span class="custom-select-arrow">▾</span>
-              </button>
-              <div class="custom-select-menu" role="listbox"></div>
-            </div>
-          </div>
-
-          <div class="form-field">
-            <span class="field-label">Difficulté</span>
-            <input id="difficulty" type="hidden" value="ambitious" />
-            <div class="custom-select" id="difficulty-select" data-input="difficulty">
-              <button class="custom-select-trigger" type="button">
-                <span class="custom-select-value" data-selected-label>Club ambitieux</span>
-                <span class="custom-select-arrow">▾</span>
-              </button>
-              <div class="custom-select-menu" role="listbox">
-                <button type="button" class="custom-select-option" data-value="outsider" data-label="Petit club outsider">Petit club outsider</button>
-                <button type="button" class="custom-select-option active" data-value="ambitious" data-label="Club ambitieux">Club ambitieux</button>
-                <button type="button" class="custom-select-option" data-value="giant" data-label="Nouveau géant">Nouveau géant</button>
-              </div>
-            </div>
-          </div>
-
-          <label class="form-field">
-            <span class="field-label">Couleur principale</span>
-            <input id="primary-color" type="color" value="#2ee987" />
-          </label>
-
-          <label class="form-field">
-            <span class="field-label">Couleur secondaire</span>
-            <input id="secondary-color" type="color" value="#ffffff" />
-          </label>
+          <label class="form-field"><span class="field-label">Nom de la carrière</span><input id="career-name" type="text" placeholder="Ex : Carrière Dragon FC" required /></label>
+          <label class="form-field"><span class="field-label">Nom du manager</span><input id="manager-name" type="text" placeholder="Ex : Benjamin" required /></label>
+          <label class="form-field"><span class="field-label">Nom du club</span><input id="club-name" type="text" placeholder="Ex : Dragon FC" required /></label>
+          <label class="form-field"><span class="field-label">Nom court</span><input id="club-short-name" type="text" placeholder="Ex : DFC" maxlength="5" required /></label>
+          <div class="form-field"><span class="field-label">Badge temporaire</span><input id="club-badge" type="hidden" value="🐉" /><div class="custom-select" id="club-badge-select" data-input="club-badge"><button class="custom-select-trigger" type="button"><span class="custom-select-value" data-selected-label>🐉 Dragon</span><span class="custom-select-arrow">▾</span></button><div class="custom-select-menu" role="listbox"><button type="button" class="custom-select-option" data-value="⚽" data-label="⚽ Ballon">⚽ Ballon</button><button type="button" class="custom-select-option active" data-value="🐉" data-label="🐉 Dragon">🐉 Dragon</button><button type="button" class="custom-select-option" data-value="🦁" data-label="🦁 Lion">🦁 Lion</button><button type="button" class="custom-select-option" data-value="🦅" data-label="🦅 Aigle">🦅 Aigle</button><button type="button" class="custom-select-option" data-value="🐺" data-label="🐺 Loup">🐺 Loup</button><button type="button" class="custom-select-option" data-value="🔥" data-label="🔥 Feu">🔥 Feu</button><button type="button" class="custom-select-option" data-value="⚡" data-label="⚡ Éclair">⚡ Éclair</button><button type="button" class="custom-select-option" data-value="👑" data-label="👑 Couronne">👑 Couronne</button></div></div></div>
+          <div class="form-field"><span class="field-label">Club remplacé</span><input id="replaced-club" type="hidden" value="" /><div class="custom-select" id="replaced-club-select" data-input="replaced-club"><button class="custom-select-trigger" type="button"><span class="custom-select-value" data-selected-label>Choisir un club</span><span class="custom-select-arrow">▾</span></button><div class="custom-select-menu" role="listbox"></div></div></div>
+          <div class="form-field"><span class="field-label">Difficulté</span><input id="difficulty" type="hidden" value="ambitious" /><div class="custom-select" id="difficulty-select" data-input="difficulty"><button class="custom-select-trigger" type="button"><span class="custom-select-value" data-selected-label>Club ambitieux</span><span class="custom-select-arrow">▾</span></button><div class="custom-select-menu" role="listbox"><button type="button" class="custom-select-option" data-value="outsider" data-label="Petit club outsider">Petit club outsider</button><button type="button" class="custom-select-option active" data-value="ambitious" data-label="Club ambitieux">Club ambitieux</button><button type="button" class="custom-select-option" data-value="giant" data-label="Nouveau géant">Nouveau géant</button></div></div></div>
+          <label class="form-field"><span class="field-label">Couleur principale</span><input id="primary-color" type="color" value="#2ee987" /></label>
+          <label class="form-field"><span class="field-label">Couleur secondaire</span><input id="secondary-color" type="color" value="#ffffff" /></label>
         </div>
-
-        <div class="form-actions">
-          <button type="submit" class="primary-btn">Créer la carrière</button>
-          <button type="button" class="secondary-btn" id="fill-demo-career-btn">Remplir un exemple</button>
-        </div>
+        <div class="form-actions"><button type="submit" class="primary-btn">Créer la carrière</button><button type="button" class="secondary-btn" id="fill-demo-career-btn">Remplir un exemple</button></div>
       </form>
     </div>
   </section>
 
   <section class="welcome-screen menu-screen app-hidden" id="saves-menu-screen">
     <div class="welcome-card setup-card">
-      <div class="welcome-brand">
-        <div>
-          <p class="eyebrow">Carrières locales</p>
-          <h2>Mes sauvegardes</h2>
-        </div>
-        <button class="secondary-btn" id="back-from-saves-btn" type="button">Retour accueil</button>
-      </div>
-
-      <div class="section-header section-header-row">
-        <div>
-          <h3>Sauvegardes</h3>
-          <p>Charge ou supprime tes carrières locales. Les données restent dans ce navigateur.</p>
-        </div>
-        <button class="primary-btn" id="create-from-saves-btn">Créer une carrière</button>
-      </div>
-
-      <div class="info-banner">
-        <strong>Note :</strong> les sauvegardes utilisent localStorage. Si tu changes de navigateur ou d’ordinateur, elles ne suivent pas automatiquement.
-      </div>
-
+      <div class="welcome-brand"><div><p class="eyebrow">Carrières locales</p><h2>Mes sauvegardes</h2></div><button class="secondary-btn" id="back-from-saves-btn" type="button">Retour accueil</button></div>
+      <div class="section-header section-header-row"><div><h3>Sauvegardes</h3><p>Charge ou supprime tes carrières locales. Les données restent dans ce navigateur.</p></div><button class="primary-btn" id="create-from-saves-btn">Créer une carrière</button></div>
+      <div class="info-banner"><strong>Note :</strong> les sauvegardes utilisent localStorage. Si tu changes de navigateur ou d’ordinateur, elles ne suivent pas automatiquement.</div>
       <div class="saves-list" id="saves-list"></div>
     </div>
   </section>
 
   <div class="app-shell app-hidden" id="app-shell">
     <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-badge">BTM</div>
-        <div>
-          <h1>Become the next Mourinho</h1>
-          <p>Private Manager Game</p>
-        </div>
-      </div>
-
+      <div class="brand"><div class="brand-badge">BTM</div><div><h1>Become the next Mourinho</h1><p>Private Manager Game</p></div></div>
       <nav class="nav">
-        <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
-        <button class="nav-btn" data-screen="squad">Effectif</button>
-        <button class="nav-btn" data-screen="lineup">Composition</button>
-        <button class="nav-btn" data-screen="calendar">Calendrier</button>
-        <button class="nav-btn" data-screen="standings">Classement</button>
-        <button class="nav-btn" data-screen="match">Match</button>
-        <button class="nav-btn" data-screen="transfers">Recrutement</button>
-        <button class="nav-btn" data-screen="finances">Finances</button>
-        <button class="nav-btn" data-screen="training">Entraînement</button>
+        <button class="nav-btn active" data-screen="dashboard">Dashboard</button><button class="nav-btn" data-screen="squad">Effectif</button><button class="nav-btn" data-screen="lineup">Composition</button><button class="nav-btn" data-screen="calendar">Calendrier</button><button class="nav-btn" data-screen="standings">Classement</button><button class="nav-btn" data-screen="match">Match</button><button class="nav-btn" data-screen="transfers">Recrutement</button><button class="nav-btn" data-screen="finances">Finances</button><button class="nav-btn" data-screen="training">Entraînement</button>
       </nav>
-
-      <div class="sidebar-footer">V0.22 — Index plat</div>
+      <div class="sidebar-footer">V0.23 — Modules stables</div>
     </aside>
-
     <main class="main-content">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Carrière actuelle</p>
-          <h2 id="page-title">Dashboard</h2>
-        </div>
-        <div class="topbar-actions">
-          <button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button>
-        </div>
-      </header>
-
-      <section class="screen active" id="dashboard">
-        <div class="hero-card">
-          <div>
-            <p class="eyebrow">Bienvenue manager</p>
-            <h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3>
-            <p id="dashboard-description">La V0.22 stabilise le chargement des modules avec des points d’entrée stables.</p>
-          </div>
-          <div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div>
-        </div>
-
-        <div class="kpi-grid">
-          <article class="kpi-card"><p>Club</p><strong id="kpi-club">—</strong></article>
-          <article class="kpi-card"><p>Budget</p><strong id="kpi-money">—</strong></article>
-          <article class="kpi-card"><p>Difficulté</p><strong id="kpi-difficulty">—</strong></article>
-          <article class="kpi-card"><p>Prochain match</p><strong id="kpi-next-match">—</strong></article>
-        </div>
-
-        <div class="panel-grid">
-          <article class="panel">
-            <h3>Statut V0.22</h3>
-            <p>Le chargement passe par des points d’entrée stables pour limiter les conflits entre modules.</p>
-          </article>
-          <article class="panel">
-            <h3>Prochaine évolution</h3>
-            <p>Extraire progressivement les derniers ponts de compatibilité et ajouter un vrai schemaVersion de sauvegarde.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="screen" id="squad">
-        <div class="section-header"><h3>Effectif</h3><p>Liste des joueurs générés pour ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div>
-        <div class="players-grid" id="players-preview"></div>
-      </section>
-
-      <section class="screen" id="lineup">
-        <div class="section-header section-header-row">
-          <div>
-            <h3>Composition</h3>
-            <p>Choisis une formation, place tes titulaires et vérifie les joueurs hors poste. La composition est sauvegardée automatiquement.</p>
-          </div>
-          <div class="formation-buttons" id="formation-buttons"></div>
-        </div>
-
-        <div class="lineup-warning" id="lineup-warning"></div>
-        <div class="lineup-summary kpi-grid" id="lineup-summary"></div>
-
-        <div class="lineup-layout">
-          <div class="lineup-slots" id="lineup-slots"></div>
-          <div class="pitch-card lineup-pitch" id="lineup-pitch"></div>
-          <article class="lineup-bench panel">
-            <h3>Remplaçants</h3>
-            <p>Les meilleurs joueurs non titulaires sont listés ici automatiquement.</p>
-            <div id="lineup-bench"></div>
-          </article>
-        </div>
-      </section>
-
-      <section class="screen" id="calendar">
-        <div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier…</p></div>
-      </section>
-
-      <section class="screen" id="standings">
-        <div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique…</p></div>
-      </section>
-
-      <section class="screen" id="match">
-        <div class="section-header"><h3>Match</h3><p>Chargement du Match Center…</p></div>
-      </section>
-
+      <header class="topbar"><div><p class="eyebrow">Carrière actuelle</p><h2 id="page-title">Dashboard</h2></div><div class="topbar-actions"><button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button></div></header>
+      <section class="screen active" id="dashboard"><div class="hero-card"><div><p class="eyebrow">Bienvenue manager</p><h3 id="dashboard-title">Construis ton club, gagne ta place, deviens une légende.</h3><p id="dashboard-description">La V0.23 charge les modules depuis des points d’entrée stables.</p></div><div class="hero-score" id="active-career-badge"><span>PL</span><strong>25/26</strong></div></div><div class="kpi-grid"><article class="kpi-card"><p>Club</p><strong id="kpi-club">—</strong></article><article class="kpi-card"><p>Budget</p><strong id="kpi-money">—</strong></article><article class="kpi-card"><p>Difficulté</p><strong id="kpi-difficulty">—</strong></article><article class="kpi-card"><p>Prochain match</p><strong id="kpi-next-match">—</strong></article></div><div class="panel-grid"><article class="panel"><h3>Statut V0.23</h3><p>Le HTML charge les modules stables directement. Les ponts historiques restants seront extraits progressivement.</p></article><article class="panel"><h3>Prochaine évolution</h3><p>Créer un vrai schemaVersion de sauvegarde et retirer les derniers fichiers versionnés historiques.</p></article></div></section>
+      <section class="screen" id="squad"><div class="section-header"><h3>Effectif</h3><p>Liste des joueurs générés pour ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div><div class="players-grid" id="players-preview"></div></section>
+      <section class="screen" id="lineup"><div class="section-header section-header-row"><div><h3>Composition</h3><p>Choisis une formation, place tes titulaires et vérifie les joueurs hors poste.</p></div><div class="formation-buttons" id="formation-buttons"></div></div><div class="lineup-warning" id="lineup-warning"></div><div class="lineup-summary kpi-grid" id="lineup-summary"></div><div class="lineup-layout"><div class="lineup-slots" id="lineup-slots"></div><div class="pitch-card lineup-pitch" id="lineup-pitch"></div><article class="lineup-bench panel"><h3>Remplaçants</h3><p>Les meilleurs joueurs non titulaires sont listés ici automatiquement.</p><div id="lineup-bench"></div></article></div></section>
+      <section class="screen" id="calendar"><div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier…</p></div></section>
+      <section class="screen" id="standings"><div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique…</p></div></section>
+      <section class="screen" id="match"><div class="section-header"><h3>Match</h3><p>Chargement du Match Center…</p></div></section>
       <section class="screen" id="transfers"><div class="section-header"><h3>Recrutement</h3><p>Marché avec négociation simple.</p></div><div class="empty-state"><span>🔎</span><h4>Marché à venir</h4><p>La prochaine grosse étape pourra ajouter les offres, refus et contre-offres.</p></div></section>
       <section class="screen" id="finances"><div class="section-header"><h3>Finances</h3><p>Budget transfert, salaires, sponsors et primes.</p></div><div class="kpi-grid"><article class="kpi-card"><p>Solde</p><strong id="finance-balance">—</strong></article><article class="kpi-card"><p>Budget transfert</p><strong id="finance-transfer-budget">—</strong></article><article class="kpi-card"><p>Masse salariale</p><strong id="finance-wage-bill">—</strong></article><article class="kpi-card"><p>Sponsors</p><strong>—</strong></article></div></section>
       <section class="screen" id="training"><div class="section-header"><h3>Entraînement</h3><p>Focus par groupe de joueurs.</p></div><div class="panel-grid"><article class="panel"><h3>Gardiens</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Défenseurs</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Milieux</h3><p>Focus à choisir plus tard.</p></article><article class="panel"><h3>Attaquants</h3><p>Focus à choisir plus tard.</p></article></div></section>
@@ -314,17 +93,17 @@
 
   <script src="data.js?v=060"></script>
   <script src="app.js?v=044"></script>
-  <script src="lineup-v050.js?v=053"></script>
-  <script src="calendar-v060.js?v=071"></script>
-  <script src="match-v080.js?v=080"></script>
-  <script src="matchday-v090.js?v=090"></script>
-  <script src="theme.js?v=022"></script>
-  <script src="squad.js?v=022"></script>
-  <script src="season-flow.js?v=022"></script>
-  <script src="mailbox.js?v=022"></script>
-  <script src="player-db.js?v=022"></script>
-  <script src="transfers.js?v=022"></script>
-  <script src="training.js?v=022"></script>
-  <script src="match-center.js?v=022"></script>
+  <script src="theme.js?v=023"></script>
+  <script src="lineup.js?v=023"></script>
+  <script src="calendar.js?v=023"></script>
+  <script src="match-engine.js?v=023"></script>
+  <script src="league-sim.js?v=023"></script>
+  <script src="squad.js?v=023"></script>
+  <script src="season-flow.js?v=023"></script>
+  <script src="mailbox.js?v=023"></script>
+  <script src="player-db.js?v=023"></script>
+  <script src="transfers.js?v=023"></script>
+  <script src="training.js?v=023"></script>
+  <script src="match-center.js?v=023"></script>
 </body>
 </html>
