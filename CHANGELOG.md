@@ -1,5 +1,21 @@
 # Changelog — Become the next Mourinho
 
+## V0.24 — Extraction réelle du Match Center
+
+- `match-center.js` n’est plus un simple pont vers `season-v013.js`.
+- `match-center.css` n’est plus un simple `@import` vers `season-v013.css`.
+- Le rendu stable du Match Center vit maintenant directement dans `match-center.js`.
+- Le style stable du Match Center vit maintenant directement dans `match-center.css`.
+- Le Match Center conserve les fonctions principales :
+  - préparation d’avant-match ;
+  - analyse adverse ;
+  - validation de composition ;
+  - validation du plan de match ;
+  - lancement du match ;
+  - rapport post-match avec timeline et stats.
+- Cette version retire le premier gros pont historique derrière les noms stables.
+- `index.html` garde encore `match-center.js?v=023` pendant cette passe, donc un `Ctrl + F5` reste recommandé.
+
 ## V0.23 — Index plat sur points d’entrée stables
 
 - `index.html` ne charge plus directement les vieux modules de base :
@@ -136,11 +152,11 @@
 À privilégier :
 
 ```text
-match-center.js?v=023
-season-flow.js?v=023
-mailbox.js?v=023
-transfers.js?v=023
-training.js?v=023
+match-center.js?v=024
+season-flow.js?v=024
+mailbox.js?v=024
+transfers.js?v=024
+training.js?v=024
 ```
 
 À éviter :
