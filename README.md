@@ -1,4 +1,4 @@
-# Become the next Mourinho — V0.30A
+# Become the next Mourinho — V0.31
 
 Jeu privé de gestion footballistique jouable directement dans le navigateur.
 
@@ -6,19 +6,21 @@ Le projet avance en HTML/CSS/JavaScript vanilla, sans backend pour le moment. Le
 
 ## Version actuelle
 
-**V0.30A — Lineup registry cutover**
+**V0.31 — Calendar registry cutover**
 
-Cette passe stabilise le module Composition sans encore réécrire tout son ancien moteur historique.
+Cette passe stabilise le module Calendrier sans encore réécrire tout son ancien moteur historique.
 
-`lineup.js` ne laisse plus le vieux module Composition garder son wrapper `refreshUI`. Il capture le `refreshUI` central, charge temporairement le moteur historique de compo, neutralise son wrapper après chargement, puis enregistre `renderLineupBuilder` dans le registre de rendu :
+`calendar.js` charge encore temporairement `calendar-v060.js`, mais il neutralise son ancien wrapper `refreshUI` et enregistre le rendu du calendrier dans le registre central :
 
 ```text
 app.js
 → theme.js installe le registre
-→ lineup.js charge la logique de composition
+→ calendar.js charge la logique calendrier
 → wrapper legacy neutralisé
-→ btmRegisterRender("lineup", renderLineupBuilder)
+→ btmRegisterRender("calendar", renderCalendarV060)
 ```
+
+Le calendrier ne fait que changer la journée affichée. Le vrai passage des jours reste piloté par `season-flow.js`.
 
 ## Modules passés sur le registre
 
@@ -26,6 +28,7 @@ app.js
 theme.js
 squad.js
 lineup.js
+calendar.js
 season-flow.js
 mailbox.js
 training.js
@@ -70,23 +73,15 @@ theme.js
 
 ```text
 lineup.js       -> compatibilité temporaire avec lineup-v050.js, wrapper neutralisé
-calendar.js     -> calendar-v060.js
+calendar.js     -> compatibilité temporaire avec calendar-v060.js, wrapper neutralisé
 player-db.js    -> player-db-v016.js
 transfers.js    -> transfers-v017.js
 ```
 
 ## Note cache
 
-`index.html` pointe encore vers `lineup.js?v=023` pour le moment. Le contenu réel de `lineup.js` est en V0.30A, mais un **Ctrl + F5** est nécessaire tant que le cache-buster HTML n’est pas bumpé.
+`index.html` pointe maintenant vers `calendar.css?v=031` et `calendar.js?v=031`. Un **Ctrl + F5** reste recommandé après chaque refonte structurelle.
 
 ## Prochaine étape recommandée
 
-**V0.30B — bump HTML ciblé ou extraction complète de Lineup**
-
-Objectifs :
-
-```text
-- bumper `index.html` proprement sans réécrire les longues lignes HTML ;
-- ou extraire complètement le code Composition dans `lineup.js` sans pont ;
-- continuer ensuite avec Calendar.
-```
+**V0.32 — extraction réelle de Calendar ou nettoyage des orphelins**
