@@ -1,5 +1,16 @@
 # Changelog — Become the next Mourinho
 
+## V0.38 — Cleanup final de stabilisation
+
+- Retrait du double bootstrap du registre de rendu dans `squad.js`.
+- `theme.js` reste l’unique propriétaire du registre `btmRegisterRender` / `btmRunRegisteredRenders`.
+- `squad.js` se limite maintenant à enregistrer son renderer via `btmRegisterRender("squad", ...)`.
+- Suppression des anciens modules legacy orphelins liés au match, à la saison, au courrier, à l’effectif, à l’entraînement et aux anciens loaders.
+- Suppression des anciens CSS legacy remplacés par `match-center.css`, `season-flow.css` et `mailbox.css`.
+- `save-migrations.js` ne répète plus la valeur de `dataVersion` : il lit maintenant les constantes définies par `app.js`.
+- Ajout d’un commentaire dans `index.html` pour documenter l’ordre critique des scripts : `data.js`, `app.js`, `save-migrations.js`, `theme.js`, puis les modules gameplay.
+- Le footer et le dashboard affichent maintenant la V0.38.
+
 ## V0.37 — schemaVersion + migrations de sauvegardes
 
 - Ajout du module stable `save-migrations.js`.
@@ -8,8 +19,6 @@
 - Les sauvegardes sont aussi normalisées avant écriture via `saveCareers`.
 - `repairCareerIfNeeded` passe désormais par la migration centrale avant et après ses réparations historiques.
 - La migration complète les champs manquants importants : club, finances, joueurs, league, standings, fixtures, mailbox, trainingFocus, version, dataVersion et timestamps.
-- `index.html` charge maintenant `save-migrations.js?v=037` juste après `app.js`.
-- Le footer et le dashboard affichent la V0.37.
 
 ## V0.36 — Nettoyage ciblé des orphelins
 
@@ -17,8 +26,6 @@
 - Suppression de `lineup-v050.js`, remplacé par le module stable `lineup.js` depuis la V0.33.
 - Suppression de `player-db-v016.js`, remplacé par le module stable `player-db.js` depuis la V0.34.
 - Suppression de `transfers-v017.js`, remplacé par le module stable `transfers.js` depuis la V0.35.
-- Cette passe réduit la confusion entre anciens fichiers versionnés et points d’entrée stables.
-- Les suppressions restent ciblées : les autres anciens fichiers seront supprimés seulement après vérification explicite.
 
 ## V0.35 — Transfers / Recrutement extrait
 
@@ -28,7 +35,6 @@
 - L’achat ajoute le joueur à l’effectif, met à jour le budget transfert et le solde.
 - Le courrier de transfert reste déclenché via `btmGenerateTransferMail` quand disponible.
 - `transfers.js` s’enregistre via `btmRegisterRender("transfers", ...)` au lieu de réécrire `refreshUI`.
-- `index.html` charge maintenant `transfers.css?v=035` et `transfers.js?v=035`.
 
 ## V0.34 — Player DB extrait
 
@@ -36,46 +42,34 @@
 - Le générateur de joueurs est maintenant directement dans le module stable.
 - `btmEnsurePlayerDatabase(career, count)` reste disponible pour les autres modules.
 - `btmEnsurePlayerDatabasePersisted(count)` reste disponible pour initialiser et sauvegarder la base joueurs active.
-- `player-db.js` s’enregistre via `btmRegisterRender("player-db", ...)` au lieu de réécrire `refreshUI`.
-- `index.html` charge maintenant `player-db.js?v=034`.
 
 ## V0.33 — Lineup extrait
 
 - `lineup.js` n’est plus un pont vers `lineup-v050.js`.
 - La gestion des formations est maintenant directement dans le module stable.
 - La composition est normalisée et réparée directement par `lineup.js`.
-- Les changements de formation, d’auto-composition, de vidage et de titulaires sont sauvegardés directement par le module stable.
-- `lineup.js` s’enregistre toujours via `btmRegisterRender("lineup", ...)`.
 
 ## V0.32 — Calendar extrait
 
 - `calendar.js` n’est plus un pont vers `calendar-v060.js`.
 - La génération du calendrier est maintenant directement dans le module stable.
-- Le rendu du calendrier est maintenant directement dans le module stable.
-- `calendar.js` s’enregistre toujours via `btmRegisterRender("calendar", ...)`.
-- Les boutons du calendrier restent uniquement des boutons d’affichage : ils ne modifient pas la date réelle de carrière.
+- Les boutons du calendrier restent uniquement des boutons d’affichage.
 
 ## V0.31 — Calendar registry cutover
 
 - `calendar.js` stabilise le module Calendrier côté registre de rendu.
 - Le vieux wrapper `refreshUI` de `calendar-v060.js` est neutralisé après chargement.
-- `renderCalendarV060` est enregistré via `btmRegisterRender("calendar", ...)`.
-- Les boutons du calendrier changent seulement la journée affichée et ne modifient pas la date réelle de carrière.
-- `index.html` pointe maintenant vers `calendar.css?v=031` et `calendar.js?v=031`.
 
 ## V0.30A — Lineup registry cutover
 
 - `lineup.js` stabilise le module Composition côté registre de rendu.
 - Le vieux wrapper `refreshUI` de `lineup-v050.js` est neutralisé après chargement.
-- `renderLineupBuilder` est enregistré via `btmRegisterRender("lineup", ...)`.
-- Cette passe réduit le risque de cascade `refreshUI`, sans encore extraire tout le code historique de Composition.
 
 ## V0.29B — Render registry centralisé
 
 - Le bootstrap du registre de rendu est déplacé dans `theme.js`.
 - Le registre n’est plus dépendant de `squad.js`.
 - `theme.js` s’enregistre via `btmRegisterRender`.
-- `index.html` est bumpé pour `theme.js`, `match-engine.js`, `league-sim.js` et `squad.js`.
 
 ## V0.29 — Render registry, phase 1
 
