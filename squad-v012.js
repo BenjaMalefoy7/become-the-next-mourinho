@@ -11,7 +11,7 @@ const SQUAD_DOSSIER_VERSION = "0.12";
   };
 
   function sx(value) {
-    return typeof escapeHtml === "function" ? escapeHtml(value) : String(value ?? "").replace(/[&<>\"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    return typeof escapeHtml === "function" ? escapeHtml(value) : String(value ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   }
 
   function sm(value, fallback = "—") {
@@ -173,4 +173,57 @@ const SQUAD_DOSSIER_VERSION = "0.12";
   });
 
   document.addEventListener("DOMContentLoaded", () => render());
+})();
+
+(function initSquadPolishV0121() {
+  const flagMap = { "Brésil": "🇧🇷", "France": "🇫🇷", "Angleterre": "🏴", "Espagne": "🇪🇸", "Italie": "🇮🇹", "Allemagne": "🇩🇪", "Portugal": "🇵🇹", "Argentine": "🇦🇷", "Belgique": "🇧🇪", "Pays-Bas": "🇳🇱", "Uruguay": "🇺🇾", "Colombie": "🇨🇴", "Croatie": "🇭🇷", "Maroc": "🇲🇦", "Sénégal": "🇸🇳", "Nigeria": "🇳🇬", "Ghana": "🇬🇭", "Danemark": "🇩🇰", "Suède": "🇸🇪", "Norvège": "🇳🇴", "Écosse": "🏴", "Irlande": "🇮🇪", "Pologne": "🇵🇱" };
+
+  function addSquadPolishStyles() {
+    if (document.getElementById("squad-polish-v0121")) return;
+    const style = document.createElement("style");
+    style.id = "squad-polish-v0121";
+    style.textContent = ".squad-v012-list-head{position:relative;display:grid;grid-template-columns:46px 1fr 44px 44px 60px;gap:10px;margin:0 4px 8px 0;padding:0 10px;color:#806542;font-size:.66rem;font-weight:1000;text-transform:uppercase;letter-spacing:.08em}.squad-v012-list-head span:nth-child(n+3){text-align:center}.squad-v012-country{display:inline-flex;gap:4px;align-items:center;white-space:nowrap}";
+    document.head.appendChild(style);
+  }
+
+  function addHeaders() {
+    const board = document.querySelector(".squad-v012-board");
+    const list = document.querySelector(".squad-v012-list");
+    if (!board || !list || board.querySelector(".squad-v012-list-head")) return;
+    const header = document.createElement("div");
+    header.className = "squad-v012-list-head";
+    header.innerHTML = "<span></span><span>Joueur</span><span>OVR</span><span>POT</span><span>Cond.</span>";
+    list.before(header);
+  }
+
+  function addFlags() {
+    document.querySelectorAll(".squad-v012-name span, .squad-v012-role").forEach((node) => {
+      if (node.dataset.flagged === "1") return;
+      let html = node.innerHTML;
+      Object.entries(flagMap).forEach(([country, flag]) => {
+        if (html.includes(country) && !html.includes(flag)) html = html.replace(country, `<span class="squad-v012-country">${flag} ${country}</span>`);
+      });
+      node.innerHTML = html;
+      node.dataset.flagged = "1";
+    });
+  }
+
+  function polish() {
+    addSquadPolishStyles();
+    addHeaders();
+    addFlags();
+  }
+
+  const previousRenderPlayersPreview = window.renderPlayersPreview;
+  if (typeof previousRenderPlayersPreview === "function") {
+    window.renderPlayersPreview = function renderPlayersPreviewV0121() {
+      previousRenderPlayersPreview.apply(this, arguments);
+      polish();
+    };
+  }
+
+  document.addEventListener("DOMContentLoaded", () => setTimeout(polish, 80));
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-squad-filter], [data-squad-player], .nav-btn")) setTimeout(polish, 40);
+  });
 })();
