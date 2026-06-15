@@ -18,13 +18,50 @@
   <link rel="stylesheet" href="transfers.css?v=035" />
   <link rel="stylesheet" href="training.css?v=027" />
   <link rel="stylesheet" href="dashboard-story.css?v=042" />
+  <link rel="stylesheet" href="home-premium.css?v=043" />
   <link rel="stylesheet" href="responsive.css?v=041B" />
 </head>
 <body>
-  <section id="start-screen" class="start-screen active"><div class="start-card"><p class="eyebrow">Private build</p><h1>Become the next Mourinho</h1><p>Crée ton club, choisis ton niveau de départ et lance une carrière Premier League 2025/26.</p><div class="start-actions"><button class="primary-btn" id="new-career-btn">Nouvelle carrière</button><button class="secondary-btn" id="load-career-btn">Charger une carrière</button></div></div></section>
+  <section id="start-screen" class="start-screen active">
+    <div class="home-v043">
+      <section class="home-v043-hero">
+        <span class="home-v043-kicker">Private build · Manager office</span>
+        <h1>Become the next Mourinho</h1>
+        <p class="home-v043-lead">Crée ton club, remplace une équipe de Premier League et lance ta première saison comme si tu débarquais dans un vrai bureau de manager : vestiaire, mercato, calendrier, pression et matchs à préparer.</p>
+        <div class="home-v043-actions">
+          <button class="primary-btn" id="new-career-btn">Nouvelle carrière</button>
+          <button class="secondary-btn" id="load-career-btn">Charger une carrière</button>
+        </div>
+        <div class="home-v043-strips">
+          <article class="home-v043-strip"><span>Étape 01</span><strong>Créer ton club</strong><p>Nom, stade, club remplacé et niveau de départ pour poser les bases de ton histoire.</p></article>
+          <article class="home-v043-strip"><span>Étape 02</span><strong>Composer ton XI</strong><p>Choisis ta formation, trouve ton onze et prépare chaque match avec ton groupe.</p></article>
+          <article class="home-v043-strip"><span>Étape 03</span><strong>Gérer la saison</strong><p>Avance jour par jour, suis le vestiaire et fais évoluer ton projet sur le terrain.</p></article>
+        </div>
+        <div class="home-v043-note">“Une carrière ne commence pas au coup d’envoi. Elle commence dans le bureau, quand tu décides quel club tu veux devenir.”</div>
+      </section>
+      <aside class="home-v043-side">
+        <article class="home-v043-card">
+          <span>Mode carrière</span>
+          <h2>Un club à bâtir</h2>
+          <p>Tu ne lances pas juste une sauvegarde. Tu écris le début d’une ère : identité, objectif, effectif, mercato et premières décisions de manager.</p>
+          <div class="home-v043-plan"><div><b>Championnat</b><strong>Premier League</strong></div><div><b>Saison</b><strong>2025/2026</strong></div><div><b>Sauvegarde</b><strong>Locale</strong></div></div>
+        </article>
+        <article class="home-v043-card light">
+          <span>Ton bureau</span>
+          <h3>Ce qui t’attend</h3>
+          <p>Un tableau de bord de manager, une composition complète, un calendrier, un classement dynamique, un marché de recrutement et un Match Center qui raconte tes rencontres.</p>
+        </article>
+        <article class="home-v043-card light">
+          <span>Objectif V1</span>
+          <h3>Simple, jouable, évolutif</h3>
+          <p>La base est privée et progressive : chaque version rend le jeu plus stable avant d’ajouter des mécaniques plus ambitieuses.</p>
+        </article>
+      </aside>
+    </div>
+  </section>
   <section id="setup-screen" class="setup-screen"><div class="setup-card"><button class="ghost-btn" id="setup-back-btn">← Retour</button><p class="eyebrow">Création de club</p><h2>Ton nouveau club</h2><div class="form-grid"><label>Nom du club<input id="club-name-input" placeholder="Ex : Royal Benjamin FC" /></label><label>Nom court<input id="club-short-input" placeholder="RBF" maxlength="4" /></label><label>Stade<input id="stadium-input" placeholder="Ex : The Special One Arena" /></label><label>Club remplacé<select id="replace-club-select"></select></label><label>Niveau de départ<select id="difficulty-select"><option value="outsider">Petit outsider</option><option value="ambitious">Club ambitieux</option><option value="giant">Nouveau géant</option></select></label></div><button class="primary-btn" id="create-career-btn">Créer la carrière</button></div></section>
   <section id="load-screen" class="load-screen"><div class="setup-card"><button class="ghost-btn" id="load-back-btn">← Retour</button><p class="eyebrow">Sauvegardes locales</p><h2>Choisir une carrière</h2><div id="save-slots" class="save-slots"></div></div></section>
-  <div id="game-shell" class="game-shell notebook-tabs-left"><aside class="sidebar"><div class="brand"><span class="brand-ball">⚽</span><div><p class="eyebrow">Manager Office</p><h1 id="brand-club">BTNM</h1></div></div><nav class="nav"><button class="nav-item active" data-screen="dashboard">Dashboard</button><button class="nav-item" data-screen="squad">Effectif</button><button class="nav-item" data-screen="lineup">Composition</button><button class="nav-item" data-screen="calendar">Calendrier</button><button class="nav-item" data-screen="standings">Classement</button><button class="nav-item" data-screen="match">Match</button><button class="nav-item" data-screen="transfers">Recrutement</button><button class="nav-item" data-screen="finances">Finances</button><button class="nav-item" data-screen="training">Entraînement</button></nav><div class="sidebar-footer"><p>V0.42 — Dashboard manager</p></div></aside>
+  <div id="game-shell" class="game-shell notebook-tabs-left"><aside class="sidebar"><div class="brand"><span class="brand-ball">⚽</span><div><p class="eyebrow">Manager Office</p><h1 id="brand-club">BTNM</h1></div></div><nav class="nav"><button class="nav-item active" data-screen="dashboard">Dashboard</button><button class="nav-item" data-screen="squad">Effectif</button><button class="nav-item" data-screen="lineup">Composition</button><button class="nav-item" data-screen="calendar">Calendrier</button><button class="nav-item" data-screen="standings">Classement</button><button class="nav-item" data-screen="match">Match</button><button class="nav-item" data-screen="transfers">Recrutement</button><button class="nav-item" data-screen="finances">Finances</button><button class="nav-item" data-screen="training">Entraînement</button></nav><div class="sidebar-footer"><p>V0.43 — Accueil premium</p></div></aside>
     <main class="main-content">
       <header class="topbar"><div><p class="eyebrow">Carrière actuelle</p><h2 id="page-title">Dashboard</h2></div><div class="topbar-actions"><button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button></div></header>
       <section class="screen active" id="dashboard"><div class="dashboard-story"><section class="dashboard-story-hero"><div><p class="eyebrow">Carnet du manager</p><h3>Tableau de bord du club</h3><p>Chargement de l’identité du club, du prochain enjeu et de l’état du vestiaire…</p></div></section></div></section>
@@ -57,7 +94,7 @@
   <script src="transfers.js?v=035"></script>
   <script src="training.js?v=027"></script>
   <script src="match-center.js?v=040F"></script>
-  <script src="version-label.js?v=042"></script>
+  <script src="version-label.js?v=043"></script>
   <script src="ui-compat.js?v=040C"></script>
 </body>
 </html>
