@@ -1,4 +1,4 @@
-/* V0.43E — Desk layout cleanup */
+/* V0.43F — Desk overlap hard cleanup */
 
 .home-desk {
   isolation: isolate;
@@ -12,7 +12,6 @@
 }
 
 .desk-detail-note,
-.desk-detail-checklist,
 .desk-detail-scribble,
 .desk-detail-stamp,
 .desk-detail-coffee {
@@ -20,24 +19,29 @@
   pointer-events: none;
 }
 
+/* The left floating notes caused too many overlaps with the main title and quote. */
+.desk-detail-checklist,
+.desk-detail-note.board {
+  display: none;
+}
+
 .desk-detail-note {
-  width: 190px;
-  padding: 14px 15px;
+  width: 178px;
+  padding: 13px 14px;
   border-radius: 16px;
   background: #f3cf60;
   color: #3e2a14;
-  box-shadow: 0 16px 34px rgba(32, 23, 10, 0.20);
+  box-shadow: 0 16px 34px rgba(32, 23, 10, 0.18);
   font-weight: 850;
   line-height: 1.25;
 }
 
-.desk-detail-note span,
-.desk-detail-checklist span {
+.desk-detail-note span {
   display: block;
   margin-bottom: 7px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 950;
   opacity: 0.72;
 }
@@ -47,61 +51,17 @@
   line-height: 1.32;
 }
 
-/* Left decoration: keep it inside the left panel, away from the main title and quote. */
-.desk-detail-checklist {
-  left: 2.6%;
-  top: 16.5%;
-  width: 190px;
-  padding: 15px 15px 14px;
-  border-radius: 18px;
-  background: rgba(255, 250, 235, 0.94);
-  border: 1px solid rgba(121, 89, 41, 0.22);
-  box-shadow: 0 16px 34px rgba(32, 23, 10, 0.18);
-  color: #173f31;
-  transform: rotate(-1.2deg);
-  z-index: 4;
-}
-
-.desk-detail-checklist ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 7px;
-  color: #544834;
-  font-weight: 750;
-  font-size: 0.88rem;
-}
-
-.desk-detail-checklist li::before {
-  content: "☐";
-  display: inline-block;
-  width: 20px;
-  color: #a73730;
-  font-weight: 950;
-}
-
-.desk-detail-note.board {
-  left: 5.1%;
-  bottom: 2.5%;
-  background: #f6e0a3;
-  border-left: 5px solid #b83934;
-  transform: rotate(-4deg);
-  z-index: 5;
-}
-
-/* Right notes: separated vertically so they no longer collide. */
 .desk-detail-note.reminder {
-  right: 8.8%;
-  top: 4.2%;
+  right: 82px;
+  top: 34px;
   background: #ffe083;
-  transform: rotate(2deg);
+  transform: rotate(2deg) scale(0.94);
   z-index: 5;
 }
 
 .desk-detail-stamp {
-  right: 31.5%;
-  top: 12.4%;
+  right: 398px;
+  top: 120px;
   padding: 7px 12px;
   border: 3px solid rgba(184, 57, 52, 0.60);
   border-radius: 10px;
@@ -110,22 +70,21 @@
   letter-spacing: 0.18em;
   font-size: 0.68rem;
   font-weight: 950;
-  transform: rotate(-10deg);
+  transform: rotate(-10deg) scale(0.88);
   z-index: 4;
 }
 
-/* Handwritten note now sits under the contract CTA without covering the signature. */
 .desk-detail-scribble {
-  right: 27.2%;
-  bottom: 10.8%;
-  width: 195px;
+  right: 390px;
+  bottom: 94px;
+  width: 180px;
   color: #8a2f2b;
   font-family: Georgia, serif;
   font-style: italic;
   font-weight: 900;
-  font-size: 0.95rem;
-  line-height: 1.18;
-  transform: rotate(-6deg);
+  font-size: 0.9rem;
+  line-height: 1.16;
+  transform: rotate(-6deg) scale(0.82);
   text-align: left;
   z-index: 5;
 }
@@ -140,10 +99,10 @@
 }
 
 .desk-detail-coffee {
-  left: 34.5%;
-  bottom: 6.3%;
-  width: 78px;
-  height: 78px;
+  left: 454px;
+  bottom: 76px;
+  width: 76px;
+  height: 76px;
   border: 10px solid rgba(116, 74, 32, 0.10);
   border-radius: 50%;
   transform: rotate(18deg);
@@ -162,12 +121,12 @@
 }
 
 .tactical-board {
-  gap: 18px;
+  gap: 20px;
 }
 
 .tactical-board .post-it {
   transform: rotate(-1.2deg);
-  margin-top: 44px;
+  margin-top: 56px;
 }
 
 .tactics-card .tactic-arrow {
@@ -188,39 +147,17 @@
 }
 
 @media (max-width: 1500px) {
-  .desk-detail-checklist {
-    left: 2%;
-    top: 18%;
-    width: 176px;
-    transform: rotate(-1deg) scale(0.94);
-    transform-origin: top left;
-  }
-
-  .desk-detail-note.board {
-    left: 4.3%;
-    bottom: 3.4%;
-    transform: rotate(-3deg) scale(0.94);
-    transform-origin: bottom left;
-  }
-
   .desk-detail-note.reminder {
-    right: 6.5%;
-    top: 3.4%;
-    transform: rotate(1.5deg) scale(0.94);
-    transform-origin: top right;
+    right: 64px;
+    top: 28px;
   }
 
-  .desk-detail-scribble {
-    right: 28%;
-    bottom: 12%;
-    transform: rotate(-5deg) scale(0.9);
-    transform-origin: bottom right;
+  .tactical-board .post-it {
+    margin-top: 28px;
   }
 }
 
 @media (max-width: 1280px) {
-  .desk-detail-checklist,
-  .desk-detail-note.board,
   .desk-detail-note.reminder,
   .desk-detail-scribble,
   .desk-detail-stamp,
