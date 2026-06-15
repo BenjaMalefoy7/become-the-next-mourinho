@@ -1,7 +1,72 @@
-/* V0.43G — Desk balance pass */
+/* V0.43H — Outer desk balance pass */
 
 .home-desk {
   isolation: isolate;
+  z-index: 1;
+}
+
+/* Wide-screen side fillers: easy to replace later with real HTML cards if needed. */
+.start-screen {
+  position: relative;
+  --landing-edge-width: clamp(150px, 10vw, 220px);
+  --landing-edge-offset: clamp(24px, 3.6vw, 70px);
+}
+
+.start-screen.active::before,
+.start-screen.active::after {
+  position: fixed;
+  top: clamp(104px, 15vh, 168px);
+  width: var(--landing-edge-width);
+  min-height: clamp(300px, 44vh, 430px);
+  padding: 18px 18px 20px;
+  border-radius: 26px;
+  pointer-events: none;
+  white-space: pre-line;
+  line-height: 1.62;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  font-size: clamp(0.66rem, 0.72vw, 0.8rem);
+  font-weight: 950;
+  z-index: 0;
+  display: none;
+}
+
+.start-screen.active::before {
+  content: "Carte saison\A────────────────\A J1 · Plan de départ\A XI · Identité claire\A Marché · À surveiller";
+  left: var(--landing-edge-offset);
+  color: rgba(29, 64, 45, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 248, 225, 0.86), rgba(244, 225, 171, 0.70)),
+    repeating-linear-gradient(0deg, transparent 0 32px, rgba(45, 72, 53, 0.08) 33px 34px);
+  border: 1px solid rgba(190, 145, 48, 0.26);
+  box-shadow: 0 26px 70px rgba(41, 30, 14, 0.16);
+  transform: rotate(-3.2deg);
+}
+
+.start-screen.active::after {
+  content: "War room\A────────────────\A Shortlist prête\A Forme à contrôler\A Board pressure";
+  right: var(--landing-edge-offset);
+  color: rgba(255, 244, 207, 0.82);
+  background:
+    linear-gradient(145deg, rgba(12, 58, 37, 0.82), rgba(6, 28, 18, 0.74)),
+    radial-gradient(circle at 76% 18%, rgba(246, 213, 118, 0.24), transparent 34%);
+  border: 1px solid rgba(246, 213, 118, 0.20);
+  box-shadow: 0 28px 76px rgba(0, 0, 0, 0.20);
+  transform: rotate(2.6deg);
+}
+
+@media (min-width: 1720px) and (min-height: 720px) {
+  .start-screen.active::before,
+  .start-screen.active::after {
+    display: block;
+  }
+}
+
+@media (min-width: 1940px) {
+  .start-screen {
+    --landing-edge-offset: clamp(54px, 5vw, 118px);
+    --landing-edge-width: clamp(190px, 10.5vw, 260px);
+  }
 }
 
 .desk-detail-layer {
