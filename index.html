@@ -23,66 +23,36 @@
   <link rel="stylesheet" href="responsive.css?v=041B" />
 </head>
 <body>
-  <section id="start-screen" class="start-screen active">
-    <div class="home-desk">
-      <section class="desk-copy">
-        <span class="desk-kicker">Poste vacant · Bureau du manager</span>
-        <h1>Become the next <span>Mourinho</span></h1>
-        <p class="desk-lead">Le vestiaire attend une voix. Le dossier du club est ouvert. À toi de signer, construire ton staff mental et transformer une nouvelle équipe en projet de saison.</p>
-        <div class="desk-quote">“Le coup d’envoi vient plus tard. La carrière commence ici, devant le contrat.”</div>
-        <article class="desk-vision-card">
-          <span>Vision du coach</span>
-          <div class="desk-vision-tags"><b>Discipline</b><b>Style clair</b><b>Transitions</b></div>
-          <p>Installer une méthode avant de parler de trophées. Le groupe doit comprendre l’idée dès les premiers jours.</p>
-        </article>
-        <div class="desk-mini-mark">Board approved · Shortlist ready</div>
+  <section id="start-screen" class="start-screen active" aria-label="Accueil">
+    <main class="home-start" aria-labelledby="home-title">
+      <header class="home-block home-header">
+        <p class="home-kicker">Poste vacant · Bureau du manager</p>
+        <h1 id="home-title">Become the next <span>Mourinho</span></h1>
+        <p class="home-lead">Un poste vacant, un contrat à signer, une méthode à poser.</p>
+      </header>
+
+      <section class="home-block home-contract" aria-label="Le contrat">
+        <p class="home-contract-label">Contrat à signer</p>
+        <div class="home-actions" aria-label="Actions de carrière">
+          <button class="primary-btn" id="new-career-btn" type="button">Nouvelle carrière</button>
+          <button class="secondary-btn" id="load-career-btn" type="button">Charger une carrière</button>
+        </div>
       </section>
 
-      <section class="contract-folder" aria-label="Contrat de manager">
-        <div class="paperclip"></div>
-        <article class="contract-paper">
-          <div class="contract-topline"><span class="contract-seal">⚽</span><span>Dossier de nomination</span></div>
-          <h2>Contrat de manager</h2>
-          <p class="subtitle">Une place est libre en Premier League. Crée ton club, remplace une équipe existante et impose ta méthode dès la première journée.</p>
-          <div class="contract-lines">
-            <div class="contract-line"><span>Championnat</span><strong>Premier League 2025/2026</strong></div>
-            <div class="contract-line"><span>Mission</span><strong>Bâtir un club crédible, puis une dynastie</strong></div>
-            <div class="contract-line"><span>Statut</span><strong>Poste à pourvoir immédiatement</strong></div>
-            <div class="contract-line"><span>Format</span><strong>Carrière locale, privée, évolutive</strong></div>
-          </div>
-          <div class="contract-actions">
-            <button class="primary-btn" id="new-career-btn">Signer un nouveau contrat</button>
-            <button class="secondary-btn" id="load-career-btn">Ouvrir un dossier existant</button>
-          </div>
-          <div class="signature-row">
-            <div><span class="desk-kicker">Private build</span></div>
-            <div class="signature">Signature du coach</div>
-          </div>
-        </article>
+      <section class="home-block home-vision" aria-label="La vision du coach">
+        <p class="home-vision-title">Vision du coach</p>
+        <ul class="home-keywords" aria-label="Mots-clés de la vision du coach">
+          <li>Discipline</li>
+          <li>Style clair</li>
+          <li>Transitions</li>
+        </ul>
+        <p class="home-vision-line">Installer une méthode avant de parler de trophées.</p>
       </section>
 
-      <aside class="tactical-board" aria-label="Notes du manager">
-        <article class="post-it"><span>Note du vestiaire</span><p>Créer une identité avant de chercher les trophées. Le groupe suivra si la ligne est claire.</p></article>
-        <article class="desk-objective-note"><span>Objectif 30 jours</span><ul><li>Stabiliser le premier XI</li><li>Installer un style simple</li><li>Réussir le premier match</li></ul></article>
-        <article class="tactics-card">
-          <h3>Plan de match</h3>
-          <div class="tactic-dots"><span class="tactic-dot">9</span><span class="tactic-dot">7</span><span class="tactic-dot">11</span><span class="tactic-dot">8</span><span class="tactic-dot">6</span><span class="tactic-dot">1</span></div>
-          <div class="tactic-arrow">trouver les espaces</div>
-        </article>
-        <article class="desk-status"><span>À venir</span><strong>Construire ton premier XI</strong><p>Composition, calendrier, recrutement et Match Center sont déjà prêts à accueillir ta première décision.</p></article>
-        <article class="scouting-note"><span>Scouting note</span><p>Priorité : trouver un milieu fiable et garder une vraie profondeur de banc.</p></article>
-        <article class="desk-rendezvous"><span>Premiers rendez-vous</span><p>Composition · Premier match · Recrutement</p></article>
-      </aside>
-
-      <div class="desk-detail-layer" aria-hidden="true">
-        <div class="desk-detail-checklist"><span>Dossier de prise de poste</span><ul><li>Nommer le club</li><li>Poser un style</li><li>Choisir un onze</li><li>Lancer la première journée</li></ul></div>
-        <div class="desk-detail-note board"><span>Note du board</span><p>Trouve une identité claire avant de viser les sommets.</p></div>
-        <div class="desk-detail-note reminder"><span>Rappel</span><p>Le premier match donne le ton.</p></div>
-        <div class="desk-detail-scribble">Construire d’abord.<br />Dominer ensuite.</div>
-        <div class="desk-detail-stamp">Urgent</div>
-        <div class="desk-detail-coffee"></div>
-      </div>
-    </div>
+      <footer class="home-block home-footer">
+        <p>Private build · V0.43J</p>
+      </footer>
+    </main>
   </section>
   <section id="setup-screen" class="setup-screen"><div class="setup-card"><button class="ghost-btn" id="setup-back-btn">← Retour</button><p class="eyebrow">Création de club</p><h2>Ton nouveau club</h2><div class="form-grid"><label>Nom du club<input id="club-name-input" placeholder="Ex : Royal Benjamin FC" /></label><label>Nom court<input id="club-short-input" placeholder="RBF" maxlength="4" /></label><label>Stade<input id="stadium-input" placeholder="Ex : The Special One Arena" /></label><label>Club remplacé<select id="replace-club-select"></select></label><label>Niveau de départ<select id="difficulty-select"><option value="outsider">Petit outsider</option><option value="ambitious">Club ambitieux</option><option value="giant">Nouveau géant</option></select></label></div><button class="primary-btn" id="create-career-btn">Créer la carrière</button></div></section>
   <section id="load-screen" class="load-screen"><div class="setup-card"><button class="ghost-btn" id="load-back-btn">← Retour</button><p class="eyebrow">Sauvegardes locales</p><h2>Choisir une carrière</h2><div id="save-slots" class="save-slots"></div></div></section>
