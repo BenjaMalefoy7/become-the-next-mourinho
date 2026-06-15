@@ -1,0 +1,261 @@
+/* V0.41 — Responsive layout foundation.
+   Final CSS layer. It only adapts layout/scale and does not change gameplay. */
+
+:root {
+  --btm-content-max: 1380px;
+  --btm-fluid-gap: clamp(14px, 1.6vw, 26px);
+  --btm-fluid-pad: clamp(14px, 2vw, 28px);
+}
+
+.game-shell.active {
+  width: 100%;
+  max-width: none;
+  overflow-x: hidden;
+}
+
+.game-shell.notebook-tabs-left .main-content {
+  width: 100%;
+  max-width: var(--btm-content-max);
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.game-shell.notebook-tabs-left .topbar,
+.game-shell.notebook-tabs-left .hero-card,
+.game-shell.notebook-tabs-left .kpi-grid,
+.game-shell.notebook-tabs-left .panel-grid,
+.game-shell.notebook-tabs-left .section-header,
+.game-shell.notebook-tabs-left .lineup-layout,
+.game-shell.notebook-tabs-left .match-center-v020,
+.game-shell.notebook-tabs-left .calendar-v060,
+.game-shell.notebook-tabs-left .standings-v023,
+.game-shell.notebook-tabs-left .transfers-v017,
+.game-shell.notebook-tabs-left .training-v018 {
+  max-width: 100%;
+}
+
+.kpi-grid,
+.panel-grid,
+.players-grid {
+  gap: var(--btm-fluid-gap);
+}
+
+.kpi-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+}
+
+.panel-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+}
+
+.lineup-layout {
+  grid-template-columns: minmax(260px, .9fr) minmax(420px, 1.35fr) minmax(260px, .9fr);
+}
+
+.lineup-pitch {
+  min-height: clamp(420px, 54vh, 620px);
+}
+
+@media (max-width: 1500px) {
+  .game-shell.notebook-tabs-left {
+    grid-template-columns: 230px minmax(0, 1fr);
+    padding: 18px 22px 18px 12px;
+  }
+
+  .game-shell.notebook-tabs-left .sidebar {
+    padding-left: 18px;
+  }
+
+  .game-shell.notebook-tabs-left .brand h1 {
+    font-size: 1.48rem;
+  }
+
+  .game-shell.notebook-tabs-left .nav-item {
+    min-height: 39px;
+    padding: 9px 14px;
+    font-size: .78rem;
+  }
+
+  .game-shell.notebook-tabs-left .main-content {
+    padding-left: 28px !important;
+  }
+
+  .topbar h2 {
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+  }
+
+  .hero-card h3 {
+    font-size: clamp(1.45rem, 2.2vw, 2rem);
+  }
+}
+
+@media (max-width: 1280px) {
+  .game-shell.notebook-tabs-left {
+    grid-template-columns: 200px minmax(0, 1fr);
+    padding: 14px 18px 14px 10px;
+  }
+
+  .game-shell.notebook-tabs-left .nav {
+    gap: 6px;
+    margin-right: -12px;
+  }
+
+  .game-shell.notebook-tabs-left .nav-item {
+    border-left-width: 4px !important;
+    padding: 8px 11px;
+    letter-spacing: .02em;
+  }
+
+  .game-shell.notebook-tabs-left .nav-item::after {
+    width: 13px;
+    right: -7px;
+  }
+
+  .game-shell.notebook-tabs-left .main-content {
+    padding: 22px 0 22px 22px !important;
+  }
+
+  .hero-card {
+    align-items: stretch;
+  }
+
+  .hero-score {
+    width: 88px;
+    height: 88px;
+  }
+
+  .lineup-layout {
+    grid-template-columns: minmax(250px, 1fr) minmax(390px, 1.35fr);
+  }
+
+  .lineup-bench {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1080px) {
+  .game-shell.notebook-tabs-left {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .game-shell.notebook-tabs-left .sidebar {
+    position: static;
+    height: auto;
+    border-radius: 24px;
+    padding: 18px;
+  }
+
+  .game-shell.notebook-tabs-left .brand {
+    margin-right: 0;
+  }
+
+  .game-shell.notebook-tabs-left .sidebar::before,
+  .game-shell.notebook-tabs-left .nav-item::after {
+    display: none !important;
+  }
+
+  .game-shell.notebook-tabs-left .nav {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    margin: 6px 0 0;
+    padding: 0;
+  }
+
+  .game-shell.notebook-tabs-left .nav::before {
+    grid-column: 1 / -1;
+  }
+
+  .game-shell.notebook-tabs-left .nav-item,
+  .game-shell.notebook-tabs-left .nav-item.active {
+    width: auto !important;
+    min-height: 38px;
+    transform: none !important;
+    text-align: center;
+  }
+
+  .game-shell.notebook-tabs-left .main-content {
+    padding: 22px 0 !important;
+    border-left: 0;
+    border-radius: 22px !important;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar-actions {
+    justify-content: flex-start;
+  }
+
+  .lineup-layout,
+  .mc-v020-grid,
+  .mc-v020-board {
+    grid-template-columns: 1fr !important;
+  }
+
+  .lineup-pitch {
+    min-height: 470px;
+  }
+}
+
+@media (max-width: 760px) {
+  .start-screen.active,
+  .setup-screen.active,
+  .load-screen.active {
+    padding: 16px;
+    align-items: flex-start;
+  }
+
+  .start-card,
+  .setup-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .game-shell.notebook-tabs-left {
+    padding: 8px;
+  }
+
+  .game-shell.notebook-tabs-left .sidebar {
+    padding: 14px;
+  }
+
+  .game-shell.notebook-tabs-left .nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .game-shell.notebook-tabs-left .main-content {
+    padding: 16px 0 !important;
+  }
+
+  .hero-card,
+  .section-header-row,
+  .mc-v020-head,
+  .season-flow-panel,
+  .season-v014-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kpi-grid,
+  .panel-grid,
+  .players-grid,
+  .mc-v020-kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  .lineup-pitch {
+    min-height: 420px;
+  }
+
+  .standings-v023-table,
+  .standings-readable-table,
+  .calendar-table,
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
