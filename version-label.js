@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.44A - Home hierarchy pass";
+const BTM_VISIBLE_UI_VERSION = "V0.44B - Stylesheet consolidation";
 
 (function () {
   function applyVersionLabel() {
@@ -6,7 +6,7 @@ const BTM_VISIBLE_UI_VERSION = "V0.44A - Home hierarchy pass";
     if (footer) footer.textContent = BTM_VISIBLE_UI_VERSION;
 
     const homeFooter = document.querySelector(".home-footer p");
-    if (homeFooter) homeFooter.textContent = "Private build · V0.44A";
+    if (homeFooter) homeFooter.textContent = "Private build · V0.44B";
   }
 
   if (typeof window.btmRegisterRender === "function") window.btmRegisterRender("version-label", applyVersionLabel);
