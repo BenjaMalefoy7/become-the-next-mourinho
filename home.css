@@ -1,4 +1,4 @@
-/* V0.44E — Contract focal pass */
+/* V0.44F — Contract document header treatment */
 
 .start-screen {
   min-height: 100vh;
@@ -92,10 +92,33 @@
 }
 
 .home-contract-label {
-  display: inline-block;
-  padding: 0 14px 12px;
-  color: color-mix(in srgb, var(--gold) 88%, var(--text));
-  border-bottom: 1px solid color-mix(in srgb, var(--gold) 34%, transparent);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 36%, transparent);
+  color: transparent;
+  font-size: 0;
+}
+
+.home-contract-label::before {
+  content: "Contrat de manager · Premier League 2025/26";
+  color: color-mix(in srgb, var(--gold) 90%, var(--text));
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.17em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.home-contract-label::after {
+  content: "Réf. BTNM · Saison 1 · Poste vacant";
+  color: color-mix(in srgb, var(--muted) 82%, var(--text));
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .home-actions {
