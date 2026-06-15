@@ -1,14 +1,15 @@
-/* V0.43 — Premium home screen */
+/* V0.43B — Manager Desk Landing */
 
 .start-screen {
   min-height: 100vh;
-  padding: clamp(26px, 4vw, 56px);
+  padding: clamp(18px, 3.5vw, 54px);
   background:
-    radial-gradient(circle at 18% 18%, rgba(46, 216, 128, 0.20), transparent 30%),
-    radial-gradient(circle at 85% 10%, rgba(210, 170, 80, 0.22), transparent 28%),
-    linear-gradient(135deg, #06150d 0%, #0b291b 48%, #ecdfc4 49%, #f1e6cf 100%);
+    radial-gradient(circle at 16% 14%, rgba(224, 174, 71, 0.26), transparent 25%),
+    radial-gradient(circle at 82% 22%, rgba(37, 119, 78, 0.35), transparent 28%),
+    linear-gradient(135deg, #07140e 0%, #092116 42%, #2b1d10 100%);
   display: none;
-  color: #102418;
+  color: #162418;
+  overflow: auto;
 }
 
 .start-screen.active {
@@ -17,221 +18,392 @@
   justify-content: center;
 }
 
-.home-v043 {
-  width: min(1240px, 100%);
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
-  gap: clamp(18px, 3vw, 34px);
-  align-items: stretch;
-}
-
-.home-v043-hero,
-.home-v043-card {
-  border: 1px solid rgba(87, 63, 27, 0.18);
-  box-shadow: 0 26px 70px rgba(7, 18, 11, 0.24);
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-.home-v043-hero {
+.home-desk {
   position: relative;
-  min-height: 620px;
-  padding: clamp(28px, 5vw, 58px);
-  background:
-    linear-gradient(140deg, rgba(255,255,255,0.94), rgba(250,241,221,0.88)),
-    repeating-linear-gradient(-45deg, rgba(22, 98, 63, 0.08) 0 2px, transparent 2px 13px);
+  width: min(1320px, 100%);
+  min-height: min(780px, calc(100vh - 48px));
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(430px, 1.1fr) minmax(270px, 0.72fr);
+  gap: clamp(16px, 2.4vw, 30px);
+  align-items: center;
 }
 
-.home-v043-hero::before {
+.home-desk::before {
   content: "";
   position: absolute;
-  inset: 24px;
-  border: 1px solid rgba(23, 94, 61, 0.16);
-  border-radius: 24px;
+  inset: -20px;
+  border-radius: 38px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 36px 36px;
+  opacity: 0.55;
   pointer-events: none;
 }
 
-.home-v043-kicker {
+.desk-copy,
+.contract-folder,
+.tactical-board {
+  position: relative;
+  z-index: 1;
+}
+
+.desk-copy {
+  color: #f8edd2;
+}
+
+.desk-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px 12px;
+  gap: 10px;
+  padding: 9px 13px;
+  border: 1px solid rgba(231, 186, 86, 0.35);
   border-radius: 999px;
-  background: rgba(20, 96, 61, 0.10);
-  color: #155c3d;
+  background: rgba(231, 186, 86, 0.10);
+  color: #e6c472;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  font-size: 0.74rem;
-  font-weight: 900;
+  font-size: 0.72rem;
+  font-weight: 950;
 }
 
-.home-v043 h1 {
-  position: relative;
-  max-width: 790px;
-  margin: 26px 0 18px;
-  font-size: clamp(3.3rem, 7vw, 6.6rem);
+.desk-copy h1 {
+  margin: 24px 0 16px;
+  font-size: clamp(3rem, 6.6vw, 6.6rem);
   line-height: 0.88;
-  letter-spacing: -0.075em;
-  color: #123d29;
+  letter-spacing: -0.08em;
+  color: #fff6dc;
+  text-wrap: balance;
 }
 
-.home-v043-lead {
-  position: relative;
-  max-width: 670px;
-  color: #3f3a2e;
-  font-size: clamp(1.04rem, 1.5vw, 1.28rem);
-  line-height: 1.6;
+.desk-copy h1 span {
+  color: #d9ad4f;
+  font-family: Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.06em;
+}
+
+.desk-lead {
+  max-width: 470px;
+  color: rgba(255, 246, 220, 0.78);
+  font-size: 1.06rem;
+  line-height: 1.62;
   font-weight: 650;
 }
 
-.home-v043-actions {
+.desk-quote {
+  margin-top: 28px;
+  max-width: 430px;
+  padding: 18px 19px;
+  border-left: 5px solid #bf3330;
+  border-radius: 16px;
+  background: rgba(255, 246, 220, 0.08);
+  color: rgba(255, 246, 220, 0.82);
+  font-family: Georgia, serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.contract-folder {
+  transform: rotate(-1.2deg);
+}
+
+.contract-folder::before {
+  content: "";
+  position: absolute;
+  left: 30px;
+  top: -22px;
+  width: 190px;
+  height: 46px;
+  border-radius: 18px 18px 0 0;
+  background: #d1aa61;
+  box-shadow: inset 0 -12px 22px rgba(93, 58, 22, 0.18);
+}
+
+.contract-paper {
   position: relative;
+  min-height: 620px;
+  padding: clamp(26px, 3vw, 44px);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.88), rgba(250,239,211,0.96)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(31, 62, 44, 0.07) 32px 33px);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.36), inset 0 0 0 1px rgba(95, 66, 27, 0.16);
+  border: 1px solid rgba(102, 71, 31, 0.25);
+}
+
+.contract-paper::after {
+  content: "PRIVATE BUILD";
+  position: absolute;
+  right: 32px;
+  top: 34px;
+  transform: rotate(10deg);
+  padding: 8px 14px;
+  border: 3px solid rgba(169, 43, 38, 0.72);
+  border-radius: 10px;
+  color: rgba(169, 43, 38, 0.78);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+}
+
+.contract-topline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #7a5b2b;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 950;
+}
+
+.contract-seal {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #143f2a;
+  color: #f6d576;
+  box-shadow: inset 0 0 0 3px rgba(246, 213, 118, 0.20);
+}
+
+.contract-paper h2 {
+  margin: 24px 0 8px;
+  color: #143f2a;
+  font-size: clamp(2.2rem, 4.2vw, 4.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.07em;
+}
+
+.contract-paper .subtitle {
+  color: #5b4a34;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.52;
+  max-width: 590px;
+}
+
+.contract-lines {
+  display: grid;
+  gap: 12px;
+  margin: 28px 0;
+}
+
+.contract-line {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px dashed rgba(45, 72, 53, 0.26);
+  color: #193a29;
+  font-weight: 850;
+}
+
+.contract-line span {
+  color: #8a662e;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+.contract-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 30px;
 }
 
-.home-v043-actions .primary-btn,
-.home-v043-actions .secondary-btn {
-  min-height: 52px;
-  padding-inline: 24px;
+.contract-actions .primary-btn,
+.contract-actions .secondary-btn {
+  min-height: 54px;
+  padding-inline: 26px;
   font-size: 1rem;
 }
 
-.home-v043-strips {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.signature-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
   margin-top: 36px;
+  color: #5c4a34;
 }
 
-.home-v043-strip {
-  min-height: 132px;
-  padding: 18px;
-  border-radius: 22px;
-  background: rgba(255, 249, 235, 0.86);
-  border: 1px solid rgba(102, 75, 31, 0.15);
+.signature {
+  min-width: 230px;
+  padding-top: 14px;
+  border-top: 2px solid rgba(43, 61, 44, 0.55);
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 800;
 }
 
-.home-v043-strip span,
-.home-v043-card span {
-  display: inline-flex;
-  margin-bottom: 10px;
-  color: #91682b;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.72rem;
-  font-weight: 900;
+.paperclip {
+  position: absolute;
+  left: -14px;
+  top: 82px;
+  width: 34px;
+  height: 110px;
+  border: 6px solid rgba(40, 72, 52, 0.45);
+  border-left: 0;
+  border-radius: 0 22px 22px 0;
+  transform: rotate(-7deg);
 }
 
-.home-v043-strip strong {
-  display: block;
-  color: #123d29;
-  font-size: 1.08rem;
-  margin-bottom: 8px;
-}
-
-.home-v043-strip p {
-  margin: 0;
-  color: #5d513f;
-  line-height: 1.45;
-  font-weight: 600;
-}
-
-.home-v043-side {
+.tactical-board {
   display: grid;
   gap: 16px;
 }
 
-.home-v043-card {
-  padding: 26px;
-  background: linear-gradient(145deg, rgba(22, 94, 61, 0.95), rgba(6, 30, 19, 0.98));
-  color: #f9efd6;
+.post-it,
+.tactics-card,
+.desk-status {
+  border-radius: 24px;
+  box-shadow: 0 24px 58px rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.10);
 }
 
-.home-v043-card.light {
-  background: rgba(255, 248, 232, 0.94);
-  color: #143723;
-}
-
-.home-v043-card h2,
-.home-v043-card h3 {
-  margin: 0 0 12px;
-  color: inherit;
-  letter-spacing: -0.035em;
-}
-
-.home-v043-card p {
-  margin: 0;
-  color: inherit;
-  opacity: 0.86;
-  line-height: 1.52;
-  font-weight: 620;
-}
-
-.home-v043-plan {
-  display: grid;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.home-v043-plan div {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+.post-it {
+  padding: 20px;
+  background: #f7da80;
+  color: #3d2a13;
+  transform: rotate(2deg);
   font-weight: 800;
 }
 
-.home-v043-card.light .home-v043-plan div {
-  background: rgba(23, 94, 61, 0.07);
-  border-color: rgba(23, 94, 61, 0.12);
+.post-it span,
+.desk-status span {
+  display: block;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 950;
+  opacity: 0.78;
 }
 
-.home-v043-note {
+.post-it p {
+  margin: 0;
+  line-height: 1.42;
+}
+
+.tactics-card {
   position: relative;
-  margin-top: 36px;
-  max-width: 620px;
-  padding: 18px 20px;
-  border-left: 5px solid #9b2e2b;
-  border-radius: 16px;
-  background: rgba(255, 247, 228, 0.92);
-  color: #4d3825;
-  font-family: Georgia, serif;
-  font-style: italic;
-  font-weight: 700;
+  min-height: 330px;
+  padding: 24px;
+  background:
+    linear-gradient(135deg, rgba(12, 58, 37, 0.96), rgba(4, 27, 17, 0.98));
+  color: #eaf6df;
+  overflow: hidden;
+}
+
+.tactics-card::before {
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border: 2px solid rgba(234, 246, 223, 0.18);
+  border-radius: 18px;
+}
+
+.tactics-card::after {
+  content: "";
+  position: absolute;
+  inset: 80px 34px 70px;
+  border-top: 2px dashed rgba(234, 246, 223, 0.20);
+  border-bottom: 2px dashed rgba(234, 246, 223, 0.20);
+}
+
+.tactics-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 12px;
+  color: #f6d576;
+}
+
+.tactic-dots {
+  position: relative;
+  z-index: 1;
+  height: 220px;
+}
+
+.tactic-dot {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eaf6df;
+  color: #103c28;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+}
+
+.tactic-dot:nth-child(1) { left: 44%; bottom: 8%; }
+.tactic-dot:nth-child(2) { left: 18%; bottom: 34%; }
+.tactic-dot:nth-child(3) { right: 18%; bottom: 34%; }
+.tactic-dot:nth-child(4) { left: 35%; top: 34%; }
+.tactic-dot:nth-child(5) { right: 35%; top: 34%; }
+.tactic-dot:nth-child(6) { left: 45%; top: 9%; background: #f6d576; }
+
+.desk-status {
+  padding: 22px;
+  background: rgba(255, 246, 220, 0.92);
+  color: #143723;
+}
+
+.desk-status strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.15rem;
+}
+
+.desk-status p {
+  margin: 0;
+  color: #5d513f;
+  line-height: 1.48;
+  font-weight: 650;
 }
 
 @media (max-width: 1180px) {
-  .home-v043 {
+  .home-desk {
     grid-template-columns: 1fr;
-  }
-  .home-v043-hero {
     min-height: auto;
   }
-  .home-v043-side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .contract-folder {
+    order: -1;
+    transform: rotate(0);
+  }
+  .contract-paper {
+    min-height: auto;
+  }
+  .tactical-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tactics-card {
+    min-height: 260px;
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 780px) {
   .start-screen {
-    padding: 18px;
+    padding: 16px;
   }
-  .home-v043-strips,
-  .home-v043-side {
+  .contract-line {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .contract-actions .primary-btn,
+  .contract-actions .secondary-btn {
+    width: 100%;
+  }
+  .tactical-board {
     grid-template-columns: 1fr;
   }
-  .home-v043 h1 {
-    font-size: clamp(2.65rem, 13vw, 4.2rem);
-  }
-  .home-v043-actions .primary-btn,
-  .home-v043-actions .secondary-btn {
-    width: 100%;
+  .signature-row {
+    align-items: start;
+    flex-direction: column;
   }
 }
