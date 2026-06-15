@@ -1,4 +1,4 @@
-/* V0.44F — Contract lamp and document depth treatments */
+/* V0.44G — Contract board seal treatment */
 
 .start-screen {
   min-height: 100vh;
@@ -106,6 +106,31 @@
   background: radial-gradient(ellipse at 50% 12%, color-mix(in srgb, var(--gold) 24%, transparent), transparent 70%);
   filter: blur(8px);
   opacity: 0.72;
+  pointer-events: none;
+}
+
+.home-contract::after {
+  content: "Board - Poste Vacant";
+  position: absolute;
+  z-index: 1;
+  top: clamp(18px, 3vw, 28px);
+  right: clamp(18px, 3vw, 30px);
+  transform: rotate(4deg);
+  padding: 9px 13px;
+  border: 1px solid color-mix(in srgb, var(--gold) 62%, var(--line));
+  outline: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
+  outline-offset: -4px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--panel-light) 72%, var(--bg));
+  color: color-mix(in srgb, var(--gold) 90%, var(--text));
+  box-shadow:
+    0 14px 30px color-mix(in srgb, var(--bg) 58%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 10%, transparent);
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  line-height: 1.15;
+  text-transform: uppercase;
   pointer-events: none;
 }
 
@@ -247,6 +272,15 @@
 @media (max-width: 600px) {
   .start-screen {
     padding: 22px;
+  }
+
+  .home-contract::after {
+    top: 14px;
+    right: 14px;
+    max-width: 118px;
+    padding: 8px 10px;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
   }
 
   .home-actions {
