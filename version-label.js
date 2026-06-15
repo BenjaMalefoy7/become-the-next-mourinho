@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.43C - Left intro readability";
+const BTM_VISIBLE_UI_VERSION = "V0.43D - Desk details polish";
 (function () {
   function ensureLandingStyle() {
     if (document.getElementById("btm-v043c-style")) return;
