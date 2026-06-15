@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.42 — Dashboard manager";
+const BTM_VISIBLE_UI_VERSION = "V0.43 — Accueil premium";
 (function () {
   function applyVersionLabel() {
     const footer = document.querySelector(".sidebar-footer");
