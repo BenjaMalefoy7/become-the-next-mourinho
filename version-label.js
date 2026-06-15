@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.43G - Desk balance pass";
+const BTM_VISIBLE_UI_VERSION = "V0.43H - Outer desk balance pass";
 (function () {
   function ensureLandingStyle() {
     if (document.getElementById("btm-v043c-style")) return;
