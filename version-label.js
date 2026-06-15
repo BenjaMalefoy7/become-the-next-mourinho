@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.43E - Desk layout cleanup";
+const BTM_VISIBLE_UI_VERSION = "V0.43F - Desk overlap hard fix";
 (function () {
   function ensureLandingStyle() {
     if (document.getElementById("btm-v043c-style")) return;
