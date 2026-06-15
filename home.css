@@ -1,4 +1,4 @@
-/* V0.44F — Contract document header treatment */
+/* V0.44F — Contract lamp and document depth treatments */
 
 .start-screen {
   min-height: 100vh;
@@ -74,21 +74,39 @@
 }
 
 .home-contract {
+  position: relative;
+  isolation: isolate;
   padding: clamp(32px, 5.4vw, 52px);
   border: 1px solid color-mix(in srgb, var(--gold) 68%, var(--line));
   border-radius: var(--radius-lg);
   background:
     linear-gradient(180deg,
-      color-mix(in srgb, var(--panel-light) 96%, var(--gold) 7%) 0%,
-      color-mix(in srgb, var(--panel) 96%, var(--bg)) 55%,
-      color-mix(in srgb, var(--panel) 88%, var(--bg)) 100%);
+      color-mix(in srgb, var(--panel-light) 94%, var(--gold) 12%) 0%,
+      color-mix(in srgb, var(--panel-light) 82%, var(--panel)) 48%,
+      color-mix(in srgb, var(--panel) 86%, var(--bg)) 100%);
   box-shadow:
-    var(--shadow),
-    0 28px 76px color-mix(in srgb, var(--gold) 10%, transparent),
+    0 42px 92px color-mix(in srgb, var(--bg) 82%, transparent),
+    0 22px 48px color-mix(in srgb, var(--gold) 10%, transparent),
     0 0 0 1px color-mix(in srgb, var(--gold) 16%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--text) 12%, transparent),
-    inset 0 -1px 0 color-mix(in srgb, var(--bg) 50%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--text) 14%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--bg) 48%, transparent);
   text-align: center;
+}
+
+.home-contract::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: clamp(-62px, -7vw, -40px);
+  left: 50%;
+  width: min(118%, 760px);
+  height: clamp(130px, 19vw, 190px);
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(ellipse at 50% 12%, color-mix(in srgb, var(--gold) 24%, transparent), transparent 70%);
+  filter: blur(8px);
+  opacity: 0.72;
+  pointer-events: none;
 }
 
 .home-contract-label {
@@ -138,7 +156,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 0 10px;
-  background: color-mix(in srgb, var(--panel) 88%, var(--bg));
+  background: color-mix(in srgb, var(--panel-light) 78%, var(--panel));
   color: color-mix(in srgb, var(--muted) 78%, var(--text));
   font-size: 0.62rem;
   font-weight: 900;
