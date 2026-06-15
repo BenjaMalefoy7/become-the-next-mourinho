@@ -1,4 +1,4 @@
-const BTM_VISIBLE_UI_VERSION = "V0.43 — Accueil premium";
+const BTM_VISIBLE_UI_VERSION = "V0.43B — Manager Desk Landing";
 (function () {
   function applyVersionLabel() {
     const footer = document.querySelector(".sidebar-footer");
