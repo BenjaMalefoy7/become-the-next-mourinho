@@ -1,6 +1,6 @@
 // =====================================================================
 // Become the next Mourinho — Generated name quality
-// V0.45J-bis: post-process generated squads to avoid visible name repeats.
+// V0.45J-fix: post-process generated squads with nationality-safe names.
 // =====================================================================
 
 (function initGeneratedNameQuality() {
@@ -16,80 +16,100 @@
   }
 
   const LAST_NAME_LIMIT_PER_SQUAD = 2;
-  const NAME_ATTEMPTS = 90;
+  const NAME_ATTEMPTS = 120;
   const FALLBACK_INITIALS = ["A","B","C","D","E","F","G","H","J","K","L","M","N","P","R","S","T","V"];
 
   const STYLE = {
     England: {
-      first: ["Jack","Harry","George","Oliver","Charlie","Tom","Jacob","Alfie","Lewis","Mason","Callum","Ryan","Reece","Ollie","Dexter","Marcus","Archie","Jude","Ethan","Noah","Theo","Finley","Harvey","Riley","Bobby","Freddie","Oscar","Kian","Morgan","Jamie"],
-      prefix: ["Ash","Brook","West","Hart","Crow","Ell","Fair","Whit","Oak","Stone","Bram","Wood","Hal","Brid","Kings"],
-      suffix: ["ford","ley","ton","wood","well","son","field","brook","shaw","worth","ham","ridge","more","croft","den"]
+      first: ["Jack","Harry","George","Oliver","Charlie","Tom","Jacob","Alfie","Lewis","Mason","Callum","Ryan","Reece","Ollie","Dexter","Marcus","Archie","Jude","Ethan","Noah","Theo","Finley","Harvey","Riley","Bobby","Freddie","Oscar","Kian","Morgan","Jamie","Declan","Curtis","Jadon","Cole","Ben","Conor","Bukayo","Trent","Kyle","Jordan"],
+      last: ["Smith","Walker","Carter","Mills","Hughes","Turner","Reid","Ward","Cooper","Bennett","Hayes","Shaw","Knight","Palmer","Webb","Rowe","Anderson","Phillips","Taylor","Johnson","Thompson","Roberts","Green","Wood","Moore","King","Henderson","Foster","Bailey","Watkins","Westwood","Ashford","Hartley","Bramwell","Fairfield","Whitmore","Stonebridge","Crowley","Oakley","Kingsley"]
     },
     France: {
-      first: ["Lucas","Hugo","Théo","Nathan","Enzo","Maxime","Antoine","Mathis","Clément","Romain","Léo","Adrien","Florian","Kylian","Ousmane","Aurélien","Jules","Evan","Noé","Baptiste","Sacha","Nolan","Malo","Quentin","Yanis","Ilan","Eliott","Axel","Maël","Amine"],
-      prefix: ["Bel","Mont","Val","Mar","Du","Ler","Char","Gau","Riv","Bois","Ren","Fau","Mer","Lau","Cor"],
-      suffix: ["mont","bert","reau","nier","val","court","eau","ard","in","ot","ier","el","and","on","et"]
+      first: ["Lucas","Hugo","Théo","Nathan","Enzo","Maxime","Antoine","Mathis","Clément","Romain","Léo","Adrien","Florian","Kylian","Ousmane","Aurélien","Jules","Evan","Noé","Baptiste","Sacha","Nolan","Malo","Quentin","Yanis","Ilan","Eliott","Axel","Maël","Amine","Nassim","Ibrahim","Warren","Eduardo","Moussa","Malik","Rayan","Noam","Mathéo","Youssef"],
+      last: ["Martin","Bernard","Dubois","Moreau","Laurent","Lefebvre","Girard","Faure","Rousseau","Mercier","Garnier","Chevalier","Renard","Camara","Diallo","Lemoine","Petit","Blanc","Gauthier","Perrin","Marchand","Legrand","Benoît","Boyer","Guerin","Masson","Dumont","Leroy","Fontaine","Barbier","Traoré","Konaté","Fofana","Diaby","Sissoko","Bamba","Kouamé","Mendy","Diarra","Toure"]
     },
     Spain: {
-      first: ["Sergio","Carlos","Javier","Pablo","Álvaro","Marco","Iker","Rubén","Hugo","Diego","Adrián","Mateo","Nico","Gerard","Dani","Pau","Alejandro","Iván","Jorge","Mario","Unai","Ferran","Álex","Raúl","Jaime","Óscar","Marcos","Miguel","Aitor","Mikel"],
-      prefix: ["Gar","Nav","Sol","Her","Var","Cast","Mol","Ser","Vid","Ros","Mar","Cal","Cam","Del","Rub"],
-      suffix: ["cía","ez","ero","ano","ales","osa","ero","és","ino","era","ado","illo","era","ano","al"]
+      first: ["Sergio","Carlos","Javier","Pablo","Álvaro","Marco","Iker","Rubén","Hugo","Diego","Adrián","Mateo","Nico","Gerard","Dani","Pau","Alejandro","Iván","Jorge","Mario","Unai","Ferran","Álex","Raúl","Jaime","Óscar","Marcos","Miguel","Aitor","Mikel","Gavi","Pedri","Lamine","Ansu","Yeremy","Fermín","Rodri","Ander","Asier","Isco"],
+      last: ["García","Martínez","López","Sánchez","Romero","Torres","Ramos","Navarro","Molina","Herrera","Vargas","Castro","Iglesias","Serra","Vidal","Soler","Moreno","Ruiz","Jiménez","Hernández","Ortega","Delgado","Cabrera","Campos","Reyes","Aguilar","Santos","Peña","Vega","Cano","Calvo","Rubio","Prieto","Pascual","Arias","Rojas","Serrano","Méndez","Gallego","Cortés"]
     },
     Portugal: {
-      first: ["João","Diogo","Rúben","Bruno","Gonçalo","Tiago","Rafael","André","Nuno","Fábio","Pedro","Bernardo","Henrique","Tomás","Dinis","Martim","Afonso","Guilherme","Miguel","Rodrigo","Duarte","Renato","Francisco","Vasco","Leandro","Hugo","Ivo","Rui","Xavier","David"],
-      prefix: ["Sil","Fer","Cost","Per","Olive","Carv","Gom","Lop","Mar","Fon","Pint","Nev","Card","Mor","Teix"],
-      suffix: ["va","eira","a","es","ira","alho","es","es","ques","seca","o","es","oso","eira","eiro"]
+      first: ["João","Diogo","Rúben","Bruno","Gonçalo","Tiago","Rafael","André","Nuno","Fábio","Pedro","Bernardo","Henrique","Tomás","Dinis","Martim","Afonso","Guilherme","Miguel","Rodrigo","Duarte","Renato","Francisco","Vasco","Leandro","Hugo","Ivo","Rui","Xavier","David","Vitinha","Cristiano","Otávio","Rúben","Jota","Trincão","Matheus","Gonçalo","Nélson","Pepe"],
+      last: ["Silva","Santos","Ferreira","Costa","Pereira","Oliveira","Carvalho","Gomes","Lopes","Marques","Fonseca","Pinto","Ramos","Neves","Cardoso","Moreira","Teixeira","Mendes","Nunes","Sousa","Vieira","Correia","Rocha","Monteiro","Barros","Moura","Faria","Leite","Coelho","Amorim","Guerreiro","Cancelo","Dalot","Leão","Palhinha","Vitinha","Jota","Trincão","Semedo","Patrício"]
     },
     Brazil: {
-      first: ["Gabriel","Lucas","Matheus","Bruno","Rodrigo","Vinícius","Pedro","Thiago","Felipe","Caio","Raphael","Éder","Igor","Murilo","Wesley","João","Ruan","Renan","Rafael","Gustavo","Vitor","Luan","Arthur","Henrique","Danilo","Douglas","Allan","Éverton","Marcos","Diego"],
-      prefix: ["Sou","Lim","Cost","Rib","Alm","Bar","Roch","Carv","Gom","Mart","Nas","Arau","Pere","Mel","Duar"],
-      suffix: ["za","a","a","eiro","eida","bosa","a","alho","es","ins","cimento","jo","ira","o","te"]
+      first: ["Gabriel","Lucas","Matheus","Bruno","Rodrigo","Vinícius","Pedro","Thiago","Felipe","Caio","Raphael","Éder","Igor","Murilo","Wesley","João","Ruan","Renan","Rafael","Gustavo","Vitor","Luan","Arthur","Henrique","Danilo","Douglas","Allan","Éverton","Marcos","Diego","Endrick","Neymar","Richarlison","Raphinha","Casemiro","Antony","Éder","Bremer","Yan","Andrey"],
+      last: ["Silva","Souza","Oliveira","Santos","Ferreira","Lima","Costa","Ribeiro","Almeida","Barbosa","Rocha","Carvalho","Gomes","Martins","Nascimento","Araújo","Pereira","Melo","Duarte","Moreira","Fernandes","Castro","Monteiro","Cardoso","Correia","Teixeira","Moura","Cavalcante","Andrade","Machado","Rodrigues","Azevedo","Batista","Campos","Mendes","Nunes","Pires","Vieira","Borges","Tavares"]
     },
     Argentina: {
-      first: ["Lautaro","Julián","Enzo","Alexis","Nicolás","Thiago","Franco","Gonzalo","Emiliano","Cristian","Matías","Facundo","Valentín","Joaquín","Bruno","Agustín","Tomás","Santiago","Juan","Ángel","Leandro","Ezequiel","Lisandro","Ramiro","Luciano","Federico","Nahuel","Alan","Iván","Pablo"],
-      prefix: ["Gon","Rod","Fer","Alv","Rom","Mart","Cor","Mol","Pal","Per","Gim","Qui","Ben","Cab","Mor"],
-      suffix: ["zález","ríguez","nández","arez","ero","ínez","rea","ina","acios","ez","énez","roga","ítez","rera","ales"]
+      first: ["Lautaro","Julián","Enzo","Alexis","Nicolás","Thiago","Franco","Gonzalo","Emiliano","Cristian","Matías","Facundo","Valentín","Joaquín","Bruno","Agustín","Tomás","Santiago","Juan","Ángel","Leandro","Ezequiel","Lisandro","Ramiro","Luciano","Federico","Nahuel","Alan","Iván","Pablo","Lionel","Rodrigo","Exequiel","Giovanni","Paulo","Ángel","Nicolás","Germán","Lucas","Marcos"],
+      last: ["González","Rodríguez","Fernández","Álvarez","Romero","Martínez","Paredes","Acuña","Molina","Correa","Mac Allister","Lo Celso","Otamendi","Palacios","Simeone","Pérez","Giménez","Benítez","Cabrera","Morales","Quinteros","Vega","Rojas","Herrera","Medina","Varela","Arias","Sosa","Funes","Domínguez","Messi","De Paul","Dybala","Di María","López","Montiel","Tagliafico","Almada","Buonanotte","Barco"]
     },
     Netherlands: {
-      first: ["Daan","Sem","Lars","Bram","Tijn","Cody","Frenkie","Jurriën","Xavi","Micky","Teun","Joey","Noa","Quinten","Ryan","Wout","Mats","Jesse","Luuk","Jorrit","Sven","Thijs","Ruben","Mees","Tygo","Niels","Denzel","Steven","Davy","Calvin"],
-      prefix: ["van ","de ","ter ","Bakker","Smit","Meij","Mul","Viss","Koop","Tim","Dum","Reijn","Klaa","Schout","Berg"],
-      suffix: ["Berg","Boer","Vries","Jong","Dijk","er","der","er","mans","ber","stra","ders","sen","en","wijn"]
+      first: ["Daan","Sem","Lars","Bram","Tijn","Cody","Frenkie","Jurriën","Xavi","Micky","Teun","Joey","Noa","Quinten","Ryan","Wout","Mats","Jesse","Luuk","Jorrit","Sven","Thijs","Ruben","Mees","Tygo","Niels","Denzel","Steven","Davy","Calvin","Tijjani","Brian","Justin","Jurrien","Jeremie","Memphis","Matthijs","Daley","Quincy","Kenneth"],
+      last: ["de Jong","van Dijk","Bakker","de Vries","Janssen","Visser","Smit","Meijer","Mulder","de Boer","van den Berg","Koopmans","Timber","Dumfries","Gakpo","Reijnders","Klaassen","Schouten","Bergwijn","Blind","Simons","Frimpong","Gravenberch","de Ligt","Aké","Malen","Depay","Bijlow","Veerman","Weghorst","van de Ven","Brobbey","Lang","Wieffer","Hartman","Stengs","Rensch","Veltman","Verbruggen","Zirkzee"]
     },
     Germany: {
-      first: ["Leon","Florian","Jamal","Niclas","Kai","Pascal","Robin","Jonas","Felix","Maximilian","Lukas","Marvin","Nico","Tim","Julian","David","Timo","Serge","Karim","Anton","Marco","Kevin","Emre","Joshua","Leroy","Dennis","Moritz","Niklas","Jonathan","Mats"],
-      prefix: ["Müll","Schm","Wagn","Fisch","Web","Beck","Hof","Koch","Rich","Klein","Wolf","Schäf","Brand","Kell","Vog"],
-      suffix: ["er","idt","er","er","er","er","mann","er","ter","er","gang","er","t","er","el"]
+      first: ["Leon","Florian","Jamal","Niclas","Kai","Pascal","Robin","Jonas","Felix","Maximilian","Lukas","Marvin","Nico","Tim","Julian","David","Timo","Serge","Karim","Anton","Marco","Kevin","Emre","Joshua","Leroy","Dennis","Moritz","Niklas","Jonathan","Mats","Ilkay","Toni","Thomas","Manuel","Antonio","Rüdiger","Florian","Robert","Benjamin","Youssoufa"],
+      last: ["Müller","Schmidt","Wagner","Fischer","Weber","Becker","Hofmann","Koch","Richter","Klein","Wolf","Schäfer","Brandt","Gündogan","Havertz","Wirtz","Neuer","Rüdiger","Kimmich","Sané","Musiala","Goretzka","Tah","Raum","Can","Adeyemi","Gnabry","Füllkrug","Schlotterbeck","Henrichs","Kroos","Reus","Werner","Süle","Hummels","Anton","Undav","Baumann","Nmecha","Kobel"]
     },
     Belgium: {
-      first: ["Romelu","Youri","Leandro","Charles","Amadou","Dodi","Arthur","Jérémy","Lois","Maxim","Senne","Aster","Roméo","Wout","Loïs","Orel","Thibaut","Kevin","Michy","Yari","Alexis","Zeno","Johan","Noah","Mats","Théo","Daan","Eliot","Sacha","Nicolas"],
-      prefix: ["Van ","De ","Ver","Mech","Brug","Ant","Liev","Cla","Wes","Bod","Hey","Dend","Sae","Deb","Vran"],
-      suffix: ["aken","brugge","meeren","ele","sens","ers","ens","es","ael","art","en","er","mans","ast","ckx"]
+      first: ["Romelu","Youri","Leandro","Charles","Amadou","Dodi","Arthur","Jérémy","Lois","Maxim","Senne","Aster","Roméo","Wout","Loïs","Orel","Thibaut","Kevin","Michy","Yari","Alexis","Zeno","Johan","Noah","Mats","Théo","Daan","Eliot","Sacha","Nicolas","Eden","Axel","Thomas","Jan","Toby","Dries","Hans","Johan","Koen","Arnaud"],
+      last: ["Lukaku","Tielemans","Trossard","De Ketelaere","Onana","Lukebakio","Theate","Doku","Openda","De Cuyper","Lavia","Vanaken","Mangala","Faes","Carrasco","Vermeeren","Courtois","De Bruyne","Batshuayi","Verschaeren","Saelemaekers","Debast","Vranckx","Vertonghen","Alderweireld","Mertens","Witsel","Meunier","Castagne","Origi","Van den Broeck","Peeters","Janssens","Claes","Verbruggen","Willems","Maes","Goossens","Lambrechts","Vandenberghe"]
     },
     Italy: {
-      first: ["Marco","Lorenzo","Alessandro","Federico","Davide","Nicolò","Matteo","Riccardo","Gianluca","Sandro","Giacomo","Samuele","Andrea","Cesare","Francesco","Leonardo","Tommaso","Pietro","Giovanni","Manuel","Domenico","Ciro","Nicola","Luca","Edoardo","Filippo","Cristian","Mattia","Gabriele","Daniele"],
-      prefix: ["Ross","Ferr","Espos","Bian","Roman","Col","Grec","Cont","Manc","Bare","Ton","Locat","Bast","Ric","Pell"],
-      suffix: ["i","ari","ito","chi","o","ombo","o","i","ini","lla","ali","elli","oni","ci","ini"]
+      first: ["Marco","Lorenzo","Alessandro","Federico","Davide","Nicolò","Matteo","Riccardo","Gianluca","Sandro","Giacomo","Samuele","Andrea","Cesare","Francesco","Leonardo","Tommaso","Pietro","Giovanni","Manuel","Domenico","Ciro","Nicola","Luca","Edoardo","Filippo","Cristian","Mattia","Gabriele","Daniele","Gianluigi","Giorgio","Claudio","Federico","Alessio","Moise","Rafael","Stefano","Gennaro","Salvatore"],
+      last: ["Rossi","Ferrari","Esposito","Bianchi","Romano","Colombo","Greco","Conti","De Luca","Mancini","Barella","Tonali","Scamacca","Locatelli","Bastoni","Frattesi","Donnarumma","Chiesa","Calafiori","Dimarco","Di Lorenzo","Jorginho","Pellegrini","Raspadori","Retegui","Buongiorno","Ricci","Udogie","Kean","Orsolini","Acerbi","Berardi","Spinazzola","Zaniolo","Verratti","Meret","Vicario","Politano","Cambiaso","Gatti"]
     },
     Nigeria: {
-      first: ["Victor","Samuel","Ademola","Joe","Calvin","Alex","Kelechi","Taiwo","Frank","Bright","Paul","Cyriel","Raphael","Gift","Emmanuel","Tolu","Moses","Chidera","Ibrahim","Wilfred","Terem","Umar","Sadiq","Kenneth","Zaidu","Fisayo","Nathan","Adebayo","Ola","Daniel"],
-      prefix: ["Osi","Chu","Iwo","Awo","Ony","Aina","Sanu","Ndi","Eko","Aja","Mof","Oka","Uch","Balo","Ade"],
-      suffix: ["men","weze","bi","niyi","eka","la","si","di","ng","yi","fi","for","e","gun","goke"]
+      first: ["Victor","Samuel","Ademola","Joe","Calvin","Alex","Kelechi","Taiwo","Frank","Bright","Paul","Cyriel","Raphael","Gift","Emmanuel","Tolu","Moses","Chidera","Ibrahim","Wilfred","Terem","Umar","Sadiq","Kenneth","Zaidu","Fisayo","Nathan","Adebayo","Ola","Daniel","Victor","Boniface","Maduka","Semi","William","Kevin","Bassey","Aribo","Iheanacho","Ndidi"],
+      last: ["Osimhen","Chukwueze","Lookman","Aribo","Bassey","Iwobi","Iheanacho","Awoniyi","Onyeka","Dele","Aina","Simon","Onuachu","Sanusi","Ndidi","Boniface","Okafor","Uche","Balogun","Adebayo","Ogunleye","Eze","Okonkwo","Nwosu","Afolayan","Akindele","Obasi","Ibrahim","Salisu","Musa","Okoye","Ajayi","Ekong","Dessers","Onyedika","Moffi","Sadiq","Dennis","Omeruo","Nwabali"]
     },
     Senegal: {
-      first: ["Sadio","Idrissa","Ismaïla","Nicolas","Boulaye","Pape","Habib","Krépin","Cheikhou","Iliman","Lamine","Abdou","Moussa","Formose","Nampalys","Pathé","Kalidou","Édouard","Mamadou","Bamba","Youssouf","Aliou","Samba","Moustapha","Arouna","Ibrahima","Sidy","Souleymane","Badou","Oumar"],
-      prefix: ["Man","Gue","Sar","Di","San","Dial","Diat","Kou","Ndi","Cam","Men","Cis","Jak","Fay","Sow"],
-      suffix: ["é","ye","r","a","é","lo","ta","yaté","aye","ara","dy","s","obs","e",""]
+      first: ["Sadio","Idrissa","Ismaïla","Nicolas","Boulaye","Pape","Habib","Krépin","Cheikhou","Iliman","Lamine","Abdou","Moussa","Formose","Nampalys","Pathé","Kalidou","Édouard","Mamadou","Bamba","Youssouf","Aliou","Samba","Moustapha","Arouna","Ibrahima","Sidy","Souleymane","Badou","Oumar","Pape","Mikayil","Famara","Mame","Saliou","Abdoulaye","Babacar","El Hadji","Moussa","Seny"],
+      last: ["Mané","Gueye","Sarr","Jackson","Dia","Sané","Diallo","Diatta","Kouyaté","Ndiaye","Camara","Mendy","Niakhaté","Ciss","Jakobs","Diao","Koulibaly","Gomis","Faye","Sow","Diouf","Sakho","Ba","Fall","Seck","Diagne","Dieng","Sy","Ndao","Mbaye","Cissé","Samb","Wade","Niane","Badiane","Ndour","Gassama","Thiam","Sene","Toure"]
     },
     Norway: {
-      first: ["Erling","Martin","Alexander","Sander","Fredrik","Kristian","Patrick","Leo","Ola","Jens","Andreas","Emil","Oscar","Mathias","Birk","Antonio","Magnus","Marius","Tobias","Henrik","Jonas","Sivert","Hugo","Markus","Elias","Noah","Lasse","Simen","Aron","Oliver"],
-      prefix: ["Haal","Øde","Sør","Berg","Aurs","Thor","Nus","Lar","Ryer","Haug","Sol","Vet","Schjel","Nils","Hov"],
-      suffix: ["and","gaard","loth","e","nes","vedt","a","sen","son","e","bakken","lesen","derup","en","land"]
+      first: ["Erling","Martin","Alexander","Sander","Fredrik","Kristian","Patrick","Leo","Ola","Jens","Andreas","Emil","Oscar","Mathias","Birk","Antonio","Magnus","Marius","Tobias","Henrik","Jonas","Sivert","Hugo","Markus","Elias","Noah","Lasse","Simen","Aron","Oliver","Jørgen","Kasper","Håkon","Morten","Sondre","Vetle","Eirik","Thomas","Kristoffer","Ludvig"],
+      last: ["Haaland","Ødegaard","Sørloth","Berge","Aursnes","Thorstvedt","Bobb","Nusa","Larsen","Ryerson","Hauge","Østigård","Solbakken","Vetlesen","Schjelderup","Nilsen","Hansen","Johansen","Olsen","Pedersen","Andersen","Kristiansen","Berg","Dahl","Hovland","Knudsen","Eide","Myhre","Bakke","Strand","Meling","Normann","Selvik","Børkeeiet","Gregersen","Sahraoui","Bjørkan","Hanche-Olsen","Askildsen","Solheim"]
     },
     Denmark: {
-      first: ["Mikkel","Rasmus","Christian","Andreas","Jonas","Joakim","Pierre","Victor","Morten","Anders","Thomas","Mathias","Gustav","Oliver","Frederik","Kasper","Nicolai","Emil","Magnus","Simon","Jacob","Mads","Daniel","Noah","William","Malthe","Oscar","Lasse","Valdemar","Tobias"],
-      prefix: ["Hjul","Høj","Erik","Wind","Mæh","Krist","And","Dam","Nør","Isak","Dorg","Vest","Schm","Jens","Skov"],
-      suffix: ["mand","lund","sen","er","le","ensen","ersen","gaard","gaard","sen","u","ergaard","eichel","en",""]
+      first: ["Mikkel","Rasmus","Christian","Andreas","Jonas","Joakim","Pierre","Victor","Morten","Anders","Thomas","Mathias","Gustav","Oliver","Frederik","Kasper","Nicolai","Emil","Magnus","Simon","Jacob","Mads","Daniel","Noah","William","Malthe","Oscar","Lasse","Valdemar","Tobias","Jesper","Kasper","Joachim","Yussuf","Philip","Mads","Martin","Jannik","Daniel","Jens"],
+      last: ["Hjulmand","Højlund","Eriksen","Olsen","Wind","Mæhle","Højbjerg","Kristensen","Andersen","Damsgaard","Bah","Nørgaard","Isaksen","Dorgu","Vestergaard","Schmeichel","Jensen","Nielsen","Hansen","Pedersen","Madsen","Sørensen","Poulsen","Christensen","Larsen","Kjær","Dolberg","Skov","Braithwaite","Delaney","Lindstrøm","Nelsson","Wass","Stryger","Rønnow","Skov Olsen","Daramy","Billing","Dreyer","Falk"]
     }
+  };
+
+  const CODE_TO_STYLE = {
+    ENG: "England", GBR: "England",
+    FRA: "France",
+    ESP: "Spain",
+    PRT: "Portugal", POR: "Portugal",
+    BRA: "Brazil",
+    ARG: "Argentina",
+    NLD: "Netherlands", NED: "Netherlands",
+    DEU: "Germany", GER: "Germany",
+    BEL: "Belgium",
+    ITA: "Italy",
+    NGA: "Nigeria",
+    SEN: "Senegal",
+    NOR: "Norway",
+    DNK: "Denmark", DEN: "Denmark"
+  };
+
+  const LABEL_TO_STYLE = {
+    england: "England", english: "England", angleterre: "England",
+    france: "France", french: "France", francais: "France", français: "France",
+    spain: "Spain", spanish: "Spain", espagne: "Spain",
+    portugal: "Portugal", portuguese: "Portugal", portugais: "Portugal",
+    brazil: "Brazil", brasil: "Brazil", brazilian: "Brazil", bresil: "Brazil", brésil: "Brazil",
+    argentina: "Argentina", argentine: "Argentina", argentinian: "Argentina",
+    netherlands: "Netherlands", dutch: "Netherlands", paysbas: "Netherlands", pays_bas: "Netherlands",
+    germany: "Germany", german: "Germany", allemagne: "Germany",
+    belgium: "Belgium", belgian: "Belgium", belgique: "Belgium",
+    italy: "Italy", italian: "Italy", italie: "Italy",
+    nigeria: "Nigeria", nigerian: "Nigeria",
+    senegal: "Senegal", sénégal: "Senegal", senegalese: "Senegal",
+    norway: "Norway", norwegian: "Norway", norvege: "Norway", norvège: "Norway",
+    denmark: "Denmark", danish: "Denmark", danemark: "Denmark"
   };
 
   function hashNameSeed(club, difficulty, squad) {
@@ -127,12 +147,39 @@
     return String(value || "").trim().toLowerCase();
   }
 
-  function getStyle(nationality) {
-    return STYLE[nationality] || STYLE.England;
+  function normalizeLabel(value) {
+    return normalizeKey(value)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
   }
 
-  function buildLastName(rng, style) {
-    return `${pickFrom(rng, style.prefix)}${pickFrom(rng, style.suffix)}`;
+  function getOriginalNameParts(player) {
+    const raw = String(player.fullName || player.name || player.shortName || "Alex Player").trim();
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return { first: parts[0], last: "Player" };
+    return { first: parts[0], last: parts.slice(1).join(" ") };
+  }
+
+  function getStyle(player) {
+    const code = String(player && player.nationalityCode || "").trim().toUpperCase();
+    if (CODE_TO_STYLE[code] && STYLE[CODE_TO_STYLE[code]]) return STYLE[CODE_TO_STYLE[code]];
+
+    const label = normalizeLabel(player && player.nationality);
+    if (LABEL_TO_STYLE[label] && STYLE[LABEL_TO_STYLE[label]]) return STYLE[LABEL_TO_STYLE[label]];
+
+    return null;
+  }
+
+  function buildLastName(rng, style, player) {
+    if (style && Array.isArray(style.last) && style.last.length) return pickFrom(rng, style.last);
+    return getOriginalNameParts(player).last;
+  }
+
+  function buildFirstName(rng, style, player) {
+    if (style && Array.isArray(style.first) && style.first.length) return pickFrom(rng, style.first);
+    return getOriginalNameParts(player).first;
   }
 
   function isAvailable(registry, fullName, lastName) {
@@ -149,12 +196,12 @@
   }
 
   function buildUniqueName(player, rng, registry) {
-    const style = getStyle(player.nationality);
+    const style = getStyle(player);
     let fallback = null;
 
     for (let attempt = 0; attempt < NAME_ATTEMPTS; attempt += 1) {
-      const first = pickFrom(rng, style.first);
-      const last = buildLastName(rng, style);
+      const first = buildFirstName(rng, style, player);
+      const last = buildLastName(rng, style, player);
       const fullName = `${first} ${last}`;
 
       if (!fallback || !registry.fullNames.has(normalizeKey(fullName))) {
@@ -167,8 +214,8 @@
       }
     }
 
-    const fallbackFirst = fallback ? fallback.first : pickFrom(rng, style.first);
-    const fallbackLast = fallback ? fallback.last : buildLastName(rng, style);
+    const fallbackFirst = fallback ? fallback.first : buildFirstName(rng, style, player);
+    const fallbackLast = fallback ? fallback.last : buildLastName(rng, style, player);
 
     for (let attempt = 0; attempt < FALLBACK_INITIALS.length * 2; attempt += 1) {
       const middle = pickFrom(rng, FALLBACK_INITIALS);
@@ -205,9 +252,10 @@
   };
 
   window.BTM_GENERATED_NAME_QUALITY_META = Object.freeze({
-    version: "0.45J-bis",
+    version: "0.45J-fix",
     lastNameLimitPerSquad: LAST_NAME_LIMIT_PER_SQUAD,
     fullNameDuplicates: "blocked",
-    source: "generated-name-quality"
+    source: "generated-name-quality",
+    fallback: "original-player-name"
   });
 })();
