@@ -1,0 +1,71 @@
+/* V0.46C — Home War Room PNG asset overrides */
+
+.home-start::before,
+.home-start::after {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 14px 18px color-mix(in srgb, var(--bg) 42%, transparent));
+}
+
+.home-start::before {
+  content: "Trouver un 9\A de niveau Europe";
+  background-image: url("assets/home-postit-yellow.png");
+  background-color: transparent;
+}
+
+.home-start::after {
+  content: "Pressing haut\A vestiaire sous contrôle";
+  background-image: url("assets/home-postit-ochre.png");
+  background-color: transparent;
+}
+
+.home-header::after {
+  width: clamp(92px, 10vw, 128px);
+  height: clamp(92px, 10vw, 128px);
+  background: url("assets/home-trophy-gold.png") center / contain no-repeat;
+  -webkit-mask: none;
+  mask: none;
+  filter:
+    drop-shadow(0 0 22px color-mix(in srgb, var(--gold) 42%, transparent))
+    drop-shadow(0 10px 13px color-mix(in srgb, var(--bg) 38%, transparent));
+}
+
+.home-contract {
+  background:
+    url("assets/home-coffee-ring.png") right clamp(14px, 2vw, 24px) bottom clamp(76px, 8vw, 104px) / clamp(112px, 12vw, 168px) auto no-repeat,
+    repeating-linear-gradient(180deg, transparent 0 22px, var(--paper-line) 23px 24px, transparent 25px),
+    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--text) 28%, transparent), transparent 38%),
+    linear-gradient(180deg, var(--paper), var(--paper-deep));
+}
+
+.home-vision::after {
+  content: "";
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  min-height: 120px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: url("assets/home-tactic-sketch.png") center / contain no-repeat;
+  box-shadow: none;
+  opacity: 0.96;
+  color: transparent;
+}
+
+.home-footer::after {
+  content: "build V0.46C";
+}
+
+@media (max-width: 760px) {
+  .home-contract {
+    background-size: clamp(96px, 28vw, 144px) auto, auto, auto, auto;
+  }
+
+  .home-vision::after {
+    min-height: 142px;
+  }
+}
