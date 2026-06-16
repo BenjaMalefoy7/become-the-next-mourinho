@@ -1,4 +1,4 @@
-/* V0.44J — Trophy material pass */
+/* V0.44K — Tactical note material pass */
 
 .start-screen {
   min-height: 100vh;
@@ -209,16 +209,29 @@
   bottom: 18px;
   min-height: 84px;
   padding-top: 58px;
-  border: 2px solid color-mix(in srgb, var(--green) 70%, var(--panel));
-  border-radius: 14px;
+  border: 2px solid color-mix(in srgb, var(--green) 72%, var(--panel));
+  border-radius: 12px;
   background:
-    linear-gradient(90deg, transparent 49%, color-mix(in srgb, var(--green) 40%, transparent) 50%, transparent 51%),
-    radial-gradient(circle at 50% 50%, transparent 0 17px, color-mix(in srgb, var(--green) 45%, transparent) 18px 19px, transparent 20px),
-    linear-gradient(180deg, transparent 49%, color-mix(in srgb, var(--green) 38%, transparent) 50%, transparent 51%);
-  color: color-mix(in srgb, var(--green) 74%, var(--bg));
+    radial-gradient(circle at 21% 66%, color-mix(in srgb, var(--danger) 72%, var(--bg)) 0 3.8px, transparent 4.6px),
+    radial-gradient(circle at 28% 45%, color-mix(in srgb, var(--danger) 72%, var(--bg)) 0 3.8px, transparent 4.6px),
+    radial-gradient(circle at 35% 71%, color-mix(in srgb, var(--danger) 72%, var(--bg)) 0 3.8px, transparent 4.6px),
+    radial-gradient(circle at 42% 51%, color-mix(in srgb, var(--danger) 72%, var(--bg)) 0 3.8px, transparent 4.6px),
+    radial-gradient(circle at 53% 68%, color-mix(in srgb, var(--danger) 72%, var(--bg)) 0 3.8px, transparent 4.6px),
+    radial-gradient(circle at 69% 39%, color-mix(in srgb, var(--panel-light) 76%, var(--bg)) 0 3.4px, transparent 4.2px),
+    radial-gradient(circle at 74% 58%, color-mix(in srgb, var(--panel-light) 76%, var(--bg)) 0 3.4px, transparent 4.2px),
+    radial-gradient(circle at 82% 47%, color-mix(in srgb, var(--panel-light) 76%, var(--bg)) 0 3.4px, transparent 4.2px),
+    linear-gradient(52deg, transparent 0 42%, color-mix(in srgb, var(--green) 50%, transparent) 43% 45%, transparent 46% 100%),
+    repeating-linear-gradient(68deg, transparent 0 11px, color-mix(in srgb, var(--green) 42%, transparent) 12px 16px, transparent 17px 27px),
+    linear-gradient(90deg, transparent 49%, color-mix(in srgb, var(--green) 48%, transparent) 50%, transparent 51%),
+    radial-gradient(circle at 50% 50%, transparent 0 15px, color-mix(in srgb, var(--green) 50%, transparent) 16px 17px, transparent 18px),
+    linear-gradient(180deg, transparent 48%, color-mix(in srgb, var(--green) 44%, transparent) 49% 51%, transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, var(--green) 7%, transparent), transparent);
+  background-blend-mode: normal;
+  color: color-mix(in srgb, var(--green) 82%, var(--bg));
   font-size: 0.76rem;
   font-weight: 950;
   text-align: center;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 20%, transparent);
 }
 
 .home-footer {
