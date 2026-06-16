@@ -1,4 +1,4 @@
-/* V0.46C — Home War Room PNG asset overrides */
+/* V0.46D — Home War Room PNG asset overrides + fluid desktop scaling */
 
 .home-start::before,
 .home-start::after {
@@ -57,7 +57,84 @@
 }
 
 .home-footer::after {
-  content: "build V0.46C";
+  content: "build V0.46D";
+}
+
+@media (min-width: 1180px) and (min-height: 680px) {
+  .start-screen {
+    padding: clamp(18px, 2.4vw, 56px);
+  }
+
+  .home-start {
+    width: min(1660px, calc(100vw - clamp(32px, 5vw, 96px)));
+    min-height: clamp(720px, 88vh, 980px);
+  }
+
+  .home-contract {
+    top: clamp(82px, 13vh, 154px);
+    width: clamp(410px, 28vw, 540px);
+    min-height: clamp(520px, 61vh, 690px);
+    padding: clamp(30px, 3vw, 42px) clamp(30px, 3vw, 42px) clamp(108px, 10vh, 132px);
+  }
+
+  .home-header {
+    top: clamp(58px, 10vh, 112px);
+    left: clamp(54px, 11vw, 240px);
+    width: clamp(222px, 15.2vw, 302px);
+    height: clamp(184px, 17vh, 232px);
+  }
+
+  .home-header::after {
+    width: clamp(102px, 8vw, 142px);
+    height: clamp(102px, 8vw, 142px);
+  }
+
+  .home-start::before {
+    top: clamp(64px, 11vh, 124px);
+    right: clamp(54px, 12vw, 250px);
+    width: clamp(200px, 14vw, 300px);
+    min-height: clamp(136px, 16vh, 178px);
+    padding: clamp(28px, 3vh, 40px) clamp(20px, 2vw, 28px) clamp(18px, 2vh, 26px);
+  }
+
+  .home-start::after {
+    top: clamp(292px, 40vh, 450px);
+    right: clamp(50px, 11.5vw, 246px);
+    width: clamp(204px, 14.5vw, 306px);
+    min-height: clamp(154px, 18vh, 204px);
+    padding: clamp(28px, 3vh, 38px) clamp(20px, 2vw, 30px) clamp(42px, 5vh, 58px);
+  }
+
+  .home-vision {
+    top: clamp(318px, 44vh, 455px);
+    left: clamp(52px, 11vw, 232px);
+    width: clamp(230px, 16vw, 310px);
+    height: clamp(190px, 21vh, 246px);
+  }
+
+  .home-vision::after {
+    min-height: clamp(126px, 14vh, 166px);
+  }
+
+  .home-footer {
+    left: clamp(116px, 13vw, 280px);
+    bottom: clamp(44px, 8vh, 92px);
+    width: clamp(250px, 18vw, 340px);
+    height: clamp(82px, 9vh, 104px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 820px) {
+  .home-start {
+    width: min(1760px, 96vw);
+    min-height: clamp(820px, 90vh, 1040px);
+  }
+
+  .home-contract {
+    top: clamp(102px, 13vh, 172px);
+    width: clamp(500px, 29vw, 580px);
+    min-height: clamp(640px, 63vh, 730px);
+  }
 }
 
 @media (max-width: 760px) {
