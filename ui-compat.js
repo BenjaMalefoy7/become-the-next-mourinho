@@ -1,4 +1,4 @@
-const BTM_UI_COMPAT_VERSION = "0.40C";
+const BTM_UI_COMPAT_VERSION = "0.44G";
 
 (function initUiCompat() {
   if (window.__BTM_UI_COMPAT_LOADED__) return;
@@ -99,6 +99,8 @@ const BTM_UI_COMPAT_VERSION = "0.40C";
     const stadiumName = ($("stadium-input")?.value || "Stade à définir").trim();
     const replacedClubId = $("replace-club-select")?.value || getPremierLeagueClubs()[0]?.id;
     const difficulty = $("difficulty-select")?.value || "outsider";
+    const primaryColor = $("primary-color-input")?.value || "#2ee987";
+    const secondaryColor = $("secondary-color-input")?.value || "#ffffff";
     const replacedClub = typeof getClubById === "function" ? getClubById(replacedClubId) : null;
 
     if (!clubName || !shortName) {
@@ -123,8 +125,8 @@ const BTM_UI_COMPAT_VERSION = "0.40C";
       league: "Premier League",
       reputation: settings.reputation,
       budget: settings.clubBudget,
-      primaryColor: "#2ee987",
-      secondaryColor: "#ffffff",
+      primaryColor,
+      secondaryColor,
       stadiumName,
       isCustom: true
     };
