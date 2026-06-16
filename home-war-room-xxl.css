@@ -1,4 +1,36 @@
-/* V0.46E — XXL desktop scale override for the War Room home */
+/* V0.46F — XXL desktop scale + filled manager contract */
+
+.home-contract::before {
+  content: "Premier League 2025/26 · Réf. BTNM-01 · Saison 1\A\A Art. 1 — Le soussigné prend la direction sportive du club et s'engage à atteindre l'objectif fixé par le conseil.\A\A Art. 2 — Le manager définit l'identité de jeu, le cadre du vestiaire et la ligne de conduite du mercato.\A\A Art. 3 — Chaque décision devra préserver l'équilibre sportif, financier et moral de l'effectif.\A\A Art. 4 — Les résultats seront évalués à chaque journée selon la performance, la cohérence tactique et la progression du groupe.\A\A Clause spéciale — Toute crise médiatique, rumeur de transfert ou perte de contrôle du vestiaire devra être traitée depuis le bureau du manager.";
+  flex: 1 1 auto;
+  margin: clamp(16px, 2vh, 28px) 0 clamp(18px, 2.4vh, 34px);
+  padding: clamp(12px, 1.6vh, 22px) 0 0;
+  font-size: clamp(0.84rem, 0.9vw, 1.02rem);
+  line-height: 1.62;
+}
+
+.home-actions {
+  margin-top: auto;
+  padding-top: clamp(14px, 2vh, 26px);
+  align-self: stretch;
+}
+
+.home-actions::after {
+  order: 1;
+  margin-top: 0;
+  font-size: clamp(1.18rem, 1.5vw, 1.64rem);
+}
+
+.home-actions::before {
+  order: 2;
+  margin-bottom: clamp(14px, 1.8vh, 24px);
+}
+
+.home-actions .primary-btn,
+.home-actions .secondary-btn {
+  order: 3;
+  min-height: clamp(56px, 6vh, 72px);
+}
 
 @media (min-width: 1180px) and (min-height: 680px) {
   .start-screen {
@@ -14,7 +46,11 @@
     top: clamp(34px, 5.8vh, 76px);
     width: clamp(560px, 35vw, 720px);
     min-height: clamp(700px, 80vh, 880px);
-    padding: clamp(36px, 3vw, 52px) clamp(36px, 3vw, 52px) clamp(130px, 11vh, 166px);
+    padding: clamp(36px, 3vw, 52px) clamp(36px, 3vw, 52px) clamp(132px, 12vh, 178px);
+  }
+
+  .home-contract::after {
+    bottom: clamp(24px, 3vh, 42px);
   }
 
   .home-header {
@@ -109,5 +145,5 @@
 }
 
 .home-footer::after {
-  content: "build V0.46E";
+  content: "build V0.46F";
 }
