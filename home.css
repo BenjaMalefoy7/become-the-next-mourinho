@@ -1,4 +1,4 @@
-/* V0.44K — Tactical note material pass */
+/* V0.44L — Coffee stain material pass */
 
 .start-screen {
   min-height: 100vh;
@@ -25,7 +25,8 @@
   --ink: color-mix(in srgb, var(--bg) 92%, var(--panel));
   --wax: color-mix(in srgb, var(--danger) 46%, var(--bg));
   --wax-dark: color-mix(in srgb, var(--danger) 30%, var(--bg));
-  --coffee: color-mix(in srgb, var(--gold) 34%, var(--bg));
+  --coffee: color-mix(in srgb, var(--gold) 28%, var(--bg));
+  --coffee-deep: color-mix(in srgb, var(--gold) 18%, var(--bg));
   position: relative;
   width: min(1160px, 96vw);
   min-height: clamp(650px, 78vh, 790px);
@@ -105,7 +106,10 @@
   transform: rotate(4deg);
   border-radius: 12px;
   background:
-    radial-gradient(ellipse at 72% 84%, transparent 0 20px, color-mix(in srgb, var(--coffee) 62%, transparent) 21px 24px, color-mix(in srgb, var(--coffee) 22%, transparent) 25px 32px, transparent 33px),
+    radial-gradient(ellipse 42px 31px at 78% 91%, transparent 0 17px, color-mix(in srgb, var(--coffee-deep) 72%, transparent) 18px 24px, color-mix(in srgb, var(--coffee) 42%, transparent) 25px 29px, transparent 30px),
+    radial-gradient(ellipse 36px 27px at 80% 92%, transparent 0 15px, color-mix(in srgb, var(--coffee) 36%, transparent) 16px 20px, transparent 21px),
+    radial-gradient(circle at 69% 95%, color-mix(in srgb, var(--coffee-deep) 34%, transparent) 0 4px, transparent 5px),
+    radial-gradient(circle at 87% 86%, color-mix(in srgb, var(--coffee) 32%, transparent) 0 3px, transparent 4px),
     linear-gradient(140deg, color-mix(in srgb, var(--gold) 34%, var(--panel-light)), color-mix(in srgb, var(--gold) 58%, var(--bg)));
   border: 1px solid color-mix(in srgb, var(--gold) 42%, var(--line));
   opacity: 0.96;
