@@ -1,19 +1,29 @@
-const BTM_PLAYER_DB_ENTRYPOINT_VERSION = "0.34";
-const BTM_PLAYER_DATABASE_VERSION = "0.34";
+const BTM_PLAYER_DB_ENTRYPOINT_VERSION = "0.45L";
+const BTM_PLAYER_DATABASE_VERSION = "0.45L";
 
 (function () {
   if (window.__BTM_PLAYER_DB_LOADED__) return;
   window.__BTM_PLAYER_DB_LOADED__ = true;
 
-  const firstNames = ["Adam", "Alex", "André", "Ben", "Daniel", "Diego", "Elias", "Enzo", "Felix", "Hugo", "Isaac", "Ivan", "Jules", "Leo", "Lucas", "Malo", "Mateo", "Milan", "Nico", "Oscar", "Rayan", "Sam", "Theo", "Victor"];
-  const lastNames = ["Araujo", "Bakker", "Costa", "Diallo", "Fernandes", "Garcia", "Hansen", "Ito", "Kovacs", "Lemoine", "Martins", "Moreau", "Novak", "Okafor", "Petrov", "Reed", "Santos", "Silva", "Traore", "Turner", "Varela", "Warren"];
-  const nationalities = ["Angleterre", "France", "Belgique", "Pays-Bas", "Espagne", "Portugal", "Italie", "Allemagne", "Brésil", "Argentine", "Sénégal", "Côte d’Ivoire", "Ghana", "Maroc", "Croatie", "Danemark"];
+  const legacyFirstNames = ["Adam", "Alex", "André", "Ben", "Daniel", "Diego", "Elias", "Enzo", "Felix", "Hugo", "Isaac", "Ivan", "Jules", "Leo", "Lucas", "Malo", "Mateo", "Milan", "Nico", "Oscar", "Rayan", "Sam", "Theo", "Victor"];
+  const legacyLastNames = ["Araujo", "Bakker", "Costa", "Diallo", "Fernandes", "Garcia", "Hansen", "Ito", "Kovacs", "Lemoine", "Martins", "Moreau", "Novak", "Okafor", "Petrov", "Reed", "Santos", "Silva", "Traore", "Turner", "Varela", "Warren"];
+  const legacyNationalities = ["Angleterre", "France", "Belgique", "Pays-Bas", "Espagne", "Portugal", "Italie", "Allemagne", "Brésil", "Argentine", "Sénégal", "Côte d’Ivoire", "Ghana", "Maroc", "Croatie", "Danemark"];
   const positions = ["GK", "DD", "DC", "DG", "MDC", "MC", "MOC", "AD", "AG", "BU"];
 
   function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
   function pick(list) { return list[randomInt(0, list.length - 1)]; }
   function createDbId(prefix) { return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`; }
+
+  function hashSeed(parts) {
+    const text = parts.filter(value => value !== null && value !== undefined).join("|");
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i += 1) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
 
   function getSecondary(position) {
     if (typeof getSecondaryPositions === "function") return getSecondaryPositions(position);
@@ -42,22 +52,80 @@ const BTM_PLAYER_DATABASE_VERSION = "0.34";
     return Math.round((value * 0.075 + overall * 4500) / 10000) * 10000;
   }
 
-  function makePlayer(career, index) {
-    const primaryPosition = positions[index % positions.length];
+  function getMarketClub(career) {
+    const clubPool = (career?.clubs || []).filter((club) => club.id !== career?.club?.id);
+    return clubPool.length && Math.random() > 0.18 ? pick(clubPool) : null;
+  }
+
+  function toGeneratorClub(club) {
+    return {
+      clubId: club?.id || "free_agent",
+      clubName: club?.name || "Libre",
+      leagueId: "premier_league",
+      leagueName: "Premier League",
+      isPlayableLeague: Boolean(club)
+    };
+  }
+
+  function rollMarketOverall() {
     const tier = Math.random();
-    const overall = tier > 0.92 ? randomInt(80, 88) : tier > 0.72 ? randomInt(74, 81) : tier > 0.38 ? randomInt(67, 75) : randomInt(58, 68);
+    if (tier > 0.92) return randomInt(80, 88);
+    if (tier > 0.72) return randomInt(74, 81);
+    if (tier > 0.38) return randomInt(67, 75);
+    return randomInt(58, 68);
+  }
+
+  function normalizeGeneratedMarketPlayer(player, career, club) {
+    const value = Number(player.value) || estimateValue(Number(player.overall) || 60, Number(player.potential) || Number(player.overall) || 60, Number(player.age) || 25);
+    return Object.assign({}, player, {
+      id: createDbId("dbp"),
+      name: player.fullName || player.shortName || player.playerId,
+      clubId: club ? club.id : "free_agent",
+      club: club ? club.name : "Libre",
+      clubName: club ? club.name : "Libre",
+      isTransferMarketEligible: true,
+      secondaryPositions: Array.isArray(player.secondaryPositions) ? player.secondaryPositions : getSecondary(player.primaryPosition),
+      injuryStatus: player.injury && player.injury.label ? player.injury.label : "Disponible",
+      listedPrice: Math.round(value * (0.85 + Math.random() * 0.55) / 50000) * 50000,
+      scoutLevel: randomInt(35, 85),
+      databaseVersion: BTM_PLAYER_DATABASE_VERSION,
+      marketSource: "BTMGenerator"
+    });
+  }
+
+  function makeGeneratedPlayer(career, index, generator) {
+    const primaryPosition = positions[index % positions.length];
+    const overall = rollMarketOverall();
+    const age = randomInt(18, 34);
+    const club = getMarketClub(career);
+    const generatorClub = toGeneratorClub(club);
+
+    const player = generator.generatePlayer({
+      position: primaryPosition,
+      overall,
+      age,
+      club: generatorClub,
+      dataSource: "generated",
+      year: 2025
+    });
+
+    return normalizeGeneratedMarketPlayer(player, career, club);
+  }
+
+  function makeLegacyPlayer(career, index) {
+    const primaryPosition = positions[index % positions.length];
+    const overall = rollMarketOverall();
     const age = randomInt(18, 34);
     const potential = clamp(overall + randomInt(0, age <= 22 ? 10 : age >= 30 ? 3 : 7), overall, 94);
-    const clubPool = (career?.clubs || []).filter((club) => club.id !== career?.club?.id);
-    const club = clubPool.length && Math.random() > 0.18 ? pick(clubPool) : null;
+    const club = getMarketClub(career);
     const value = estimateValue(overall, potential, age);
 
     return {
       id: createDbId("dbp"),
-      name: `${pick(firstNames)} ${pick(lastNames)}`,
+      name: `${pick(legacyFirstNames)} ${pick(legacyLastNames)}`,
       clubId: club ? club.id : "free_agent",
       club: club ? club.name : "Libre",
-      nationality: pick(nationalities),
+      nationality: pick(legacyNationalities),
       age,
       primaryPosition,
       secondaryPositions: getSecondary(primaryPosition),
@@ -67,13 +135,26 @@ const BTM_PLAYER_DATABASE_VERSION = "0.34";
       value,
       salary: estimateSalary(value, overall),
       contractYears: club ? randomInt(1, 5) : 0,
-      morale: "Normal",
+      morale: "normal",
       condition: 100,
       injuryStatus: "Disponible",
       listedPrice: Math.round(value * (0.85 + Math.random() * 0.55) / 50000) * 50000,
       scoutLevel: randomInt(35, 85),
-      databaseVersion: BTM_PLAYER_DATABASE_VERSION
+      databaseVersion: BTM_PLAYER_DATABASE_VERSION,
+      marketSource: "legacy-fallback"
     };
+  }
+
+  function createMarketGenerator(career, count) {
+    if (!window.BTMGenerator || typeof window.BTMGenerator.createGenerator !== "function") return null;
+    const seed = hashSeed([career?.id, career?.club?.id, career?.createdAt, career?.playerDatabase?.length || 0, count, Date.now(), Math.random()]);
+    return window.BTMGenerator.createGenerator(seed);
+  }
+
+  function applyNameQuality(players, career) {
+    const quality = window.BTMGeneratedNameQuality;
+    if (!quality || typeof quality.improveGeneratedNames !== "function") return players;
+    return quality.improveGeneratedNames(players, { id: "transfer_market", name: career?.club?.name || "Marché" }, "market");
   }
 
   function getActiveContext() {
@@ -94,20 +175,35 @@ const BTM_PLAYER_DATABASE_VERSION = "0.34";
   function ensurePlayerDatabase(career, count = 240) {
     if (!career) return null;
     career.playerDatabase = Array.isArray(career.playerDatabase) ? career.playerDatabase : [];
+
     const target = Number(count) || 240;
-    while (career.playerDatabase.length < target) {
-      career.playerDatabase.push(makePlayer(career, career.playerDatabase.length));
+    const missing = Math.max(0, target - career.playerDatabase.length);
+    if (!missing) return career.playerDatabase;
+
+    const generator = createMarketGenerator(career, target);
+    const generated = [];
+
+    for (let i = 0; i < missing; i += 1) {
+      const index = career.playerDatabase.length + i;
+      generated.push(generator ? makeGeneratedPlayer(career, index, generator) : makeLegacyPlayer(career, index));
     }
+
+    const polished = generator ? applyNameQuality(generated, career) : generated;
+    career.playerDatabase.push(...polished);
     career.playerDatabaseVersion = BTM_PLAYER_DATABASE_VERSION;
+    career.playerDatabaseSource = generator ? (career.playerDatabase.length > polished.length ? "mixed" : "BTMGenerator") : "legacy-fallback";
     return career.playerDatabase;
   }
 
   function ensureActivePlayerDatabase(count = 240) {
     const context = getActiveContext();
     if (!context.career) return null;
+
     const before = Array.isArray(context.career.playerDatabase) ? context.career.playerDatabase.length : 0;
     const database = ensurePlayerDatabase(context.career, count);
-    if (!before || before < (Number(count) || 240) || context.career.playerDatabaseVersion !== BTM_PLAYER_DATABASE_VERSION) saveContext(context);
+    const after = Array.isArray(database) ? database.length : before;
+
+    if (after > before) saveContext(context);
     return database;
   }
 
