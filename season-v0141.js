@@ -1,0 +1,5 @@
+const BTM_SEASON_FLOW_POLISH_VERSION="0.14.1";
+(function(){
+function polish(){const box=document.getElementById("season-v014");if(!box)return;const career=typeof getResolvedCareer==="function"?getResolvedCareer():null;const gate=typeof window.btmCanPlayMatch==="function"?window.btmCanPlayMatch(career):{ok:false};box.classList.toggle("season-v014-ready",!!gate.ok);box.classList.toggle("season-v014-wait",!gate.ok);const day=document.getElementById("season-next-day");if(day)day.textContent="Passer au jour suivant";const next=document.getElementById("season-next-match");if(next)next.textContent="Avancer jusqu’au match";const mail=document.getElementById("season-open-mail");if(mail&&!mail.dataset.polished){mail.dataset.polished="1";mail.title="Ouvrir le courrier du manager";}}
+const prev=typeof refreshUI==="function"?refreshUI:null;refreshUI=function refreshUISeasonPolishV0141(){if(prev)prev();polish();};document.addEventListener("DOMContentLoaded",polish);
+})();
