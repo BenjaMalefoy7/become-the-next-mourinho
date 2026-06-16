@@ -1,10 +1,14 @@
-const BTM_UI_COMPAT_VERSION = "0.44G";
+const BTM_UI_COMPAT_VERSION = "0.45F";
 
 (function initUiCompat() {
   if (window.__BTM_UI_COMPAT_LOADED__) return;
   window.__BTM_UI_COMPAT_LOADED__ = true;
 
   const $ = (id) => document.getElementById(id);
+  const PLAYER_MODE_LABELS = {
+    generated: "Joueurs générés",
+    real: "Vrais joueurs"
+  };
 
   function setActive(id, active) {
     const node = $(id);
@@ -16,6 +20,7 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
     setActive("setup-screen", screenId === "setup-screen");
     setActive("load-screen", screenId === "load-screen");
     setActive("game-shell", false);
+    if (screenId === "setup-screen") refreshPlayerModeCards();
     if (screenId === "load-screen") renderSaveSlots();
   }
 
@@ -49,6 +54,22 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
     select.innerHTML = clubs.map((club) => `<option value="${escapeHtml(club.id)}">${escapeHtml(club.name)}</option>`).join("");
   }
 
+  function getPlayerModeLabel(value) {
+    return PLAYER_MODE_LABELS[value] || PLAYER_MODE_LABELS.generated;
+  }
+
+  function getSelectedPlayerMode() {
+    const selected = document.querySelector('input[name="player-mode"]:checked');
+    return selected && PLAYER_MODE_LABELS[selected.value] ? selected.value : "generated";
+  }
+
+  function refreshPlayerModeCards() {
+    document.querySelectorAll('.mode-card input[name="player-mode"]').forEach((input) => {
+      const card = input.closest(".mode-card");
+      if (card) card.classList.toggle("active", input.checked);
+    });
+  }
+
   function renderSaveSlots() {
     const container = $("save-slots");
     if (!container || typeof loadCareers !== "function") return;
@@ -67,7 +88,7 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
           <div class="save-badge">${escapeHtml(career.club?.badge || "⚽")}</div>
           <div>
             <h4>${escapeHtml(career.careerName || career.club?.name || "Carrière")}</h4>
-            <p>${escapeHtml(career.club?.name || "Club")} · ${escapeHtml(career.managerName || "Manager")}</p>
+            <p>${escapeHtml(career.club?.name || "Club")} · ${escapeHtml(career.managerName || "Manager")} · ${escapeHtml(getPlayerModeLabel(career.playerMode || "generated"))}</p>
           </div>
         </div>
         <div class="save-actions">
@@ -99,6 +120,7 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
     const stadiumName = ($("stadium-input")?.value || "Stade à définir").trim();
     const replacedClubId = $("replace-club-select")?.value || getPremierLeagueClubs()[0]?.id;
     const difficulty = $("difficulty-select")?.value || "outsider";
+    const playerMode = getSelectedPlayerMode();
     const primaryColor = $("primary-color-input")?.value || "#2ee987";
     const secondaryColor = $("secondary-color-input")?.value || "#ffffff";
     const replacedClub = typeof getClubById === "function" ? getClubById(replacedClubId) : null;
@@ -143,6 +165,7 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
       schemaVersion: window.BTM_CAREER_SCHEMA_VERSION || 37,
       careerName: "Carrière " + clubName,
       mode: "custom_club",
+      playerMode,
       managerName: "Manager",
       season: league.season,
       matchday: 1,
@@ -181,6 +204,7 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
 
   function bindCompatControls() {
     populateReplacementSelect();
+    refreshPlayerModeCards();
 
     $("new-career-btn")?.addEventListener("click", () => showMenu("setup-screen"));
     $("load-career-btn")?.addEventListener("click", () => showMenu("load-screen"));
@@ -188,6 +212,10 @@ const BTM_UI_COMPAT_VERSION = "0.44G";
     $("load-back-btn")?.addEventListener("click", () => showMenu("start-screen"));
     $("create-career-btn")?.addEventListener("click", createCareerFromCurrentForm);
     $("home-btn")?.addEventListener("click", () => showMenu("start-screen"));
+
+    document.querySelectorAll('input[name="player-mode"]').forEach((input) => {
+      input.addEventListener("change", refreshPlayerModeCards);
+    });
 
     const nav = document.querySelector(".nav");
     nav?.addEventListener("click", (event) => {
