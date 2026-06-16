@@ -1,4 +1,4 @@
-/* V0.44H — Home War Room desk scene corrections */
+/* V0.44I — Contract paper material pass */
 
 .start-screen {
   min-height: 100vh;
@@ -18,8 +18,10 @@
 }
 
 .home-start {
-  --paper: color-mix(in srgb, var(--text) 88%, var(--gold));
-  --paper-deep: color-mix(in srgb, var(--text) 72%, var(--gold));
+  --paper: color-mix(in srgb, var(--text) 94%, var(--gold));
+  --paper-deep: color-mix(in srgb, var(--text) 86%, var(--gold));
+  --paper-edge: color-mix(in srgb, var(--gold) 30%, var(--bg));
+  --paper-line: color-mix(in srgb, var(--bg) 7%, transparent);
   --ink: color-mix(in srgb, var(--bg) 92%, var(--panel));
   --wax: color-mix(in srgb, var(--danger) 46%, var(--bg));
   --wax-dark: color-mix(in srgb, var(--danger) 30%, var(--bg));
@@ -261,13 +263,18 @@
   flex-direction: column;
   transform: translateX(-50%);
   padding: clamp(26px, 3vw, 34px) clamp(26px, 3vw, 34px) clamp(102px, 9vw, 118px);
-  border-radius: var(--radius-md);
-  background: linear-gradient(180deg, var(--paper), var(--paper-deep));
-  border: 1px solid color-mix(in srgb, var(--gold) 38%, var(--bg));
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 22px, var(--paper-line) 23px 24px, transparent 25px),
+    radial-gradient(circle at 18% 10%, color-mix(in srgb, var(--text) 28%, transparent), transparent 38%),
+    linear-gradient(180deg, var(--paper), var(--paper-deep));
+  border: 1px solid color-mix(in srgb, var(--paper-edge) 70%, var(--text));
   box-shadow:
-    0 48px 80px color-mix(in srgb, var(--bg) 86%, transparent),
-    0 20px 32px color-mix(in srgb, var(--bg) 64%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--text) 40%, transparent);
+    0 4px 0 var(--paper-edge),
+    0 58px 62px color-mix(in srgb, var(--bg) 78%, transparent),
+    0 22px 28px color-mix(in srgb, var(--bg) 58%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text) 48%, transparent),
+    inset 0 -4px 0 color-mix(in srgb, var(--paper-edge) 72%, transparent);
   color: var(--ink);
 }
 
