@@ -48,7 +48,7 @@
       </section>
 
       <footer class="home-block home-footer">
-        <p>Private build · V0.46A</p>
+        <p>Private build · V0.46B</p>
       </footer>
     </main>
   </section>
@@ -71,23 +71,23 @@
         <label class="mode-card active">
           <input type="radio" name="player-mode" value="generated" checked />
           <strong>Joueurs générés</strong>
-          <span>Mode actif maintenant. Le jeu crée un effectif fictif cohérent avec ton niveau de départ.</span>
+          <span>Le jeu crée un effectif fictif cohérent avec ton niveau de départ.</span>
         </label>
         <label class="mode-card">
           <input type="radio" name="player-mode" value="real" />
           <strong>Vrais joueurs</strong>
-          <span>Base réelle chargée. Le mode complet arrive à l’étape suivante.</span>
+          <span>Ton club récupère l’effectif réel du club Premier League que tu remplaces.</span>
         </label>
       </div>
       <button class="primary-btn" id="create-career-btn">Créer la carrière</button>
     </div>
   </section>
   <section id="load-screen" class="load-screen"><div class="setup-card"><button class="ghost-btn" id="load-back-btn">← Retour</button><p class="eyebrow">Sauvegardes locales</p><h2>Choisir une carrière</h2><div id="save-slots" class="save-slots"></div></div></section>
-  <div id="game-shell" class="game-shell notebook-tabs-left"><aside class="sidebar"><div class="brand"><span class="brand-ball">⚽</span><div><p class="eyebrow">Manager Office</p><h1 id="brand-club">BTNM</h1></div></div><nav class="nav"><button class="nav-item active" data-screen="dashboard">Dashboard</button><button class="nav-item" data-screen="squad">Effectif</button><button class="nav-item" data-screen="lineup">Composition</button><button class="nav-item" data-screen="calendar">Calendrier</button><button class="nav-item" data-screen="standings">Classement</button><button class="nav-item" data-screen="match">Match</button><button class="nav-item" data-screen="transfers">Recrutement</button><button class="nav-item" data-screen="finances">Finances</button><button class="nav-item" data-screen="training">Entraînement</button></nav><div class="sidebar-footer"><p>V0.46A — Real players database loaded</p></div></aside>
+  <div id="game-shell" class="game-shell notebook-tabs-left"><aside class="sidebar"><div class="brand"><span class="brand-ball">⚽</span><div><p class="eyebrow">Manager Office</p><h1 id="brand-club">BTNM</h1></div></div><nav class="nav"><button class="nav-item active" data-screen="dashboard">Dashboard</button><button class="nav-item" data-screen="squad">Effectif</button><button class="nav-item" data-screen="lineup">Composition</button><button class="nav-item" data-screen="calendar">Calendrier</button><button class="nav-item" data-screen="standings">Classement</button><button class="nav-item" data-screen="match">Match</button><button class="nav-item" data-screen="transfers">Recrutement</button><button class="nav-item" data-screen="finances">Finances</button><button class="nav-item" data-screen="training">Entraînement</button></nav><div class="sidebar-footer"><p>V0.46B — Real player career mode</p></div></aside>
     <main class="main-content">
       <header class="topbar"><div><p class="eyebrow">Carrière actuelle</p><h2 id="page-title">Dashboard</h2></div><div class="topbar-actions"><button class="secondary-btn" id="home-btn">Quitter vers l’accueil</button></div></header>
       <section class="screen active" id="dashboard"><div class="dashboard-story"><section class="dashboard-story-hero"><div><p class="eyebrow">Carnet du manager</p><h3>Tableau de bord du club</h3><p>Chargement de l’identité du club, du prochain enjeu et de l’état du vestiaire…</p></div></section></div></section>
-      <section class="screen" id="squad"><div class="section-header"><h3>Effectif</h3><p>Liste des joueurs générés pour ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div><div class="players-grid" id="players-preview"></div></section>
+      <section class="screen" id="squad"><div class="section-header"><h3>Effectif</h3><p>Liste des joueurs de ton club, avec postes, notes, potentiel, salaire, valeur et contrat.</p></div><div class="players-grid" id="players-preview"></div></section>
       <section class="screen" id="lineup"><div class="section-header section-header-row"><div><h3>Composition</h3><p>Choisis une formation, place tes titulaires et vérifie les joueurs hors poste.</p></div><div class="formation-buttons" id="formation-buttons"></div></div><div class="lineup-warning" id="lineup-warning"></div><div class="lineup-summary kpi-grid" id="lineup-summary"></div><div class="lineup-layout"><div class="lineup-slots" id="lineup-slots"></div><div class="pitch-card lineup-pitch" id="lineup-pitch"></div><article class="lineup-bench panel"><h3>Remplaçants</h3><p>Les meilleurs joueurs non titulaires sont listés ici automatiquement.</p><div id="lineup-bench"></div></article></div></section>
       <section class="screen" id="calendar"><div class="section-header"><h3>Calendrier</h3><p>Chargement du calendrier…</p></div></section>
       <section class="screen" id="standings"><div class="section-header"><h3>Classement</h3><p>Chargement du classement dynamique…</p></div></section>
@@ -98,13 +98,14 @@
     </main>
   </div>
 
-  <!-- Script order invariant: data.js and app.js must load first; generator.js exposes BTMGenerator for generated squads/regens; players-real.js exposes BTNM_REAL_PLAYERS for the future real-player career mode; generated-squad-bridge.js routes generated squads through BTMGenerator; generated-name-quality.js applies nationality-safe generated names after the bridge; player-db.js uses BTMGenerator for new transfer-market players; save-migrations.js must load before gameplay modules; theme.js owns the render registry and must stay before every module using btmRegisterRender. ui-compat.js reconnects the current HTML ids to the stable app functions. -->
+  <!-- Script order invariant: data.js and app.js must load first; generator.js exposes BTMGenerator for generated squads/regens; players-real.js exposes BTNM_REAL_PLAYERS; generated-squad-bridge.js routes generated squads through BTMGenerator; generated-name-quality.js applies nationality-safe generated names after the bridge; real-squad-bridge.js builds real-player custom squads from the replaced club; player-db.js uses BTMGenerator for new transfer-market players; save-migrations.js must load before gameplay modules; theme.js owns the render registry and must stay before every module using btmRegisterRender. ui-compat.js reconnects the current HTML ids to the stable app functions. -->
   <script src="data.js?v=060"></script>
   <script src="app.js?v=044"></script>
   <script src="generator.js?v=045H"></script>
   <script src="players-real.js?v=046A"></script>
   <script src="generated-squad-bridge.js?v=045I"></script>
   <script src="generated-name-quality.js?v=045Jfix"></script>
+  <script src="real-squad-bridge.js?v=046B"></script>
   <script src="save-migrations.js?v=038"></script>
   <script src="theme.js?v=038"></script>
   <script src="dashboard-story.js?v=042"></script>
@@ -121,6 +122,6 @@
   <script src="training.js?v=027"></script>
   <script src="match-center.js?v=040F"></script>
   <script src="version-label.js?v=044G"></script>
-  <script src="ui-compat.js?v=045F"></script>
+  <script src="ui-compat.js?v=046B"></script>
 </body>
 </html>
