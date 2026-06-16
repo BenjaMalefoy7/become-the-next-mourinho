@@ -1,4 +1,4 @@
-const BTM_UI_COMPAT_VERSION = "0.45F";
+const BTM_UI_COMPAT_VERSION = "0.46B";
 
 (function initUiCompat() {
   if (window.__BTM_UI_COMPAT_LOADED__) return;
@@ -109,6 +109,31 @@ const BTM_UI_COMPAT_VERSION = "0.45F";
     return true;
   }
 
+  function resolveCareerPlayers(customClub, replacedClubId, difficulty, playerMode) {
+    if (playerMode === "real") {
+      if (typeof window.generateRealStartingSquad !== "function") {
+        window.alert("La base de vrais joueurs n'est pas encore prête. Repasse en joueurs générés ou recharge la page.");
+        return null;
+      }
+
+      const realPlayers = window.generateRealStartingSquad(customClub, replacedClubId, difficulty);
+      if (!Array.isArray(realPlayers) || !realPlayers.length) {
+        window.alert("Impossible de trouver l'effectif réel du club remplacé. Choisis un autre club ou repasse en joueurs générés.");
+        return null;
+      }
+
+      return {
+        players: realPlayers,
+        squadSource: "real"
+      };
+    }
+
+    return {
+      players: typeof generateStartingSquad === "function" ? generateStartingSquad(customClub, difficulty) : [],
+      squadSource: "generated"
+    };
+  }
+
   function createCareerFromCurrentForm() {
     if (typeof getDifficultySettings !== "function" || typeof getPremierLeague !== "function") {
       window.alert("Le moteur de carrière n'est pas encore chargé.");
@@ -154,7 +179,9 @@ const BTM_UI_COMPAT_VERSION = "0.45F";
     };
 
     const clubs = typeof createLeagueTeams === "function" ? createLeagueTeams(customClub, replacedClubId) : [customClub];
-    const players = typeof generateStartingSquad === "function" ? generateStartingSquad(customClub, difficulty) : [];
+    const squadResult = resolveCareerPlayers(customClub, replacedClubId, difficulty, playerMode);
+    if (!squadResult) return;
+    const players = squadResult.players;
     const wageBill = typeof calculateWageBill === "function" ? calculateWageBill(players) : 0;
     const nextOpponentName = typeof getFirstOpponentName === "function" ? getFirstOpponentName(clubs, customClub.id) : "Adversaire à définir";
 
@@ -172,7 +199,7 @@ const BTM_UI_COMPAT_VERSION = "0.45F";
       difficulty,
       objective: settings.objective,
       squadLevel: settings.squadLevel,
-      squadSource: "generated",
+      squadSource: squadResult.squadSource,
       replacedClubId,
       replacedClubName: replacedClub.name,
       nextMatch: clubName + " vs " + nextOpponentName,
