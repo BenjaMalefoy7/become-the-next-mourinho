@@ -257,6 +257,8 @@
   left: 50%;
   width: clamp(350px, 35vw, 438px);
   min-height: clamp(438px, 48vw, 520px);
+  display: flex;
+  flex-direction: column;
   transform: translateX(-50%);
   padding: clamp(26px, 3vw, 34px) clamp(26px, 3vw, 34px) clamp(102px, 9vw, 118px);
   border-radius: var(--radius-md);
@@ -271,6 +273,7 @@
 
 .home-contract::before {
   content: "Premier League 2025/26 · Réf. BTNM-01 · Saison 1\A\A Art. 1 — Le soussigné prend la direction sportive du club et s'engage à atteindre l'objectif fixé par le conseil.";
+  order: 2;
   display: block;
   margin: 12px 0 18px;
   padding: 14px 0 6px;
@@ -311,6 +314,7 @@
 }
 
 .home-contract-label {
+  order: 1;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 12px;
@@ -345,6 +349,7 @@
 }
 
 .home-actions {
+  order: 3;
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
