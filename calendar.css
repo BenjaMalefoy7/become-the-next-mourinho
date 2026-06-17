@@ -218,3 +218,219 @@
     justify-self: start;
   }
 }
+
+/* V0.46R — Calendar War Room light */
+.game-shell.notebook-tabs-left #calendar {
+  position: relative;
+  isolation: isolate;
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-actions {
+  justify-content: flex-end;
+  gap: clamp(10px, 1.2vw, 18px);
+  margin: 0 0 clamp(14px, 1.5vw, 22px);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-actions .secondary-btn {
+  border: 1px solid rgba(21, 56, 42, .24);
+  background: linear-gradient(180deg, rgba(255, 250, 232, .96), rgba(232, 215, 176, .86));
+  color: #241709;
+  box-shadow: 0 14px 30px rgba(35, 29, 16, .12);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-actions .secondary-btn:hover {
+  border-color: rgba(194, 154, 73, .58);
+  transform: translateY(-1px);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-main-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(22px, 2.4vw, 34px) clamp(18px, 2.2vw, 30px) clamp(20px, 2vw, 28px);
+  border-radius: clamp(24px, 2.4vw, 34px);
+  border: 1px solid rgba(210, 173, 91, .32);
+  background:
+    linear-gradient(135deg, rgba(10, 44, 32, .96), rgba(17, 72, 51, .94) 48%, rgba(9, 39, 30, .98)),
+    radial-gradient(circle at 16% 18%, rgba(66, 229, 148, .14), transparent 26%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 243, 204, .08),
+    inset 0 18px 80px rgba(255, 255, 255, .03),
+    0 26px 48px rgba(24, 20, 10, .22);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-main-card::before {
+  content: "MATCHDAY";
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: clamp(22px, 2.7vw, 44px);
+  padding: 8px 16px;
+  border-radius: 0 0 14px 14px;
+  border: 1px solid rgba(196, 153, 65, .42);
+  border-top: 0;
+  background: linear-gradient(180deg, #f3e7c8, #d4ae62);
+  color: #37230c;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .16em;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-main-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .16;
+  background-image: url("assets/home-tactic-sketch.png");
+  background-repeat: no-repeat;
+  background-size: min(58vw, 760px) auto;
+  background-position: right -80px top -90px;
+  filter: sepia(.2) saturate(.7) contrast(1.2);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-list {
+  position: relative;
+  z-index: 1;
+  gap: clamp(10px, 1vw, 15px);
+  padding-top: clamp(22px, 2.1vw, 30px);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-row {
+  position: relative;
+  min-height: clamp(58px, 6.6vh, 76px);
+  grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr) minmax(112px, auto);
+  padding: clamp(14px, 1.4vw, 18px) clamp(18px, 2vw, 28px) clamp(14px, 1.4vw, 18px) clamp(38px, 3.6vw, 54px);
+  border: 1px solid rgba(80, 61, 30, .18);
+  border-radius: 9px 18px 18px 9px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 238, .96), rgba(235, 224, 199, .94)),
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, .86), transparent 38%);
+  color: #211407;
+  box-shadow:
+    0 11px 20px rgba(6, 23, 16, .24),
+    inset 0 0 0 1px rgba(255, 255, 255, .46);
+  transform: translateZ(0);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-row::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 34% 28%, #fff3c8, #cf9d3b 42%, #6b4313 100%);
+  box-shadow: 0 3px 6px rgba(42, 25, 5, .35);
+  transform: translateY(-50%);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-row::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 6px;
+  border-radius: 999px 0 0 999px;
+  background: repeating-linear-gradient(to bottom, rgba(47, 39, 24, .18) 0 5px, transparent 5px 10px);
+  opacity: .7;
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-row.user-match {
+  border-color: rgba(216, 179, 90, .8);
+  background:
+    linear-gradient(180deg, rgba(33, 104, 71, .95), rgba(18, 82, 58, .96)),
+    radial-gradient(circle at 18% 12%, rgba(85, 255, 162, .24), transparent 34%);
+  color: #fff8df;
+  box-shadow:
+    0 16px 30px rgba(7, 24, 17, .34),
+    inset 0 0 0 1px rgba(242, 207, 122, .32);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-match-row.user-match::before {
+  background: radial-gradient(circle at 34% 28%, #fff6c7, #e4b855 44%, #5d3d10 100%);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-club {
+  color: inherit;
+  font-weight: 950;
+  letter-spacing: -.02em;
+  text-shadow: none;
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-versus {
+  color: #9a7730;
+  font-size: 13px;
+  letter-spacing: .12em;
+}
+
+.game-shell.notebook-tabs-left #calendar .user-match .calendar-versus {
+  color: #f0c765;
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-status {
+  min-width: 78px;
+  background: rgba(33, 23, 10, .07);
+  color: #70562d;
+  border: 1px solid rgba(74, 52, 22, .08);
+}
+
+.game-shell.notebook-tabs-left #calendar .user-match .calendar-status {
+  background: rgba(255, 255, 255, .12);
+  color: #f9e7b0;
+  border-color: rgba(249, 231, 176, .18);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-venue-pill.home,
+.game-shell.notebook-tabs-left #calendar .calendar-next-venue.home {
+  background: rgba(46, 233, 135, .2);
+  color: #052b1c;
+  border-color: rgba(5, 66, 40, .2);
+}
+
+.game-shell.notebook-tabs-left #calendar .user-match .calendar-venue-pill.home,
+.game-shell.notebook-tabs-left #calendar .user-match .calendar-next-venue.home {
+  background: rgba(46, 233, 135, .18);
+  color: #86ffc0;
+  border-color: rgba(134, 255, 192, .32);
+}
+
+.game-shell.notebook-tabs-left #calendar .calendar-venue-pill.away,
+.game-shell.notebook-tabs-left #calendar .calendar-next-venue.away,
+.game-shell.notebook-tabs-left #calendar .calendar-venue-pill.neutral,
+.game-shell.notebook-tabs-left #calendar .calendar-next-venue.neutral {
+  background: rgba(216, 179, 90, .14);
+  color: #755927;
+  border-color: rgba(117, 89, 39, .16);
+}
+
+.game-shell.notebook-tabs-left #calendar .empty-state {
+  position: relative;
+  z-index: 1;
+  border-radius: 18px;
+  background: rgba(255, 252, 238, .92);
+  color: #211407;
+}
+
+@media (max-width: 980px) {
+  .game-shell.notebook-tabs-left #calendar .calendar-actions {
+    justify-content: flex-start;
+  }
+
+  .game-shell.notebook-tabs-left #calendar .calendar-match-row {
+    grid-template-columns: 1fr;
+    padding-left: 42px;
+    text-align: left;
+  }
+
+  .game-shell.notebook-tabs-left #calendar .calendar-club.home {
+    text-align: left;
+  }
+
+  .game-shell.notebook-tabs-left #calendar .calendar-status-stack {
+    justify-self: start;
+  }
+}
