@@ -1,6 +1,6 @@
 // =====================================================================
 // Become the next Mourinho — Real squad bridge
-// V0.46B: build a custom-club squad from the replaced club's real players.
+// V0.47C: tolerate source-season club mismatches without falling back to generated mode.
 // =====================================================================
 
 (function initRealSquadBridge() {
@@ -24,6 +24,22 @@
     BU: 3
   };
 
+  const CLUB_SOURCE_ALIASES = {
+    bournemouth: ["afc_bournemouth", "AFC Bournemouth"],
+    brighton: ["brighton_hove_albion", "Brighton & Hove Albion"],
+    newcastle_united: ["newcastle", "Newcastle United"],
+    nottingham_forest: ["nottingham", "Nottingham Forest"],
+    tottenham_hotspur: ["tottenham", "Tottenham Hotspur"],
+    west_ham_united: ["west_ham", "West Ham United"],
+    wolverhampton_wanderers: ["wolverhampton", "Wolverhampton Wanderers", "wolves", "Wolves"]
+  };
+
+  const SOURCE_SEASON_DONORS = {
+    burnley: ["leicester_city", "Leicester City", "southampton", "Southampton"],
+    leeds_united: ["leicester_city", "Leicester City", "southampton", "Southampton", "ipswich_town", "Ipswich Town"],
+    sunderland: ["ipswich_town", "Ipswich Town", "southampton", "Southampton", "leicester_city", "Leicester City"]
+  };
+
   function getRealPlayers() {
     return Array.isArray(window.BTNM_REAL_PLAYERS) ? window.BTNM_REAL_PLAYERS : [];
   }
@@ -44,17 +60,73 @@
     return club && club.name ? club.name : "";
   }
 
-  function getPlayersFromReplacedClub(replacedClubId) {
-    const realPlayers = getRealPlayers();
-    const expectedClubId = normalizeText(replacedClubId);
-    const expectedClubName = normalizeText(getClubNameById(replacedClubId));
+  function addKeys(target, values) {
+    (values || []).forEach((value) => {
+      const key = normalizeText(value);
+      if (key) target.add(key);
+    });
+  }
 
+  function getExactSourceKeys(replacedClubId) {
+    const clubId = normalizeText(replacedClubId);
+    const clubName = getClubNameById(replacedClubId);
+    const keys = new Set();
+    addKeys(keys, [replacedClubId, clubName]);
+    addKeys(keys, CLUB_SOURCE_ALIASES[clubId]);
+    addKeys(keys, CLUB_SOURCE_ALIASES[normalizeText(clubName)]);
+    return keys;
+  }
+
+  function getDonorSourceKeys(replacedClubId) {
+    const clubId = normalizeText(replacedClubId);
+    const clubName = normalizeText(getClubNameById(replacedClubId));
+    const keys = new Set();
+    addKeys(keys, SOURCE_SEASON_DONORS[clubId]);
+    addKeys(keys, SOURCE_SEASON_DONORS[clubName]);
+    return keys;
+  }
+
+  function filterPlayersByClubKeys(realPlayers, keys) {
+    if (!keys || !keys.size) return [];
     return realPlayers.filter((player) => {
       if (!player || !player.isPlayableLeague) return false;
-      const playerClubId = normalizeText(player.clubId);
-      const playerClubName = normalizeText(player.clubName);
-      return playerClubId === expectedClubId || Boolean(expectedClubName && playerClubName === expectedClubName);
+      return keys.has(normalizeText(player.clubId)) || keys.has(normalizeText(player.clubName));
     });
+  }
+
+  function getFallbackOverallCeiling(replacedClubId) {
+    const club = typeof window.getClubById === "function" ? window.getClubById(replacedClubId) : null;
+    const reputation = Number(club && club.reputation ? club.reputation : 72);
+    return Math.max(74, Math.min(82, reputation + 8));
+  }
+
+  function getRealPoolFallback(realPlayers, replacedClubId) {
+    const ceiling = getFallbackOverallCeiling(replacedClubId);
+    const floor = Math.max(56, ceiling - 18);
+    const filtered = realPlayers.filter((player) => {
+      if (!player || !player.isPlayableLeague) return false;
+      const overall = Number(player.overall || 0);
+      return overall >= floor && overall <= ceiling;
+    });
+    return filtered.length ? filtered : realPlayers.filter((player) => player && player.isPlayableLeague);
+  }
+
+  function getPlayersFromReplacedClub(replacedClubId) {
+    const realPlayers = getRealPlayers();
+    const exactPlayers = filterPlayersByClubKeys(realPlayers, getExactSourceKeys(replacedClubId));
+    if (exactPlayers.length) return exactPlayers;
+
+    const donorPlayers = filterPlayersByClubKeys(realPlayers, getDonorSourceKeys(replacedClubId));
+    if (donorPlayers.length) {
+      console.warn("[BTM] Real squad source-season donor used for:", replacedClubId);
+      return donorPlayers;
+    }
+
+    const fallbackPlayers = getRealPoolFallback(realPlayers, replacedClubId);
+    if (fallbackPlayers.length) {
+      console.warn("[BTM] Real player pool fallback used for:", replacedClubId);
+    }
+    return fallbackPlayers;
   }
 
   function sortByOverallDesc(a, b) {
@@ -164,8 +236,9 @@
 
   window.generateRealStartingSquad = generateRealStartingSquad;
   window.BTM_REAL_SQUAD_BRIDGE_META = Object.freeze({
-    version: "0.46B",
+    version: "0.47C",
     source: "BTNM_REAL_PLAYERS",
-    contractVersion: "V0.45A"
+    contractVersion: "V0.45A",
+    fallbackPolicy: "alias_or_source_season_donor_or_real_pool"
   });
 })();
