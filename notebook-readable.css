@@ -1,0 +1,116 @@
+/* V0.46N — in-game notebook readability override.
+   Keeps the home screen untouched and fixes white text on pale paper screens. */
+
+.game-shell.notebook-tabs-left {
+  --notebook-ink: #25190f;
+  --notebook-ink-soft: #3f2d1b;
+  --notebook-muted: #6f6048;
+  --notebook-muted-soft: #8a785c;
+  --notebook-line: rgba(80, 55, 24, 0.22);
+  --text: var(--notebook-ink);
+  --muted: var(--notebook-muted);
+  --line: var(--notebook-line);
+}
+
+.game-shell.notebook-tabs-left .main-content,
+.game-shell.notebook-tabs-left .screen,
+.game-shell.notebook-tabs-left .topbar,
+.game-shell.notebook-tabs-left .section-header,
+.game-shell.notebook-tabs-left .panel,
+.game-shell.notebook-tabs-left .kpi-card,
+.game-shell.notebook-tabs-left .table-card,
+.game-shell.notebook-tabs-left .match-card,
+.game-shell.notebook-tabs-left .empty-state,
+.game-shell.notebook-tabs-left .season-flow-panel,
+.game-shell.notebook-tabs-left .season-v014 {
+  color: var(--notebook-ink) !important;
+}
+
+.game-shell.notebook-tabs-left .main-content h1,
+.game-shell.notebook-tabs-left .main-content h2,
+.game-shell.notebook-tabs-left .main-content h3,
+.game-shell.notebook-tabs-left .main-content h4,
+.game-shell.notebook-tabs-left .main-content strong,
+.game-shell.notebook-tabs-left .topbar h2,
+.game-shell.notebook-tabs-left .section-header h3 {
+  color: var(--notebook-ink) !important;
+  text-shadow: none !important;
+}
+
+.game-shell.notebook-tabs-left .main-content p,
+.game-shell.notebook-tabs-left .section-header p,
+.game-shell.notebook-tabs-left .empty-state p,
+.game-shell.notebook-tabs-left .calendar-versus,
+.game-shell.notebook-tabs-left .calendar-status,
+.game-shell.notebook-tabs-left .season-v014-date span,
+.game-shell.notebook-tabs-left .season-v014-next span,
+.game-shell.notebook-tabs-left .eyebrow {
+  color: var(--notebook-muted) !important;
+  text-shadow: none !important;
+}
+
+.game-shell.notebook-tabs-left .secondary-btn,
+.game-shell.notebook-tabs-left .ghost-btn {
+  color: var(--notebook-ink) !important;
+  background: rgba(255, 252, 241, 0.56) !important;
+  border: 1px solid rgba(80, 55, 24, 0.16) !important;
+  box-shadow: 0 10px 22px rgba(47, 37, 20, 0.06) !important;
+  text-shadow: none !important;
+}
+
+.game-shell.notebook-tabs-left .secondary-btn:hover,
+.game-shell.notebook-tabs-left .ghost-btn:hover {
+  background: rgba(255, 248, 226, 0.82) !important;
+  border-color: rgba(80, 55, 24, 0.26) !important;
+}
+
+.game-shell.notebook-tabs-left .secondary-btn:disabled,
+.game-shell.notebook-tabs-left .ghost-btn:disabled {
+  color: rgba(37, 25, 15, 0.42) !important;
+  background: rgba(255, 252, 241, 0.28) !important;
+  border-color: rgba(80, 55, 24, 0.10) !important;
+}
+
+.game-shell.notebook-tabs-left .calendar-actions .secondary-btn {
+  min-width: 172px;
+}
+
+.game-shell.notebook-tabs-left .calendar-match-row,
+.game-shell.notebook-tabs-left .calendar-next-item {
+  color: var(--notebook-ink) !important;
+  border-color: var(--notebook-line) !important;
+  background: rgba(255, 252, 241, 0.62) !important;
+}
+
+.game-shell.notebook-tabs-left .calendar-match-row.user-match {
+  background: rgba(216, 179, 90, 0.18) !important;
+  border-color: rgba(130, 89, 31, 0.34) !important;
+}
+
+.game-shell.notebook-tabs-left .calendar-status {
+  background: rgba(80, 55, 24, 0.08) !important;
+  color: var(--notebook-muted) !important;
+}
+
+.game-shell.notebook-tabs-left .calendar-venue-pill.home,
+.game-shell.notebook-tabs-left .calendar-next-venue.home {
+  color: #17613f !important;
+}
+
+.game-shell.notebook-tabs-left .calendar-venue-pill.away,
+.game-shell.notebook-tabs-left .calendar-next-venue.away {
+  color: #7a551f !important;
+}
+
+.game-shell.notebook-tabs-left input,
+.game-shell.notebook-tabs-left select,
+.game-shell.notebook-tabs-left textarea {
+  color: var(--notebook-ink) !important;
+  background: rgba(255, 252, 241, 0.88) !important;
+  border-color: rgba(80, 55, 24, 0.22) !important;
+}
+
+.game-shell.notebook-tabs-left input::placeholder,
+.game-shell.notebook-tabs-left textarea::placeholder {
+  color: rgba(37, 25, 15, 0.45) !important;
+}
