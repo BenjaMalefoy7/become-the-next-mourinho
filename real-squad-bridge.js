@@ -1,6 +1,6 @@
 // =====================================================================
 // Become the next Mourinho — Real squad bridge
-// V0.47C: tolerate source-season club mismatches without falling back to generated mode.
+// V0.47D: prevent mixed-club real squads; use exact club/donor only.
 // =====================================================================
 
 (function initRealSquadBridge() {
@@ -27,6 +27,7 @@
   const CLUB_SOURCE_ALIASES = {
     bournemouth: ["afc_bournemouth", "AFC Bournemouth"],
     brighton: ["brighton_hove_albion", "Brighton & Hove Albion"],
+    fulham: ["fulham_fc", "Fulham FC", "Fulham"],
     newcastle_united: ["newcastle", "Newcastle United"],
     nottingham_forest: ["nottingham", "Nottingham Forest"],
     tottenham_hotspur: ["tottenham", "Tottenham Hotspur"],
@@ -54,6 +55,12 @@
       .replace(/^_+|_+$/g, "");
   }
 
+  function stripClubSuffix(value) {
+    return normalizeText(value)
+      .replace(/_football_club$/g, "")
+      .replace(/_fc$/g, "");
+  }
+
   function getClubNameById(clubId) {
     if (typeof window.getClubById !== "function") return "";
     const club = window.getClubById(clubId);
@@ -64,6 +71,8 @@
     (values || []).forEach((value) => {
       const key = normalizeText(value);
       if (key) target.add(key);
+      const strippedKey = stripClubSuffix(key);
+      if (strippedKey) target.add(strippedKey);
     });
   }
 
@@ -90,25 +99,12 @@
     if (!keys || !keys.size) return [];
     return realPlayers.filter((player) => {
       if (!player || !player.isPlayableLeague) return false;
-      return keys.has(normalizeText(player.clubId)) || keys.has(normalizeText(player.clubName));
+      const playerClubId = normalizeText(player.clubId);
+      const playerClubName = normalizeText(player.clubName);
+      const strippedClubId = stripClubSuffix(playerClubId);
+      const strippedClubName = stripClubSuffix(playerClubName);
+      return keys.has(playerClubId) || keys.has(playerClubName) || keys.has(strippedClubId) || keys.has(strippedClubName);
     });
-  }
-
-  function getFallbackOverallCeiling(replacedClubId) {
-    const club = typeof window.getClubById === "function" ? window.getClubById(replacedClubId) : null;
-    const reputation = Number(club && club.reputation ? club.reputation : 72);
-    return Math.max(74, Math.min(82, reputation + 8));
-  }
-
-  function getRealPoolFallback(realPlayers, replacedClubId) {
-    const ceiling = getFallbackOverallCeiling(replacedClubId);
-    const floor = Math.max(56, ceiling - 18);
-    const filtered = realPlayers.filter((player) => {
-      if (!player || !player.isPlayableLeague) return false;
-      const overall = Number(player.overall || 0);
-      return overall >= floor && overall <= ceiling;
-    });
-    return filtered.length ? filtered : realPlayers.filter((player) => player && player.isPlayableLeague);
   }
 
   function getPlayersFromReplacedClub(replacedClubId) {
@@ -122,11 +118,8 @@
       return donorPlayers;
     }
 
-    const fallbackPlayers = getRealPoolFallback(realPlayers, replacedClubId);
-    if (fallbackPlayers.length) {
-      console.warn("[BTM] Real player pool fallback used for:", replacedClubId);
-    }
-    return fallbackPlayers;
+    console.error("[BTM] No exact real squad source found for:", replacedClubId);
+    return [];
   }
 
   function sortByOverallDesc(a, b) {
@@ -236,9 +229,9 @@
 
   window.generateRealStartingSquad = generateRealStartingSquad;
   window.BTM_REAL_SQUAD_BRIDGE_META = Object.freeze({
-    version: "0.47C",
+    version: "0.47D",
     source: "BTNM_REAL_PLAYERS",
     contractVersion: "V0.45A",
-    fallbackPolicy: "alias_or_source_season_donor_or_real_pool"
+    fallbackPolicy: "alias_or_source_season_donor_only_no_global_pool"
   });
 })();
