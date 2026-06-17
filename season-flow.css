@@ -1,4 +1,4 @@
-/* V0.46O — Season Flow inside notebook header */
+/* V0.46P — Season Flow inside notebook header, desktop row fixed */
 .season-v014,
 .season-flow-panel {
   margin: 0 0 18px;
@@ -116,7 +116,7 @@
   align-self: start;
 }
 
-@media(max-width: 1500px) {
+@media(max-width: 1080px) {
   .game-shell.notebook-tabs-left .topbar {
     grid-template-columns: minmax(220px, 1fr) auto;
   }
