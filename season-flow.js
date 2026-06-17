@@ -1,4 +1,4 @@
-const BTM_SEASON_FLOW_VERSION = "0.46P";
+const BTM_SEASON_FLOW_VERSION = "0.46Q";
 (function () {
   const START = "2025-08-01";
   const FIRST_MATCH = "2025-08-16";
@@ -159,11 +159,9 @@ const BTM_SEASON_FLOW_VERSION = "0.46P";
       box.className = "season-v014 season-flow-panel";
     }
     box.classList.add("season-flow-in-topbar");
-    if (topbar) {
-      const actions = topbar.querySelector(".topbar-actions");
-      if (actions) topbar.insertBefore(box, actions);
-      else topbar.appendChild(box);
-    } else if (main && box.parentElement !== main) {
+    if (topbar && box.parentElement !== topbar) {
+      topbar.appendChild(box);
+    } else if (!topbar && main && box.parentElement !== main) {
       main.prepend(box);
     }
     if (!career) { box.innerHTML = ""; return; }
@@ -186,8 +184,8 @@ const BTM_SEASON_FLOW_VERSION = "0.46P";
     if (!gate.ok) { button.disabled = true; button.title = gate.message; }
   }
   function updateCopy() {
-    const footer = document.querySelector(".sidebar-footer");
-    if (footer) footer.textContent = "V0.46P — Season flow header breakpoint fix";
+    const footer = document.querySelector(".sidebar-footer p");
+    if (footer) footer.textContent = "V0.46Q — Home button in sidebar";
   }
   function renderSeasonFlow() {
     render();
