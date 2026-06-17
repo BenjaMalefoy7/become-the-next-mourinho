@@ -1,4 +1,4 @@
-const BTM_SEASON_FLOW_VERSION = "0.46O";
+const BTM_SEASON_FLOW_VERSION = "0.46P";
 (function () {
   const START = "2025-08-01";
   const FIRST_MATCH = "2025-08-16";
@@ -187,7 +187,7 @@ const BTM_SEASON_FLOW_VERSION = "0.46O";
   }
   function updateCopy() {
     const footer = document.querySelector(".sidebar-footer");
-    if (footer) footer.textContent = "V0.46O — Season flow in header";
+    if (footer) footer.textContent = "V0.46P — Season flow header breakpoint fix";
   }
   function renderSeasonFlow() {
     render();
