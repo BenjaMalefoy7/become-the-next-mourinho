@@ -1,4 +1,43 @@
-/* V0.40D - readable standings override for the current notebook UI. */
+/* V0.46T - readable standings override for the current notebook UI. */
+#standings .standings-summary-strip {
+  margin: 10px 0 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid rgba(86, 67, 39, 0.16) !important;
+  border-radius: 18px !important;
+  background: rgba(23, 61, 42, 0.16) !important;
+  box-shadow: 0 12px 28px rgba(57, 43, 23, 0.07) !important;
+}
+
+#standings .standings-summary-strip > div {
+  min-height: 62px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff9ed !important;
+  color: #172118 !important;
+}
+
+#standings .standings-summary-strip span {
+  color: #6d5b36 !important;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+#standings .standings-summary-strip strong {
+  color: #173d2a !important;
+  font-size: clamp(1rem, 1.25vw, 1.28rem);
+  font-weight: 950;
+  line-height: 1.05;
+  text-align: right;
+}
+
 #standings .standings-table-card {
   background: #fff9ed !important;
   color: #172118 !important;
@@ -44,4 +83,26 @@
   background: rgba(23, 61, 42, 0.08) !important;
   border-color: rgba(23, 61, 42, 0.14) !important;
   color: #173d2a !important;
+}
+
+@media (max-width: 900px) {
+  #standings .standings-summary-strip {
+    grid-template-columns: 1fr;
+  }
+
+  #standings .standings-summary-strip > div {
+    min-height: 54px;
+  }
+}
+
+@media (max-width: 560px) {
+  #standings .standings-summary-strip > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #standings .standings-summary-strip strong {
+    text-align: left;
+  }
 }
