@@ -1,4 +1,4 @@
-const BTM_SEASON_FLOW_VERSION = "0.29";
+const BTM_SEASON_FLOW_VERSION = "0.46O";
 (function () {
   const START = "2025-08-01";
   const FIRST_MATCH = "2025-08-16";
@@ -149,16 +149,22 @@ const BTM_SEASON_FLOW_VERSION = "0.29";
 
   function render() {
     const main = document.querySelector(".main-content");
-    if (!main) return;
+    const topbar = document.querySelector(".topbar");
+    if (!main && !topbar) return;
     const career = ensurePersist();
     let box = document.getElementById("season-flow-panel");
     if (!box) {
       box = document.createElement("div");
       box.id = "season-flow-panel";
       box.className = "season-v014 season-flow-panel";
-      const top = document.querySelector(".topbar");
-      if (top && top.nextSibling) main.insertBefore(box, top.nextSibling);
-      else main.prepend(box);
+    }
+    box.classList.add("season-flow-in-topbar");
+    if (topbar) {
+      const actions = topbar.querySelector(".topbar-actions");
+      if (actions) topbar.insertBefore(box, actions);
+      else topbar.appendChild(box);
+    } else if (main && box.parentElement !== main) {
+      main.prepend(box);
     }
     if (!career) { box.innerHTML = ""; return; }
     const next = nextInfo(career);
@@ -180,9 +186,8 @@ const BTM_SEASON_FLOW_VERSION = "0.29";
     if (!gate.ok) { button.disabled = true; button.title = gate.message; }
   }
   function updateCopy() {
-    if (typeof setText === "function") setText("dashboard-description", "V0.29 : les modules extraits passent par un registre de rendu au lieu de réécrire refreshUI en cascade.");
     const footer = document.querySelector(".sidebar-footer");
-    if (footer) footer.textContent = "V0.29 — Render registry";
+    if (footer) footer.textContent = "V0.46O — Season flow in header";
   }
   function renderSeasonFlow() {
     render();
