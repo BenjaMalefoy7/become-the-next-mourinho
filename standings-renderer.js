@@ -1,4 +1,4 @@
-const BTM_STANDINGS_RENDERER_VERSION = "0.46S";
+const BTM_STANDINGS_RENDERER_VERSION = "0.46T";
 
 (function () {
   function e(value) {
@@ -161,6 +161,7 @@ const BTM_STANDINGS_RENDERER_VERSION = "0.46S";
     const userRank = userIndex >= 0 ? userIndex + 1 : null;
     const leader = rows[0];
     const userRow = userIndex >= 0 ? rows[userIndex] : null;
+    const userSummary = userRank && userRow ? `${userRank}e · ${n(userRow.points)} pt${n(userRow.points) > 1 ? "s" : ""}` : "—";
 
     container.innerHTML = `
       <div class="section-header section-header-row standings-header">
@@ -171,10 +172,10 @@ const BTM_STANDINGS_RENDERER_VERSION = "0.46S";
         <span class="standings-rank-pill">${userRank ? "Ton club : " + userRank + "e" : "Ton club : —"}</span>
       </div>
 
-      <div class="kpi-grid standings-kpis">
-        <article class="kpi-card"><p>Leader</p><strong>${e(leader?.club || "—")}</strong></article>
-        <article class="kpi-card"><p>Points de ton club</p><strong>${userRow ? n(userRow.points) : "—"}</strong></article>
-        <article class="kpi-card"><p>Matchs joués</p><strong>${userRow ? n(userRow.played) : "—"}</strong></article>
+      <div class="standings-summary-strip" aria-label="Résumé du classement">
+        <div><span>Leader</span><strong>${e(leader?.club || "—")}</strong></div>
+        <div><span>Ton club</span><strong>${e(userSummary)}</strong></div>
+        <div><span>Matchs joués</span><strong>${userRow ? n(userRow.played) : "—"}</strong></div>
       </div>
 
       <article class="panel standings-table-card">
