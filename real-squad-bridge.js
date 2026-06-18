@@ -1,6 +1,6 @@
 // =====================================================================
 // Become the next Mourinho — Real squad bridge
-// V0.47D: prevent mixed-club real squads; use exact club/donor only.
+// V0.47E: real squads use real players only; no generated depth fill.
 // =====================================================================
 
 (function initRealSquadBridge() {
@@ -10,7 +10,6 @@
   window.__BTM_REAL_SQUAD_BRIDGE_LOADED__ = true;
 
   const MAX_REAL_SQUAD_SIZE = 25;
-  const MIN_SAFE_SQUAD_SIZE = 23;
   const POSITION_QUOTAS = {
     GK: 3,
     DC: 5,
@@ -59,6 +58,10 @@
     return normalizeText(value)
       .replace(/_football_club$/g, "")
       .replace(/_fc$/g, "");
+  }
+
+  function getPlayerNameKey(player) {
+    return normalizeText(player && (player.shortName || player.fullName || player.name || player.playerId || player.id));
   }
 
   function getClubNameById(clubId) {
@@ -129,7 +132,20 @@
   function selectBalancedSquad(players) {
     const selected = [];
     const usedIds = new Set();
+    const usedNames = new Set();
     const byPosition = new Map();
+
+    function tryAddPlayer(player) {
+      if (!player || selected.length >= MAX_REAL_SQUAD_SIZE) return false;
+      const playerId = player.playerId || player.id;
+      const playerNameKey = getPlayerNameKey(player);
+      if (playerId && usedIds.has(playerId)) return false;
+      if (playerNameKey && usedNames.has(playerNameKey)) return false;
+      selected.push(player);
+      if (playerId) usedIds.add(playerId);
+      if (playerNameKey) usedNames.add(playerNameKey);
+      return true;
+    }
 
     players.slice().sort(sortByOverallDesc).forEach((player) => {
       const position = player.primaryPosition || "MC";
@@ -140,26 +156,19 @@
     Object.entries(POSITION_QUOTAS).forEach(([position, quota]) => {
       const candidates = byPosition.get(position) || [];
       candidates.slice(0, quota).forEach((player) => {
-        if (selected.length < MAX_REAL_SQUAD_SIZE && !usedIds.has(player.playerId)) {
-          selected.push(player);
-          usedIds.add(player.playerId);
-        }
+        tryAddPlayer(player);
       });
     });
 
     players.slice().sort(sortByOverallDesc).forEach((player) => {
-      if (selected.length >= MAX_REAL_SQUAD_SIZE) return;
-      if (!usedIds.has(player.playerId)) {
-        selected.push(player);
-        usedIds.add(player.playerId);
-      }
+      tryAddPlayer(player);
     });
 
     return selected;
   }
 
   function normalizeRealPlayer(player, customClub) {
-    const playerId = player.playerId || player.id || `real_${Math.random().toString(36).slice(2)}`;
+    const playerId = player.playerId || player.id || `real_${getPlayerNameKey(player) || "unknown"}`;
     const displayName = player.shortName || player.fullName || player.name || playerId;
 
     return Object.assign({}, player, {
@@ -180,58 +189,20 @@
     });
   }
 
-  function normalizeGeneratedDepthPlayer(player, customClub, index) {
-    const fallbackId = `${customClub && customClub.id ? customClub.id : "custom"}_depth_${index + 1}`;
-    const playerId = player.playerId || player.id || fallbackId;
-
-    return Object.assign({}, player, {
-      id: `${playerId}_real_depth`,
-      playerId: `${playerId}_real_depth`,
-      dataSource: "generated",
-      squadSource: "real_depth",
-      clubId: customClub && customClub.id ? customClub.id : player.clubId,
-      clubName: customClub && customClub.name ? customClub.name : player.clubName,
-      club: customClub && customClub.name ? customClub.name : player.clubName,
-      injuryStatus: player.injury && player.injury.label ? player.injury.label : "Disponible"
-    });
-  }
-
-  function createDepthPlayers(customClub, difficulty, existingIds, neededCount) {
-    if (neededCount <= 0 || typeof window.generateStartingSquad !== "function") return [];
-
-    const generated = window.generateStartingSquad(customClub, difficulty) || [];
-    const depthPlayers = [];
-
-    generated.forEach((player) => {
-      if (depthPlayers.length >= neededCount) return;
-      const sourceId = player.playerId || player.id;
-      if (existingIds.has(sourceId)) return;
-      const normalized = normalizeGeneratedDepthPlayer(player, customClub, depthPlayers.length);
-      depthPlayers.push(normalized);
-      existingIds.add(sourceId);
-      existingIds.add(normalized.playerId);
-    });
-
-    return depthPlayers;
-  }
-
-  function generateRealStartingSquad(customClub, replacedClubId, difficulty) {
+  function generateRealStartingSquad(customClub, replacedClubId) {
     const realCandidates = getPlayersFromReplacedClub(replacedClubId);
     if (!realCandidates.length) return [];
 
-    const selectedRealPlayers = selectBalancedSquad(realCandidates).map((player) => normalizeRealPlayer(player, customClub || {}));
-    const usedIds = new Set(selectedRealPlayers.map((player) => player.playerId || player.id));
-    const neededCount = Math.max(0, MIN_SAFE_SQUAD_SIZE - selectedRealPlayers.length);
-    const depthPlayers = createDepthPlayers(customClub || {}, difficulty, usedIds, neededCount);
-
-    return selectedRealPlayers.concat(depthPlayers).slice(0, MAX_REAL_SQUAD_SIZE);
+    return selectBalancedSquad(realCandidates)
+      .map((player) => normalizeRealPlayer(player, customClub || {}))
+      .slice(0, MAX_REAL_SQUAD_SIZE);
   }
 
   window.generateRealStartingSquad = generateRealStartingSquad;
   window.BTM_REAL_SQUAD_BRIDGE_META = Object.freeze({
-    version: "0.47D",
+    version: "0.47E",
     source: "BTNM_REAL_PLAYERS",
     contractVersion: "V0.45A",
-    fallbackPolicy: "alias_or_source_season_donor_only_no_global_pool"
+    fallbackPolicy: "alias_or_source_season_donor_only_real_players_only"
   });
 })();
